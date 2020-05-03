@@ -20,7 +20,7 @@ public class PruebaController {
 			salas += sala.toString()+",  \n";
 		}
 		model.addAttribute("salas", salas);
-		return "salas";
+		return "/salas";
 	}
 }
 
