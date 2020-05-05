@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+		<title>UNED | Tecnologías Web | Foederis</title>
+        <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="bg-light" style="height: 100vh" onload="connect()">
+	<noscript>
+		<h2>Sorry! Your browser doesn't support Javascript</h2>
+	</noscript>
+
+<!-- 
+	<div id="username-page">
+		<div class="username-page-container">
+			<h1 class="title">Type your username</h1>
+			<form id="usernameForm" name="usernameForm">
+				<div class="form-group">
+					<input type="text" id="name" placeholder="Username"
+						autocomplete="off" class="form-control" />
+				</div>
+				<div class="form-group">
+					<button type="submit" class="accent username-submit">Start
+						Chatting</button>
+				</div>
+			</form>
+		</div>
+	</div>
+ -->
+	<div id="chat-page">
+		<div class="chat-container">
+			<div class="chat-header">
+				<h2>Bienvenido al evento ...</h2>
+			</div>
+			<div th:text="${payload.body.source} ? ${payload.body.source} : 'RETIRED'" id="connecting">Conectando...</div>
+			<ul id="messageArea">
+
+			</ul>
+			<table class="table-chat">
+				<tr>
+					<td>
+						<form id="messageForm" name="messageForm">
+							<div class="form-group">
+								<div class="input-group clearfix">
+									<input type="text" id="message" placeholder="Introduce un mensaje..."
+										autocomplete="off" class="form-control" />
+									<button type="submit" class="btn btn-success">Send</button>
+								</div>
+							</div>
+						</form>
+					</td>
+					<td>
+						<form id="uploadForm" name="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
+							<input type="file" name="file"/>
+							<input type="submit" value="Submit" class="btn btn-success"/>
+						</form>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<div th:if="${message}">
+							<h2 th:text="${message}"></h2>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script src="/js/chat.js"></script>
+    </body>
+</html>
