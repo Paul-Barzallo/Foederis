@@ -30,3 +30,4 @@ y compilar como proyecto Maven
 
 * **Paul Barzallo** - [Paul-Barzallo](https://github.com/Paul-Barzallo)
 * **Lidia** - [lizquierd61](https://github.com/lizquierd61)
+* **Juan Carlos** - [Jcandres] (https://github.com/mar1492)
