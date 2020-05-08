@@ -43,7 +43,7 @@ function onConnected() {
         JSON.stringify({sender: username, type: 'JOIN'})
     )
 
-    connectingElement.classList.add('close');	// Ocultar
+    connectingElement.classList.add('hidden');	// Ocultar
 }
 
 

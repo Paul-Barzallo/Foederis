@@ -9,6 +9,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	 	<link rel="stylesheet" href="/css/main.css" />
     </head>
     <body class="bg-light" style="height: 100vh" onload="connect()">
 	<noscript>
@@ -37,39 +38,41 @@
 			<div class="chat-header">
 				<h2>Bienvenido al evento ...</h2>
 			</div>
-			<div th:text="${payload.body.source} ? ${payload.body.source} : 'RETIRED'" id="connecting">Conectando...</div>
+			<div id="connecting">Conectando...</div>
 			<ul id="messageArea">
 
 			</ul>
-			<table class="table-chat">
-				<tr>
-					<td>
-						<form id="messageForm" name="messageForm">
-							<div class="form-group">
-								<div class="input-group clearfix">
-									<input type="text" id="message" placeholder="Introduce un mensaje..."
-										autocomplete="off" class="form-control" />
-									<button type="submit" class="btn btn-success">Send</button>
+			<div  class="chat-footer">
+				<table class="table-chat">
+					<tr>
+						<td>
+							<form id="messageForm" name="messageForm">
+								<div class="form-group">
+									<div class="input-group clearfix">
+										<input type="text" id="message" placeholder="Introduce un mensaje..."
+											autocomplete="off" class="form-control" />
+										<button type="submit" class="btn btn-success">Send</button>
+									</div>
 								</div>
+							</form>
+						</td>
+						<td>
+							<form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+								<input type="file" name="file" />
+								<input type="submit" value="Submit" class="btn btn-success"/>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<div th:if="${message}">
+								<p th:text="${message}" class="text-danger"></p>
 							</div>
-						</form>
-					</td>
-					<td>
-						<form id="uploadForm" name="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
-							<input type="file" name="file"/>
-							<input type="submit" value="Submit" class="btn btn-success"/>
-						</form>
-					</td>
-				</tr>
-				<tr>
-					<td></td>
-					<td>
-						<div th:if="${message}">
-							<h2 th:text="${message}"></h2>
-						</div>
-					</td>
-				</tr>
-			</table>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 
