@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<div th:fragment="guardar-salir">
+		<div class="d-flex justify-content-center row my-5 mx-lg-5 px-md-5">
+			<div class="col">
+				<a href="/" class="btn btn-warning btn-block" role="button">Salir</a>
+			</div>
+			<div class="col">
+				<button type="submit" class="btn btn-success btn-block">Guardar</button>
+			</div>
+		</div>
+	</div>
+	
+	<div th:fragment="navbar">
+		<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+			<!-- Logo -->
+			<a class="navbar-brand mb-1" href="/">Foederis</a>
+			
+			<!-- Links -->
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" href="#">Agenda</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Salas</a>
+				</li>
+			
+				<!-- Dropdown -->
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+						Administración
+					</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="/administracion/perfil">Perfil</a>
+						<a class="dropdown-item" href="#">Usuarios</a>
+						<a class="dropdown-item" href="#">Salas</a>
+					</div>
+				</li>
+			</ul>
+		</nav>
+	</div>
+  
+</body>
+</html>

@@ -8,12 +8,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import es.uned.foederis.sesion.model.Usuario;
-import es.uned.foederis.sesion.repository.IUsuariosRepository;
+import es.uned.foederis.sesion.repository.IRolRepository;
+import es.uned.foederis.sesion.repository.IUsuarioRepository;
 
 @SpringBootApplication
 public class FoederisApplication implements ApplicationRunner{
 	@Autowired
-	private IUsuariosRepository usuario;
+	private IUsuarioRepository usuario;
+	
+	@Autowired
+	private IRolRepository rol;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(FoederisApplication.class, args);
@@ -23,12 +27,20 @@ public class FoederisApplication implements ApplicationRunner{
 	public void run(ApplicationArguments args) throws Exception {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String password = passwordEncoder.encode("admin");
-		
+		String password2 = passwordEncoder.encode("user");
+
 		Usuario user = new Usuario();
-		user.setNombre("administrador");
+		user.setNombre("Administrador");
 		user.setPassword(password);
-		user.setUser("admin");
-		user.setRol("2");
+		user.setUsername("admin");
+		user.setRol(rol.findById((long) 3).get());
+		usuario.save(user);
+		
+		user = new Usuario();
+		user.setNombre("Usuario");
+		user.setPassword(password2);
+		user.setUsername("user");
+		user.setRol(rol.findById((long) 1).get());
 		usuario.save(user);
 	}
 }
