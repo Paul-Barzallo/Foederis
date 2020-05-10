@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>Evento seleccionado</title>
+        <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="bg-info" style="height: 100vh">
+     <div class="container">
+    	<div class="card bg-light">
+    		<div class="card-header">
+    			
+    				<h1 class="text-success px-5 mx-5"><strong>Evento seleccionado</strong></h1>
+    		</div>		
+    				
+    				</br>
+    				
+    				<div class="card-body">
+    					<form th:object="${eventoSeleccionado}" method= "post">
+    					
+    					<table class="table table-striped">
+ 					   		<tbody>
+		   						<tr>
+		   							<td><label>Id evento:</label></td>
+		   							<td th:text="${eventoSeleccionado.idEvento}" readonly></td>
+		   						</tr> 
+		   						<tr>
+		   							<td><label>Nombre:</label></td>
+		   							<td th:text="${eventoSeleccionado.nombre}" readonly></td>
+		   						</tr> 
+		   						<tr>
+		   							<td><label>Fecha de Inicio:</label></td>
+		   							<td th:text="${#dates.format(eventoSeleccionado.fechaInicio, 'dd-MM-yyyy HH:mm')}" readonly></td>
+		   									   						
+		   							<td><label>Fecha Fin:</label></td>
+		   							<td th:text="${#dates.format(eventoSeleccionado.fechaFin, 'dd-MM-yyyy HH:mm')}" readonly></td>
+		   						
+		   						</tr>  
+		   						<tr>
+		   							<td><label>Usuario Creador:</label></td>
+		   							<td th:text="${eventoSeleccionado.idUsuarioCreador}" readonly></td>
+		   						</tr>  	
+		   						<tr>
+		   							<td><label>Sala:</label></td>
+		   							<td th:text="${eventoSeleccionado.idSala}" readonly></td>
+		   						</tr>						
+   							</tbody>
+   							<tfoot>
+		   						</br>
+		   						<tr>
+		   							<td colspan = "2">   							
+		   								<a th:href="@{baja}" class="btn btn-outline-primary btn-block" >Darme de Baja</a>
+		   							</td>
+		   							
+		   								<td colspan = "2">   							
+		   								<a th:href="@{entrar}" class="btn btn-outline-primary btn-block" >Entrar al evento</a>
+		   							</td>
+		   						
+		   						</tr>   						
+		   					</tfoot>
+    					</table>    					
+
+    					</form>
+    				</div>		
+    		
+	        </div>
+        </div>
+    </body>
+</html>
