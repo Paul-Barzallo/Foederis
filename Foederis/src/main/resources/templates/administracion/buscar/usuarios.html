@@ -11,25 +11,22 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
-	<script type="text/javascript">
+	
+	<script th:inline="javascript">
 		function buscarUsuarios() {
-			var token = $('#_csrf').attr('content');
-			var header = $('#_csrf_header').attr('content');
-			$.ajax({
-				type : "post",
-				url : "/administracion/buscar/usuarios/ajax",
-				data : {
-					busqueda : $('#busqueda').val(),
-					valor : $('#valor').val()
-				},
-				beforeSend: function(xhr) {
-                    xhr.setRequestHeader(header, token);
-                },
-				success : function(response) {
-					$('#tabla_usuarios').load(response);
-				}
-			});
-			return false;
+			var url = "/administracion/buscar/usuarios/ajax";
+			var busqueda = $('#busqueda').val();
+			var valor = $('#valor').val();
+			
+			url += "?busqueda=";
+			if (busqueda) {
+				url += busqueda;
+			} 
+			url += "&valor=";
+			if (valor) {
+				url += valor;
+			}
+			$('#tabla_usuarios').load(url);
 		}
 		$(function() {
 			$('#btn_buscar').click(buscarUsuarios);
