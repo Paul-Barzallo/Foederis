@@ -12,8 +12,8 @@
     </head>
     <body class="bg-light" style="height: 100vh">
     	<div th:insert="fragmentos :: navbar"></div>
-    	<div class="container mx-auto my-5 px-ms-5 h-100" th:object="${usuario}">
-    		<form class="px-md-5 mx-lg-5" th:action="@{/administracio/perfil/guardar}" method="post">
+    	<div class="container mx-auto my-5 px-ms-5 h-100">
+    		<form class="px-md-5 mx-lg-5" th:object="${usuario}" th:action="@{/administracio/perfil/guardar}" method="post">
             	<h1 class="mb-3 ml-n2">Perfil</h1>
             	<div class="form-group">
 					<label for="user">Usuario:</label>
@@ -30,11 +30,11 @@
 				<div class="form-group">
 					<a href="#" class="btn btn-link pl-0" role="button">Cambiar contraseña</a>
 				</div>
-				<div class="form-group" th:if="${pantalla == T(es.uned.foederis.Constantes.Pantalla).PERFIL}">
+				<div class="form-group" th:if="${pantalla == T(es.uned.foederis.Constantes.Pantalla).MOD_USUARIO}">
 					<label for="rol">Rol:</label>
 					<select class="form-control" id="rol" required>
 						<option value="" class="text-black-50">Elegir rol</option>
-						<option th:each="rol : ${roles}" th:value="${rol.getId()}" th:text="${rol.getNombre()}"></option>
+						<option th:each="rol : ${roles}" th:value="${rol.id}" th:text="${rol.nombre}"></option>
 					</select>
 				</div>
 				<div th:insert="fragmentos :: guardar-salir"></div>

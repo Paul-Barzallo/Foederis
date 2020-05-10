@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+	<title>Usuarios</title>
+	<meta charset="utf-8">
+	<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+	<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		function buscarUsuarios() {
+			var token = $('#_csrf').attr('content');
+			var header = $('#_csrf_header').attr('content');
+			$.ajax({
+				type : "post",
+				url : "/administracion/buscar/usuarios/ajax",
+				data : {
+					busqueda : $('#busqueda').val(),
+					valor : $('#valor').val()
+				},
+				beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+				success : function(response) {
+					$('#tabla_usuarios').load(response);
+				}
+			});
+			return false;
+		}
+		$(function() {
+			$('#btn_buscar').click(buscarUsuarios);
+		});
+	</script>
+</head>
+<body class="bg-light" style="height: 100vh">
+   	<div th:insert="fragmentos :: navbar"></div>
+   	<div class="container px-md-5">
+   		<div class="border border-dark rounded d-flex flex-column mt-5">
+   			<div class="bg-secondary d-flex justify-content-between p-3">
+    			<h2 class="text-white mb-0">Buscar</h2>
+    			<a href="#" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
+   			</div>
+   			
+   			<div class="py-lg-4 py-3 px-lg-5 px-3">
+           		<div class="row">
+					<div class="col-5 col-lg-4 pr-0">
+						<select id="busqueda" class="form-control" required
+						style="border-top-right-radius:0!important; border-bottom-right-radius:0!important;">
+							<option value="" class="text-black-50">Parametro de busqueda</option>
+							<option th:each="param_busq : ${params_busqueda}" th:value="${param_busq}" th:text="${param_busq}"></option>
+						</select>
+					</div>
+					<div class="col-5 col-lg-7 px-0">
+						<input id="valor" class="form-control rounded-0" type="text" name="valor" placeholder="Filtro" required>
+					</div>
+					<div class="col-2 col-lg-1 pl-0">
+						<button id="btn_buscar" class="btn btn-success btn-block"
+						style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
+							<i class="fas fa-search"></i>
+						</button>
+					</div>
+           		</div>
+   			</div>
+   		</div>
+   		<div id="tabla_usuarios"></div>
+       </div>
+</body>
+</html>

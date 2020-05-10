@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<div th:if="${usuarios}" class="border border-dark rounded mt-5">
+		<table class="table table-striped mb-0">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th th:text="${T(es.uned.foederis.Constantes.Usuario).USERNAME}"></th>
+					<th th:text="${T(es.uned.foederis.Constantes.Usuario).NOMBRE}"></th>
+					<th th:text="${T(es.uned.foederis.Constantes.Usuario).APELLIDOS}"></th>
+					<th th:text="${T(es.uned.foederis.Constantes.Usuario).ROL}"></th>
+					<th th:text="${T(es.uned.foederis.Constantes.Usuario).ESTADO}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user,i : ${usuarios}">
+					<td th:text="${i.cont}"></td>
+					<td th:text="${user.username}"></td>
+					<td th:text="${user.nombre}"></td>
+					<td th:text="${user.apellidos}"></td>
+					<td th:text="${user.rol.nombre}"></td>
+					<td th:text="${user.estado}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
