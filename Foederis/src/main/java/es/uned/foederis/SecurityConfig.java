@@ -17,10 +17,7 @@ import es.uned.foederis.sesion.service.UserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -31,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth
 			.userDetailsService(userService)
-			.passwordEncoder(passwordEncoder);
+			.passwordEncoder(passwordEncoder());
 	}
 	
 	@Override
