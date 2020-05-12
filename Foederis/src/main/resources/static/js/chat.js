@@ -17,23 +17,24 @@ var colors = [
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
-function connect(event) {
-    // username = document.querySelector('#name').value.trim();
+function connect(){
+    username = document.querySelector('#userName').innerHTML.trim();
 
-    // if(username) {
-        //usernamePage.classList.add('hidden');
+    //if(username) {
+    //    usernamePage.classList.add('hidden');
         chatPage.classList.remove('close');	// Hacer visible 
 
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
-    // }
-    // event.preventDefault();
+    //}
+    //event.preventDefault();
 }
 
 
 function onConnected() {
+
     // Subscribe to the Public Topic
     stompClient.subscribe('/topic/public', onMessageReceived);
 
@@ -58,7 +59,7 @@ function sendMessage(event) {
 
     if(messageContent && stompClient) {
         var chatMessage = {
-            sender: 'jucar',
+            sender: username,
             content: messageInput.value,
             type: 'CHAT'
         };
@@ -84,12 +85,12 @@ function onMessageReceived(payload) {
     } else {
         messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+        // var avatarElement = document.createElement('i');
+        // var avatarText = document.createTextNode(message.sender[0]);
+        // avatarElement.appendChild(avatarText);
+        // avatarElement.style['background-color'] = getAvatarColor(message.sender);
 
-        messageElement.appendChild(avatarElement);
+        // messageElement.appendChild(avatarElement);
 
         var usernameElement = document.createElement('span');
         var usernameText = document.createTextNode(message.sender);
@@ -107,7 +108,7 @@ function onMessageReceived(payload) {
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-
+/*
 function getAvatarColor(messageSender) {
     var hash = 0;
     for (var i = 0; i < messageSender.length; i++) {
@@ -117,8 +118,15 @@ function getAvatarColor(messageSender) {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 }
-
-//usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
-
+*/
+//function initChat() {
+//	if (username == null)
+//		username = document.querySelector('#userName').innerHTML.trim();
+//	
+//	if (usernameForm != null)
+//		usernameForm.addEventListener('submit', connect, true);
+	
+//	if (messageForm != null)
+		messageForm.addEventListener('submit', sendMessage, true);
+//}
 

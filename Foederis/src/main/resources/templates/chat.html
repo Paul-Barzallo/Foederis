@@ -4,42 +4,66 @@
 		<title>UNED | Tecnologías Web | Foederis</title>
         <meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+		<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 	 	<link rel="stylesheet" href="/css/main.css" />
+		<script type="text/javascript">
+			function uploadFile() {
+				var token = $('#_csrf').attr('content');
+				var header = $('#_csrf_header').attr('content');
+				$.ajax({
+					type : "post",
+					url : "/upload",
+					data : {
+						file : $('#file').val()
+						//valor : $('#valor').val()
+					},
+					beforeSend: function(xhr) {
+	                    xhr.setRequestHeader(header, token);
+	                },
+					success : function(response) {
+						$('#resultUpload').value(response);
+					}
+				});
+				return false;
+			}
+			$(function() {
+				$('#btnUpload').click(uploadFile);
+			});
+		</script>
     </head>
-    <body class="bg-light" style="height: 100vh" onload="connect()">
+    <body class="bg-light" style="height: 100vh" onload="connect()"/>  <!--   onload="initChat() -->
 	<noscript>
 		<h2>Sorry! Your browser doesn't support Javascript</h2>
 	</noscript>
 
-<!-- 
-	<div id="username-page">
-		<div class="username-page-container">
-			<h1 class="title">Type your username</h1>
-			<form id="usernameForm" name="usernameForm">
-				<div class="form-group">
-					<input type="text" id="name" placeholder="Username"
-						autocomplete="off" class="form-control" />
-				</div>
-				<div class="form-group">
-					<button type="submit" class="accent username-submit">Start
-						Chatting</button>
-				</div>
-			</form>
-		</div>
-	</div>
- -->
-	<div id="chat-page">
-		<div class="chat-container">
+
+
+	<div th:insert="fragmentos :: navbar"></div>
+	<div id="chat-page" class="container mx-auto my-5 px-ms-5 h-100">
+<!-- 		<div class="chat-container"> -->
+		
 			<div class="chat-header">
 				<h2>Bienvenido al evento ...</h2>
+				<p id ="userName" th:text="${user}" class="text-danger"></p>
 			</div>
-			<div id="connecting">Conectando...</div>
-			<ul id="messageArea">
+<!-- 			<div id="username-page"> -->
+<!-- 				<div class="username-page-container"> -->
+<!-- 					<form id="usernameForm" name="usernameForm"> -->
+<!-- 						<div class="form-group"> -->
+<!-- 							<button type="submit" class="accent username-submit">Start -->
+<!-- 								Chatting</button> -->
+<!-- 						</div> -->
+<!-- 					</form> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div id="connecting" class="hidden">Conectando...</div>
+			<ul id="messageArea" class="list-group">
 
 			</ul>
 			<div  class="chat-footer">
@@ -57,23 +81,40 @@
 							</form>
 						</td>
 						<td>
-							<form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+							<div class="col-2 col-lg-1 pl-0">
 								<input type="file" name="file" />
-								<input type="submit" value="Submit" class="btn btn-success"/>
-							</form>
+								<button id="btnUpload" class="btn btn-success btn-block"
+											style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
+									<i class="fas fa-search"></i>
+								</button>
+							</div>
+
+
+
+<!-- 							<form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data"> -->
+<!-- 								<div class="form-group"> -->
+<!-- 									<div class="input-group clearfix"> -->
+<!-- 										<input type="file" name="file" /> -->
+<!-- 										<input type="submit" value="Submit" class="btn btn-success"/> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+<!-- 							</form> -->
 						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>
-							<div th:if="${message}">
-								<p th:text="${message}" class="text-danger"></p>
+							<div>
+								<p id="resultUpload" />
 							</div>
+<!-- 							<div th:if="${message}">
+								<p th:text="${message}" class="text-danger"></p>
+								</div>  -->					
 						</td>
 					</tr>
 				</table>
 			</div>
-		</div>
+	<!-- 	</div>  -->
 	</div>
 
 	<script
