@@ -12,25 +12,28 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 	 	<link rel="stylesheet" href="/css/main.css" />
-		<script type="text/javascript">
+		<script th:inline="javascript">
 			function uploadFile() {
-				var token = $('#_csrf').attr('content');
-				var header = $('#_csrf_header').attr('content');
-				$.ajax({
-					type : "post",
-					url : "/upload",
-					data : {
-						file : $('#file').val()
-						//valor : $('#valor').val()
-					},
-					beforeSend: function(xhr) {
-	                    xhr.setRequestHeader(header, token);
-	                },
-					success : function(response) {
+
+				jQuery.ajax({
+				    url: '/chat/upload',
+				    data: $('#file').val(),
+				    cache: false,
+				    contentType: false,
+				    processData: false,
+				    method: 'POST',
+				    
+					success: function(response){
 						$('#resultUpload').value(response);
-					}
+				    }
 				});
-				return false;
+				
+// 				var	url = "/upload";
+// 				var file = $('#file').val();
+
+// 				// $('#resultUpload').value(response);
+// 				$('#resultUpload').load(url);
+				
 			}
 			$(function() {
 				$('#btnUpload').click(uploadFile);
@@ -85,31 +88,30 @@
 								<input type="file" name="file" />
 								<button id="btnUpload" class="btn btn-success btn-block"
 											style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
-									<i class="fas fa-search"></i>
+<!-- 									<i class="fas fa-search"></i> -->
 								</button>
 							</div>
 
 
 
-<!-- 							<form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data"> -->
-<!-- 								<div class="form-group"> -->
-<!-- 									<div class="input-group clearfix"> -->
-<!-- 										<input type="file" name="file" /> -->
-<!-- 										<input type="submit" value="Submit" class="btn btn-success"/> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</form> -->
+							<!-- <form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+								<div class="form-group">
+									<div class="input-group clearfix">
+										<input type="file" name="file" />
+										<input type="submit" value="Submit" class="btn btn-success"/>
+									</div>
+								</div>
+							</form> -->
 						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>
-							<div>
-								<p id="resultUpload" />
-							</div>
-<!-- 							<div th:if="${message}">
+							<div id="resultUpload"></div>
+<!-- 							<div th:insert="fragmentos :: resultUpload"></div> -->
+	<!-- 							<div th:if="${message}">
 								<p th:text="${message}" class="text-danger"></p>
-								</div>  -->					
+								</div> 					 -->
 						</td>
 					</tr>
 				</table>

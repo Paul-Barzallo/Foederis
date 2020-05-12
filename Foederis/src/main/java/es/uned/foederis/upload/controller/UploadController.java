@@ -4,9 +4,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import es.uned.foederis.Constantes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Controller
+@RequestMapping("/chat")
 public class UploadController {
 
     //Save the uploaded file to this folder
@@ -26,14 +32,19 @@ public class UploadController {
 //        return "index";
 //    }
     
-    @PostMapping("/upload") // //new annotation since 4.3
-    public String singleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
+    @PostMapping("/upload") 
+    @ResponseBody
+//    public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file,
+//            RedirectAttributes redirectAttributes) {
+        public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file,
+                Model model) {
 
         if (file.isEmpty()) {
         	Message_ = "Please select a file to upload";
-            redirectAttributes.addFlashAttribute("message", Message_);
-            return "redirect:uploadStatus";
+            //redirectAttributes.addFlashAttribute("message", Message_);
+            model.addAttribute("message", Message_);
+
+            return new ModelAndView("fragmentos :: resultUpload");
         }
 
         try {
@@ -45,19 +56,25 @@ public class UploadController {
 
             Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
             
-            redirectAttributes.addFlashAttribute("message",Message_);
+            //redirectAttributes.addFlashAttribute("message",Message_);
+            model.addAttribute("message", Message_);
 
+            return new ModelAndView("fragmentos :: resultUpload");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return "redirect:/uploadStatus";
+        model.addAttribute("message", Message_);
+
+        return new ModelAndView("fragmentos :: resultUpload");
     }
 
     @GetMapping("/uploadStatus")
-    public String uploadStatus(Model model) {
+    @ResponseBody
+    public ModelAndView uploadStatus(Model model) {
     	model.addAttribute("message", Message_);
-        return "/chat";
+
+        return new ModelAndView("fragmentos :: resultUpload");
     }
 
 }

@@ -72,6 +72,10 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<div th:fragment="resultUpload" th:if="${message}">
+		<p th:text="${message}" class="text-danger"></p>
+	</div>		
   
 </body>
 </html>
