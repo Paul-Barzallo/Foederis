@@ -30,6 +30,53 @@ public class UploadController {
 //        return "index";
 //    }
     
+    
+    @PostMapping("/upload")
+    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file,
+            Model model) {
+        if (file.isEmpty()) {
+        	Message_ = "Please select a file to upload";
+            //redirectAttributes.addFlashAttribute("message", Message_);
+            model.addAttribute("message", Message_);
+
+            return new ModelAndView("fragmentos :: resultUpload");
+        }
+
+        try {
+
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
+            
+            //redirectAttributes.addFlashAttribute("message",Message_);
+            // model.addAttribute("message", Message_);
+
+            // return new ModelAndView("fragmentos :: resultUpload");
+        } catch (IOException e) {
+        	Message_= "Error -> message = " + e.getMessage();
+        }
+
+        model.addAttribute("message", Message_);
+
+        return new ModelAndView("fragmentos :: resultUpload");
+
+    	
+    	
+    	
+/*    	
+    	try {
+        // fileStorage.store(file);
+    	  Message_ = "You successfully uploaded"  + file.getOriginalFilename();
+    	  return Message_;
+      } catch (Exception e) {
+    	  Message_= "Error -> message = " + e.getMessage();
+    	  return Message_;
+      }  */  
+    }
+/*
     @PostMapping("/upload") 
     @ResponseBody
 //    public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file,
@@ -66,7 +113,8 @@ public class UploadController {
 
         return new ModelAndView("fragmentos :: resultUpload");
     }
-
+*/
+    
     @GetMapping("/uploadStatus")
     @ResponseBody
     public ModelAndView uploadStatus(Model model) {

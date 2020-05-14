@@ -4,8 +4,8 @@
 		<title>UNED | Tecnologías Web | Foederis</title>
         <meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
-		<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<!-- 		<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/> -->
+<!-- 		<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/> -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -13,31 +13,61 @@
 		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 	 	<link rel="stylesheet" href="/css/main.css" />
 		<script th:inline="javascript">
+			/*
 			function uploadFile() {
 
 				jQuery.ajax({
-				    url: '/chat/upload',
-				    data: $('#file').val(),
+				    url: '/upload',
+				    data: $('#file').files[0],
 				    cache: false,
 				    contentType: false,
 				    processData: false,
-				    method: 'POST',
-				    
+				    type: 'POST',
+				    beforeSend: function(xhr){
+			            xhr.setRequestHeader('X-CSRF-Token', $("meta[name='_csrf']").attr("content"));
+			        },
 					success: function(response){
 						$('#resultUpload').value(response);
 				    }
 				});
-				
-// 				var	url = "/upload";
-// 				var file = $('#file').val();
-
-// 				// $('#resultUpload').value(response);
-// 				$('#resultUpload').load(url);
-				
 			}
 			$(function() {
 				$('#btnUpload').click(uploadFile);
+			}); */
+
+			$(document).ready( () => {
+			    $("#btnSubmit").click((event) => {
+			        //stop submit the form, we will post it manually.
+			        event.preventDefault();
+			        doUpload();
+			    });
+			 
 			});
+			 
+			function doUpload() {
+			 
+			    // Get form
+			    var form = $('#uploadForm')[0];
+			    var data = new FormData(form);
+			 
+			    $.ajax({
+			        type: "POST",
+			        enctype: 'multipart/form-data',
+			        url: "/chat/upload",
+			        data: data,
+			        processData: false, //prevent jQuery from automatically transforming the data into a query string
+			        contentType: false,
+			        cache: false,
+			        success: (data) => {
+			        	$("#resultUpload").empty();
+			            $("#resultUpload").append(data);
+			        },
+			        error: (e) => {
+			        	$("#resultUpload").empty();
+			            $("#resultUpload").append(data);
+			        }
+			    });
+			}			
 		</script>
     </head>
     <body class="bg-light" style="height: 100vh" onload="connect()"/>  <!--   onload="initChat() -->
@@ -84,24 +114,23 @@
 							</form>
 						</td>
 						<td>
-							<div class="col-2 col-lg-1 pl-0">
+<!-- 							<div class="col-2 col-lg-1 pl-0">
 								<input type="file" name="file" />
 								<button id="btnUpload" class="btn btn-success btn-block"
 											style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
-<!-- 									<i class="fas fa-search"></i> -->
 								</button>
 							</div>
+ -->
 
 
-
-							<!-- <form id="uploadForm" name="uploadForm" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+							<form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
 								<div class="form-group">
 									<div class="input-group clearfix">
-										<input type="file" name="file" />
-										<input type="submit" value="Submit" class="btn btn-success"/>
+										<input type="file" name="file" placeholder="Upload File"/>
+										<input id="btnSubmit" type="submit" value="Submit" class="btn btn-success"/>
 									</div>
 								</div>
-							</form> -->
+							</form>
 						</td>
 					</tr>
 					<tr>
