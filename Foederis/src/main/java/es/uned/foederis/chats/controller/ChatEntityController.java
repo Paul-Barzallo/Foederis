@@ -51,7 +51,7 @@ public class ChatEntityController {
     
  
     @PostMapping("/create")
-    public void createOrUpdateEmployee(Chat chat) 
+    public void createChat(Chat chat) 
     {
         service.createChat(chat);
         //return "redirect:/";
