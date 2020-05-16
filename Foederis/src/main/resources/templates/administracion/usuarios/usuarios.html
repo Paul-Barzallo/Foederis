@@ -14,22 +14,22 @@
 	
 	<script th:inline="javascript">
 		function buscarUsuarios() {
-			var url = "/administracion/buscar/usuarios/ajax";
+			var url = "/administracion/usuarios/ajax";
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
-			url += "?busqueda=";
+			url += "?opParamBusq=";
 			if (busqueda) {
 				url += busqueda;
 			} 
-			url += "&valor=";
+			url += "&opValorBusq=";
 			if (valor) {
 				url += valor;
 			}
 			$('#tabla_usuarios').load(url);
 		}
 		$(function() {
-			$('#btn_buscar').click(buscarUsuarios);
+			$('#btn_buscar').click(buscarUsuarios());
 		});
 	</script>
 </head>
@@ -39,7 +39,7 @@
    		<div class="border border-dark rounded d-flex flex-column mt-5">
    			<div class="bg-secondary d-flex justify-content-between p-3">
     			<h2 class="text-white mb-0">Buscar</h2>
-    			<a href="#" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
+    			<a href="/administracion/usuarios/nuevo" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
    			</div>
    			
    			<div class="py-lg-4 py-3 px-lg-5 px-3">
@@ -63,7 +63,7 @@
            		</div>
    			</div>
    		</div>
-   		<div id="tabla_usuarios"></div>
-       </div>
+   		<div id="tabla_usuarios" class="my-5"></div>
+	</div>
 </body>
 </html>

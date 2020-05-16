@@ -16,6 +16,14 @@
 	</div>
 	
 	<div th:fragment="navbar">
+		<div th:if="${alerta}">
+			<script th:inline="javascript">
+				$(function() {
+					$('#modal_alerta').modal('show');
+				});
+			</script>
+			<div th:insert="fragmentos :: modal_alerta"></div>
+		</div>
 		<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
 			<!-- Logo -->
 			<a class="navbar-brand mb-1" href="/">Foederis</a>
@@ -36,7 +44,7 @@
 					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="/administracion/perfil">Perfil</a>
-						<a class="dropdown-item" href="/administracion/buscar/usuarios">Usuarios</a>
+						<a class="dropdown-item" href="/administracion/usuarios">Usuarios</a>
 						<a class="dropdown-item" href="#">Salas</a>
 					</div>
 				</li>
@@ -44,16 +52,17 @@
 		</nav>
 	</div>
 	
-	<div th:fragment="tabla_usuarios" th:if="${usuarios}" class="border border-dark rounded mt-5">
+	<div th:fragment="tabla_usuarios" th:if="${usuarios}" class="border border-dark rounded">
 		<table class="table table-striped mb-0">
 			<thead>
 				<tr>
 					<th>#</th>
-					<th th:text="${T(es.uned.foederis.Constantes.Usuario).USERNAME}"></th>
-					<th th:text="${T(es.uned.foederis.Constantes.Usuario).NOMBRE}"></th>
-					<th th:text="${T(es.uned.foederis.Constantes.Usuario).APELLIDOS}"></th>
-					<th th:text="${T(es.uned.foederis.Constantes.Usuario).ROL}"></th>
-					<th th:text="${T(es.uned.foederis.Constantes.Usuario).ESTADO}"></th>
+					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).USERNAME}"></th>
+					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).NOMBRE}"></th>
+					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).APELLIDOS}"></th>
+					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).ROL}"></th>
+					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).ESTADO}"></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Acciones</span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -61,13 +70,46 @@
 					<td th:text="${i.count}"></td>
 					<td th:text="${user.username}"></td>
 					<td th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
-					<td th:text="${#strings.capitalizeWords('__${user.apellidos}__')}"></td>
+					<td th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
 					<td th:text="${user.rol.nombre}"></td>
-					<td th:if="${user.activo}">Activo</td>
-					<td th:unless="${user.activo}">Inactivo</td>
+					<td th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
+					<td>
+						<div class="btn-group d-flex justify-content-center">
+							<button type="button" class="btn btn-link px-0" data-toggle="dropdown">
+								<i class="fas fa-cog"></i>
+							</button>
+							<div class="dropdown-menu">
+								<div th:each="accion : ${acciones}">
+									<div th:if="${accion == 'activar'}">
+										<a class="dropdown-item" th:text="${user.activo}? 'Desactivar' : 'Activar'"
+										th:href="@{./usuarios/activar(idUsuario=${user.idUsuario}, activar=${user.activo}? 'false' : 'true')}"></a>
+									</div>
+									<a th:unless="${accion == 'activar'}" class="dropdown-item" th:href="@{./usuarios/__${accion}__(idUsuario=${user.idUsuario})}"
+									th:text="${#strings.capitalize('__${accion}__')}"></a>
+								</div>
+							</div>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
+	</div>
+	
+	<div th:fragment="modal_alerta" id="modal_alerta" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" th:text="${alerta_titulo}? ${alerta_titulo} : 'Alerta!'"></h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+			  
+				<div class="modal-body" th:text="${alerta}"></div>
+			
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+				</div>  
+			</div>
+		</div>
 	</div>
   
 </body>
