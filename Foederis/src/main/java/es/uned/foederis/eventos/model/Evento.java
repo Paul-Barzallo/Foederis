@@ -67,7 +67,7 @@ public class Evento {
 		return estado;
 	}
 	public void setEstado(int estado) {
-		estado = estado;
+		this.estado = estado;
 	}
 	public int getIdChat() {
 		return idChat;
