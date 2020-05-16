@@ -18,18 +18,19 @@
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
-			url += "?opParamBusq=";
+			url += "?paramBusq=";
 			if (busqueda) {
 				url += busqueda;
 			} 
-			url += "&opValorBusq=";
+			url += "&valorBusq=";
 			if (valor) {
 				url += valor;
 			}
+			$('#tabla_usuarios').empty();
 			$('#tabla_usuarios').load(url);
 		}
 		$(function() {
-			$('#btn_buscar').click(buscarUsuarios());
+			buscarUsuarios();
 		});
 	</script>
 </head>
@@ -55,7 +56,7 @@
 						<input id="valor" class="form-control rounded-0" type="text" name="valor" placeholder="Filtro" required>
 					</div>
 					<div class="col-2 col-lg-1 pl-0">
-						<button id="btn_buscar" class="btn btn-success btn-block"
+						<button id="btn_buscar" class="btn btn-success btn-block" onclick="buscarUsuarios()"
 						style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
 							<i class="fas fa-search"></i>
 						</button>

@@ -47,8 +47,8 @@
 					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="/administracion/perfil">Perfil</a>
-						<a class="dropdown-item" href="/administracion/usuarios">Usuarios</a>
-						<a class="dropdown-item" href="#">Salas</a>
+						<a class="dropdown-item" href="/administracion/usuario/usuarios">Usuarios</a>
+						<a class="dropdown-item" href="/administracion/sala/salas">Salas</a>
 					</div>
 				</li>
 			</ul>
@@ -70,12 +70,12 @@
 			</thead>
 			<tbody>
 				<tr th:each="user,i : ${usuarios}">
-					<td th:text="${i.count}"></td>
-					<td th:text="${user.username}"></td>
-					<td th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
-					<td th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
-					<td th:text="${user.rol.nombre}"></td>
-					<td th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
+					<td class="align-middle" th:text="${i.count}"></td>
+					<td class="align-middle" th:text="${user.username}"></td>
+					<td class="align-middle" th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
+					<td class="align-middle" th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
+					<td class="align-middle" th:text="${user.rol.nombre}"></td>
+					<td class="align-middle" th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
 					<td>
 						<div class="btn-group d-flex justify-content-center">
 							<button type="button" class="btn btn-link px-0" data-toggle="dropdown">
@@ -85,9 +85,9 @@
 								<div th:each="accion : ${acciones}">
 									<div th:if="${accion == 'activar'}">
 										<a class="dropdown-item" th:text="${user.activo}? 'Desactivar' : 'Activar'"
-										th:href="@{./usuarios/activar(idUsuario=${user.idUsuario}, activar=${user.activo}? 'false' : 'true')}"></a>
+										th:href="@{./activar(idUsuario=${user.idUsuario}, activar=${user.activo}? 'false' : 'true')}"></a>
 									</div>
-									<a th:unless="${accion == 'activar'}" class="dropdown-item" th:href="@{./usuarios/__${accion}__(idUsuario=${user.idUsuario})}"
+									<a th:unless="${accion == 'activar'}" class="dropdown-item" th:href="@{./__${accion}__(idUsuario=${user.idUsuario})}"
 									th:text="${#strings.capitalize('__${accion}__')}"></a>
 								</div>
 							</div>

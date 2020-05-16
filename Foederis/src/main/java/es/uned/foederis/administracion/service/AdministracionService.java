@@ -16,6 +16,12 @@ import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
 import es.uned.foederis.sesion.repository.IUsuarioRepository;
 
+/**
+ * Servicio para los controles del modulo de administracion
+ * Proporciona acceso a los repositorios y aciones repetitivas
+ * @author barza
+ *
+ */
 @Service
 public class AdministracionService {
 	@Autowired
@@ -27,6 +33,11 @@ public class AdministracionService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
+	/**
+	 * Agrega los roles para la pantalla de formulario de usuario
+	 * y los agrega al model
+	 * @param model
+	 */
 	public void cargarRoles(Model model) {
 		List<Rol> roles = new ArrayList<>();
 		for (Rol rol : rolRepo.findAll()) {
@@ -35,6 +46,12 @@ public class AdministracionService {
 		model.addAttribute(Constantes.ROLES, roles);
 	}
 	
+	/**
+	 * Se busca un usuario a partir del ID y se agrega al model
+	 * @param model
+	 * @param idUsuario
+	 * @return true si se encuentra un usuario
+	 */
 	public boolean cargarUsuario(Model model, Long idUsuario) {
 		// Se busca el usuario y se comprueba que no sea null
 		Optional<Usuario> opUser = userRepo.findById(idUsuario);
@@ -46,6 +63,12 @@ public class AdministracionService {
 		return false;
 	}
 	
+	/**
+	 * Añade los usuarios que coincidan con la busqueda al model
+	 * @param model
+	 * @param paramBusq tipos de busqueda: NOMBRE, USERNAME, ROL, ...
+	 * @param valorBusq 
+	 */
 	public void cargarUsuarios(Model model, String paramBusq, String valorBusq) {
 		List<Usuario> usuarios = null;
 		// ponemos el valor de la busqueda en minusculas porque así se guarda en base de datos
@@ -78,7 +101,7 @@ public class AdministracionService {
 	 * En el resto de casos devuelve false
 	 * Valida que no exista ya un usuario con el mimso username
 	 * @param usuario
-	 * @return
+	 * @return true si existe algun usuario con ese username
 	 */
 	public boolean isUsernameRepetido(Usuario usuario) {
 		if (usuario.getIdUsuario() == null && usuario.getUsername() != null && !usuario.getUsername().isBlank()) {
@@ -88,20 +111,13 @@ public class AdministracionService {
 		return false;
 	}
 	
-	public boolean guardarUsuario(Model model, Usuario usuario) {
-		if (usuario != null) {
-			usuario.setApellidos(usuario.getApellidos().toLowerCase());
-			usuario.setNombre(usuario.getNombre().toLowerCase());
-			usuario.setUsername(usuario.getUsername().toLowerCase());
-			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-			userRepo.save(usuario);
-			model.addAttribute(Constantes.ALERTA_TITULO, "Información");
-			model.addAttribute(Constantes.ALERTA, "El usuario se a guardado correctamente");
-			return true;
-		}
-		return false;
-	}
-	
+	/**
+	 * Activa o desactiva el usuario
+	 * @param model
+	 * @param idUsuario
+	 * @param activar
+	 * @return
+	 */
 	public boolean activarUsuario(Model model, Long idUsuario, boolean activar) {
 		Optional<Usuario> opUser = userRepo.findById(idUsuario);
 		if (opUser.isPresent()) {
@@ -110,6 +126,28 @@ public class AdministracionService {
 			userRepo.save(user);
 			return true;
 		}
+		return false;
+	}
+	
+	/**
+	 * Guarda el usuario en la db y añade mensaje de confirmación al modelo
+	 * si hay algun error durante el guardado devuelve false
+	 * @param model
+	 * @param usuario
+	 * @return true si se guarda correctamente
+	 */
+	public boolean guardarUsuario(Model model, Usuario usuario) {
+		try {
+			usuario.setApellidos(usuario.getApellidos().toLowerCase());
+			usuario.setNombre(usuario.getNombre().toLowerCase());
+			usuario.setUsername(usuario.getUsername().toLowerCase());
+			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+			Long idUsuario = usuario.getIdUsuario();
+			userRepo.save(usuario);
+			mensajeUsuarioGuardado(model, idUsuario);
+			return true;
+		} catch(Exception e) {}
+		mensajeErrorGuardarSala(model);
 		return false;
 	}
 	
