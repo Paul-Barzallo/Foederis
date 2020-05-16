@@ -9,7 +9,7 @@ VALUES
 ;
 
 INSERT INTO rol
-	(id, nombre)
+	(id_rol, nombre)
 VALUES
 	(1, 'Usuario'),
 	(2, 'Jefe de Proyecto'),
@@ -25,18 +25,18 @@ values
 ;
 
 INSERT INTO usuario
-	(id, nombre, apellidos, username, password, rol_id, activo)
+	(id_usuario, username, nombre, apellidos, password, id_rol_fk, activo)
 VALUES
-	(1, 'ADMINISTRADOR', null, 'admin', 'admin', 3, TRUE), 
-	(2, 'ADMINISTRADOR', 'SEGUNDO', 'admin2', 'admin', 3, FALSE), 
-	(3, 'PAUL', 'BARZALLO', 'pbarza', 'foederis', 3, TRUE), 
-	(4, 'LIDIA', null, 'lidia', '1234', 3, TRUE), 
-	(5, 'JUAN CARLOS', null, 'juancarlos', '1234', 3, TRUE), 
-	(6, 'ALEX', 'BERNAT ASENSI', 'albeas', 'user', 2, TRUE), 
-	(7, 'DAVID', 'OVIEDO ALMEIDA', 'daoval', 'user', 2, TRUE), 
-	(8, 'AMPARO', 'BAS INFANTE', 'ambain', 'user', 2, TRUE), 
-	(9, 'SANDRA', 'SECO TRIVIÑO', 'sasetr', 'user', 1, TRUE), 
-	(10, 'MILAGROS', 'DUEÑAS CASELLAS', 'miduca', 'user', 1, TRUE),
-	(11, 'VICENTE', 'ROURA VILLALBA', 'virovi', 'user', 1, TRUE),
-	(12, 'GABRIEL', 'BARON COROMINAS', 'gabaco', 'user', 1, TRUE)
+	(1,  'admin',		'administrador', 	null, 				'admin', 	3, TRUE),
+	(2,  'admin2',		'adminsitrador', 	'segundo',			'admin', 	3, FALSE),
+	(3,  'pbarza',		'paul', 			'barzallo', 		'foederis', 3, TRUE),	
+	(4,  'lidia',		'lidia', 			null, 				'1234', 	3, TRUE),	
+	(5,  'juancarlos',	'juan carlos', 		null, 				'1234', 	3, TRUE),
+	(6,  'albeas',		'alex', 			'bernat asensi', 	'user', 	2, TRUE),	
+	(7,  'daoval',		'david', 			'oviedo almeida', 	'user', 	2, TRUE),
+	(8,  'ambain',		'amparo', 			'bas infante', 		'user', 	2, TRUE),	
+	(9,  'sasetr',		'sandra', 			'seco triviño', 	'user', 	1, TRUE),
+	(10, 'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1, fALSE),	
+	(11, 'virovi',		'vicente', 			'roura villalba', 	'user', 	1, TRUE),
+	(12, 'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1, TRUE)
 ;

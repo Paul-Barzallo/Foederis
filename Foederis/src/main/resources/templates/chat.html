@@ -3,6 +3,8 @@
     <head>
 		<title>UNED | Tecnologías Web | Foederis</title>
         <meta charset="utf-8">
+        <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+		<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 		<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/> -->
 <!-- 		<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/> -->
@@ -49,6 +51,9 @@
 			    // Get form
 			    var form = $('#uploadForm')[0];
 			    var data = new FormData(form);
+			    
+			    var token = $('#_csrf').attr('content');
+			    var header = $('#_csrf_header').attr('content');
 			 
 			    $.ajax({
 			        type: "POST",
@@ -58,6 +63,9 @@
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
 			        contentType: false,
 			        cache: false,
+			        beforeSend: (xhr) => {
+                        xhr.setRequestHeader(header, token);
+                    },
 			        success: (data) => {
 			        	$("#resultUpload").empty();
 			            $("#resultUpload").append(data);

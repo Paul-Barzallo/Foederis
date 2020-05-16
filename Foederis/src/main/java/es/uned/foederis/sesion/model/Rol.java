@@ -10,8 +10,8 @@ import javax.persistence.Id;
 public class Rol {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	@Column(unique = true)
+	private long idRol;
+	@Column(unique = true, nullable = true)
 	private String nombre;
 	
 	public Rol() {}
@@ -20,12 +20,12 @@ public class Rol {
 		this.nombre = nombre;
 	}
 
-	public long getId() {
-		return id;
+	public long getIdRol() {
+		return idRol;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setIdRol(long id) {
+		this.idRol = id;
 	}
 
 	public String getNombre() {
@@ -38,6 +38,6 @@ public class Rol {
 
 	@Override
 	public String toString() {
-		return "Rol [id=" + id + ", descripcion=" + nombre + "]";
+		return "Rol [id=" + idRol + ", descripcion=" + nombre + "]";
 	}
 }
