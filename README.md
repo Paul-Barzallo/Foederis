@@ -1,4 +1,4 @@
-# FOEDERIS
+# FOederis
 
 Portal de reuniones corporativas
 
@@ -20,13 +20,16 @@ git clone https://github.com/Paul-Barzallo/Foederis.git
 
 y compilar como proyecto Maven
 
-## Built With
+## Hecho con
 
 * [Spring](https://spring.io/) - Spring framework
+* [Hibernate](https://hibernate.org/) - ORM
+* [Thymeleaf](https://www.thymeleaf.org/) - Server-side Java template engine
 * [Maven](https://maven.apache.org/) - Dependency Management
 * [Bootstrap](https://getbootstrap.com/) - Open source toolkit for developing with HTML, CSS, and JS
+* [HyperSQL](http://hsqldb.org/) - DDBB
 
-## Authors
+## Autores
 
 * **Paul Barzallo** - [Paul-Barzallo](https://github.com/Paul-Barzallo)
 * **Lidia** - [lizquierd61](https://github.com/lizquierd61)
