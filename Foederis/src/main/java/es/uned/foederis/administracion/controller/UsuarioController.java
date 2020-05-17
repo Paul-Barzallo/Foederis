@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.sesion.model.Usuario;

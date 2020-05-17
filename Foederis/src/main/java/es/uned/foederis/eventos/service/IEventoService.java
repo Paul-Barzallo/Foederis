@@ -20,14 +20,19 @@ public interface IEventoService {
 	 * 
 	 * @return
 	 */
-	List<Evento> ObtenerEventos();
+	List<Evento> ObtenerEventos(long idUsuario);
 	
 	/**
 	 * Recupera la lista completa de eventos por fecha
 	 * 
 	 * @return
-	 */
-	List<Evento> obtenerEventosFuturos(Date fechaInicio);
+	 */	
+
+	List<Evento> obtenerEventosFuturos(Date fechaInicio,long idUsuario);
+	
+	List<Evento> obtenerEventosHoy(Date fechaInicio,long idUsuario);
+	
+	
 	
 	/**
 	 * Devuelve el evento correspondiente al id si existe
