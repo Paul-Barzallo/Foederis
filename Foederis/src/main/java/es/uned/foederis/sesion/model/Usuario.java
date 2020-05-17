@@ -1,23 +1,35 @@
 package es.uned.foederis.sesion.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.eventos.model.Usuario_Evento;
 
 @Entity
 public class Usuario implements UserDetails{
 	private static final long serialVersionUID = -6174649516690350773L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private long id;
 	private String nombre;
 	private String apellidos;
@@ -28,6 +40,9 @@ public class Usuario implements UserDetails{
 	private Rol rol;
 	private boolean activo;
 	
+	@OneToMany(mappedBy="idUsuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Usuario_Evento> eventosDelUsuario= new ArrayList<Usuario_Evento>();
+	
 	public Usuario() {
 		this.activo = true;
 	}
@@ -36,24 +51,27 @@ public class Usuario implements UserDetails{
 		this.username = username;
 		this.password = password;
 		this.activo = false;
+		//this.eventosDelUsuario = new HashSet<Usuario_Evento> ();
 	}
 	
-	public Usuario(String nombre, String apellidos, String username, String password, Rol rol) {
+	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, List<Usuario_Evento> eventosDelUsuario) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.username = username;
 		this.password = password;
 		this.rol = rol;
+		this.eventosDelUsuario=eventosDelUsuario;
 		this.activo = true;
 	}
 	
-	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, boolean activo) {
+	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, boolean activo, List<Usuario_Evento> eventosDelUsuario) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.username = username;
 		this.password = password;
 		this.rol = rol;
 		this.activo = activo;
+		this.eventosDelUsuario=eventosDelUsuario;
 	}
 	
 	public long getId() {
@@ -131,5 +149,15 @@ public class Usuario implements UserDetails{
 	public boolean isEnabled() {
 		return isActivo();
 	}
+
+	public List<Usuario_Evento> getEventosDelUsuario() {
+		return eventosDelUsuario;
+	}
+
+	public void setEventosDelUsuario(List<Usuario_Evento> eventosDelUsuario) {
+		this.eventosDelUsuario = eventosDelUsuario;
+	}
+
+
 	
 }

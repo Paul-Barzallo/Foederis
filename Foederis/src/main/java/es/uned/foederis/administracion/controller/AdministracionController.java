@@ -29,6 +29,8 @@ public class AdministracionController {
 	@Autowired
 	private IUsuarioRepository userRepo;
 	
+
+	
 	@GetMapping("/perfil")
 	public String getPerfil(Model model) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
