@@ -38,15 +38,14 @@ public class ChatController {
     @SendTo("/topic/public")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
     	
-    	Usuario usr = MyUserService.loadUserByUsername(chatMessage.getSender());
-    	
-    	if (usr.getNombre() != "null") {
-	        // Building chat entity
-	    	Chat c = new Chat();
-	    	c.setTimestamp(new Date());
-	    	c.setTexto(chatMessage.getContent());
-	    	c.setIdUsuarioPropietario(usr.getId());
-    	}
+		/*
+		 * Usuario usr = MyUserService.loadUserByUsername(chatMessage.getSender());
+		 * 
+		 * if (usr.getNombre() != "null") { // Building chat entity Chat c = new Chat();
+		 * c.setTimestamp(new Date()); 
+		 * c.setTexto(chatMessage.getContent());
+		 * c.setIdUsuarioPropietario(usr.getId()); }
+		 */
     	
     	return chatMessage;
     }
