@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-	<title>Perfil de usuario</title>
+	<title>Formulario Sala</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -9,49 +9,40 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+
+	<script type="text/javascript">
+		$(function () {
+			$('#datetimepicker3').datetimepicker({
+				format: 'LT'
+			});
+		});
+	</script>
 </head>
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container mx-auto my-5 px-ms-5 h-100">
    		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.USUARIO}__}" th:action="@{__${@rutas.ADM_USER_GUARDAR}__}" method="post">
-           	<h1 class="mb-3 ml-n2">Perfil</h1>
+           	<h1 class="mb-3 ml-n2">Sala</h1>
            	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
            		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		        <ul>
 		            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
 		        </ul>
 		    </div>
-           	<div class="form-group">
-				<label for="username">Usuario:</label>
-				<input th:field="*{username}" type="text" class="form-control" th:errorclass="border-danger">
-			</div>
 			<div class="form-group">
 				<label for="nombre">Nombre:</label>
 				<input th:field="*{nombre}" type="text" class="form-control" th:errorclass="border-danger">
 			</div>
 			<div class="form-group">
-				<label for="apellidos">Apellidos:</label>
-				<input th:field="*{apellidos}" type="text" class="form-control">
-			</div>
-			<div th:if="*{idUsuario}" class="form-group">
-				<a href="#" class="btn btn-link pl-0" role="button">Cambiar contraseña</a>
-			</div>
-			<div th:unless="*{idUsuario}">
-				<div class="form-group">
-					<label for="password">Contraseña:</label>
-					<input th:field="*{password}" type="password" class="form-control" th:errorclass="border-danger">
-				</div>
-				<div class="form-group">
-					<label for="confirmPassword">Confirmar contraseña:</label>
-					<input name="confirmPassword" id="confirmPassword" type="password" class="form-control">
-				</div>
-			</div>
-			<div class="form-group" th:if="${__${@atributos.ROLES}__}">
-				<label for="rol">Rol:</label>
-				<select th:field="*{rol}" class="form-control" id="rol" th:errorclass="border-danger">
-					<option value="" class="text-black-50">Elegir rol</option>
-					<option th:each="rol : ${__${@atributos.ROLES}__}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
-				</select>
+				<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
+                    <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                    </div>
+                </div>
 			</div>
 			<div th:insert="fragmentos :: guardar-salir"></div>
         </form>

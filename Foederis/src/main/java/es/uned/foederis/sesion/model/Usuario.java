@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import es.uned.foederis.sesion.constante.UsuarioConstantes;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 
 /**
  * Implementa UserDetails para ser el objeto usuario de spring-security

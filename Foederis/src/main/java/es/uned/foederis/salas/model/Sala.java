@@ -1,22 +1,38 @@
 package es.uned.foederis.salas.model;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Sala {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@NotBlank
 	private String nombre;
+	@Min(4)
 	private int aforo;
+	@NotNull
 	private boolean presentacion;
+	@NotNull
 	private boolean megafonia;
+	@NotNull
 	private boolean grabacion;
+	@NotNull
 	private boolean streaming;
+	@NotNull
 	private boolean wifi;
+	@NotNull
+	private Timestamp desde;
+	@NotNull
+	private Timestamp hasta;
 	
 	public Sala() {}
 

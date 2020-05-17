@@ -28,7 +28,7 @@ public class UsuarioController {
 	private AdministracionService service;
 
 	/**
-	 * Cargar la pantalla de busqueda de clientes
+	 * Cargar la pantalla de busqueda de usuarios
 	 * La busqueda se puede realizar por:
 	 * 		Nombre -> Se busca en nombre y apellido
 	 * 		Username
@@ -104,11 +104,11 @@ public class UsuarioController {
 	 * @return html
 	 */
 	@GetMapping(Rutas.MODIFICAR)
-	public String getFormularioModificar(Model model, Long idUsuario) {
+	public String getFormularioModificar(Model model, Long id) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
 			// se carga el usuario
-			if (service.cargarUsuario(model, idUsuario)) {
+			if (service.cargarUsuario(model, id)) {
 				// Se carga la lista de roles si se encontró usuario a cargar
 				service.cargarRoles(model);
 				return service.irAUsuario(model);

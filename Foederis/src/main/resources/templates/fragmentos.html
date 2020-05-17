@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 </head>
 <body>
+
 	<div th:fragment="guardar-salir">
 		<div class="d-flex justify-content-center row my-5 mx-lg-5 px-md-5">
 			<div class="col">
@@ -14,6 +15,7 @@
 			</div>
 		</div>
 	</div>
+	
 	
 	<div th:fragment="navbar">
 		<div th:if="${__${@atributos.ALERTA}__}">
@@ -55,6 +57,7 @@
 		</nav>
 	</div>
 	
+	
 	<div th:fragment="tabla_usuarios" th:if="${__${@atributos.USUARIOS}__}" class="border border-dark rounded">
 		<table class="table table-striped mb-0">
 			<thead>
@@ -81,6 +84,7 @@
 			</tbody>
 		</table>
 	</div>
+	
 	
 	<!-- 
 	Cuando se llame a este fragmento hay que añadir la variable 'id' al contenedor
@@ -114,6 +118,7 @@
 		</div>
 	</div>
 	
+	
 	<!-- 
 	Fragmento que muestra un mensaje al cargar la vista si llega el atributo alerta con el mensajer
 	Se carga el el navbar si tiene alerta
@@ -135,9 +140,78 @@
 		</div>
 	</div>
 	
+	
 	<div th:fragment="resultUpload" th:if="${message}">
 		<p class="text-danger" th:text="${message}"></p>
-	</div>		
+	</div>	
+	
+	
+	<!-- 
+	Necesita las variables 'ruta' y 'txt_boton' para mostrar un boton en la esquina superior derecha
+	El boton lleva a la ruta especificado, se está usando para el boton nuevo 'objeto'
+	
+	Ejemplo:
+		<div th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
+	
+	Si no trae alguno de estos 2 variables no se mostrará el boton
+	Debe venir cargado desde el controlador el atributo @atributos.PARAMS_BUSQUEDA
+	 -->
+	<div th:fragment="buscar" class="border border-dark rounded d-flex flex-column mt-5">
+		<div class="bg-secondary d-flex justify-content-between p-3">
+			<h2 class="text-white mb-0">Buscar</h2>
+			<a th:if="*{ruta} and *{txt_boton}" th:href="${@rutas.ADM_USER_NUEVO}" class="btn btn-light btn-sm" role="button">
+				<span class="align-middle" th:text="*{txt_boton}"></span>
+			</a>
+		</div>
+		<div class="py-lg-4 py-3 px-lg-5 px-3">
+			<div class="row">
+				<div class="col-5 col-lg-4 pr-0">
+					<select id="busqueda" class="form-control" required
+					style="border-top-right-radius:0!important; border-bottom-right-radius:0!important;">
+						<option value="" class="text-black-50">Parametro de busqueda</option>
+						<option th:each="param_busq : ${__${@atributos.PARAMS_BUSQUEDA}__}" th:value="${param_busq}" th:text="${param_busq}"></option>
+					</select>
+				</div>
+				<div class="col-5 col-lg-7 px-0">
+					<input id="valor" class="form-control rounded-0" type="text" name="valor" placeholder="Filtro" required>
+				</div>
+				<div class="col-2 col-lg-1 pl-0">
+					<button id="btn_buscar" class="btn btn-success btn-block"
+					style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div th:fragment="tabla_salas" th:if="${__${@atributos.SALAS}__}" class="border border-dark rounded">
+		<table class="table table-striped mb-0">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th th:text="${@SalaConstantes.USERNAME}"></th>
+					<th th:text="${@usuarioConstantes.NOMBRE}"></th>
+					<th th:text="${@usuarioConstantes.APELLIDOS}"></th>
+					<th th:text="${@usuarioConstantes.ROL}"></th>
+					<th th:text="${@usuarioConstantes.ESTADO}"></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Acciones</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user,i : ${__${@atributos.USUARIOS}__}">
+					<td class="align-middle" th:text="${i.count}"></td>
+					<td class="align-middle" th:text="${user.username}"></td>
+					<td class="align-middle" th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
+					<td class="align-middle" th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
+					<td class="align-middle" th:text="${user.rol.nombre}"></td>
+					<td class="align-middle" th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
+					<td th:with="id=${user.idUsuario}, activo=${user.activo}" th:insert="fragmentos :: acciones"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
   
 </body>
 </html>

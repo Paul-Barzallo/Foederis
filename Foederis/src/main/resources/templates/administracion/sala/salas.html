@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-	<title>Usuarios</title>
+	<title>Salas</title>
 	<meta charset="utf-8">
 	<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
 	<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -13,8 +13,8 @@
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 	
 	<script th:inline="javascript">
-		function buscarUsuarios() {
-			var url = [[${@rutas.ADM_USER_USERS_BUSQ}]];
+		function buscarSalas() {
+			var url = [[${@rutas.ADM_SALA_SALAS_BUSQ}]];
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
@@ -26,20 +26,20 @@
 			if (valor) {
 				url += valor;
 			}
-			$('#tabla_usuarios').empty();
-			$('#tabla_usuarios').load(url);
+			$('#tabla_salas').empty();
+			$('#tabla_salas').load(url);
 		}
 		$(function() {
-			buscarUsuarios();
-			$('#btn_buscar').click(buscarUsuarios);
+			buscarSalas();
+			$('#btn_buscar').click(buscarSalas);
 		});
 	</script>
 </head>
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container px-md-5">
-   		<div th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
-   		<div id="tabla_usuarios" class="my-5"></div>
+   		<div th:with="ruta=${'__${@rutas.ADM_SALA_NUEVO}__'}, txt_boton=${'Nueva sala'}" th:insert="fragmentos :: buscar"></div>
+   		<div id="tabla_salas" class="my-5"></div>
 	</div>
 </body>
 </html>
