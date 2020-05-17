@@ -13,7 +13,7 @@
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container mx-auto my-5 px-ms-5 h-100">
-   		<form class="px-md-5 mx-lg-5" th:object="${usuario}" th:action="@{/administracion/guardar/usuario}" method="post">
+   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.USUARIO}__}" th:action="@{__${@rutas.ADM_USER_GUARDAR}__}" method="post">
            	<h1 class="mb-3 ml-n2">Perfil</h1>
            	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
            		<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -46,11 +46,11 @@
 					<input name="confirmPassword" id="confirmPassword" type="password" class="form-control">
 				</div>
 			</div>
-			<div class="form-group" th:if="${roles}">
+			<div class="form-group" th:if="${__${@atributos.ROLES}__}">
 				<label for="rol">Rol:</label>
 				<select th:field="*{rol}" class="form-control" id="rol" th:errorclass="border-danger">
 					<option value="" class="text-black-50">Elegir rol</option>
-					<option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
+					<option th:each="rol : ${__${@atributos.ROLES}__}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
 				</select>
 			</div>
 			<div th:insert="fragmentos :: guardar-salir"></div>

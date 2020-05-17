@@ -16,7 +16,7 @@
 	</div>
 	
 	<div th:fragment="navbar">
-		<div th:if="${alerta}">
+		<div th:if="${__${@atributos.ALERTA}__}">
 			<script th:inline="javascript">
 				$(function() {
 					$('#modal_alerta').modal('show');
@@ -46,67 +46,87 @@
 						Administración
 					</a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="/administracion/perfil">Perfil</a>
-						<a class="dropdown-item" href="/administracion/usuario/usuarios">Usuarios</a>
-						<a class="dropdown-item" href="/administracion/sala/salas">Salas</a>
+						<a class="dropdown-item" th:href="@{__${@rutas.ADM_PERFIL}__}">Perfil</a>
+						<a class="dropdown-item" th:href="@{__${@rutas.ADM_USER_USERS}__}">Usuarios</a>
+						<a class="dropdown-item" th:href="@{__${@rutas.ADM_SALA_SALAS}__}">Salas</a>
 					</div>
 				</li>
 			</ul>
 		</nav>
 	</div>
 	
-	<div th:fragment="tabla_usuarios" th:if="${usuarios}" class="border border-dark rounded">
+	<div th:fragment="tabla_usuarios" th:if="${__${@atributos.USUARIOS}__}" class="border border-dark rounded">
 		<table class="table table-striped mb-0">
 			<thead>
 				<tr>
 					<th>#</th>
-					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).USERNAME}"></th>
-					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).NOMBRE}"></th>
-					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).APELLIDOS}"></th>
-					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).ROL}"></th>
-					<th th:text="${T(es.uned.foederis.sesion.constante.UsuarioConstantes).ESTADO}"></th>
+					<th th:text="${@usuarioConstantes.USERNAME}"></th>
+					<th th:text="${@usuarioConstantes.NOMBRE}"></th>
+					<th th:text="${@usuarioConstantes.APELLIDOS}"></th>
+					<th th:text="${@usuarioConstantes.ROL}"></th>
+					<th th:text="${@usuarioConstantes.ESTADO}"></th>
 					<th class="pr-2"><span class="d-flex justify-content-center">Acciones</span></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="user,i : ${usuarios}">
+				<tr th:each="user,i : ${__${@atributos.USUARIOS}__}">
 					<td class="align-middle" th:text="${i.count}"></td>
 					<td class="align-middle" th:text="${user.username}"></td>
 					<td class="align-middle" th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
 					<td class="align-middle" th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
 					<td class="align-middle" th:text="${user.rol.nombre}"></td>
 					<td class="align-middle" th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
-					<td>
-						<div class="btn-group d-flex justify-content-center">
-							<button type="button" class="btn btn-link px-0" data-toggle="dropdown">
-								<i class="fas fa-cog"></i>
-							</button>
-							<div class="dropdown-menu">
-								<div th:each="accion : ${acciones}">
-									<div th:if="${accion == 'activar'}">
-										<a class="dropdown-item" th:text="${user.activo}? 'Desactivar' : 'Activar'"
-										th:href="@{./activar(idUsuario=${user.idUsuario}, activar=${user.activo}? 'false' : 'true')}"></a>
-									</div>
-									<a th:unless="${accion == 'activar'}" class="dropdown-item" th:href="@{./__${accion}__(idUsuario=${user.idUsuario})}"
-									th:text="${#strings.capitalize('__${accion}__')}"></a>
-								</div>
-							</div>
-						</div>
-					</td>
+					<td th:with="id=${user.idUsuario}, activo=${user.activo}" th:insert="fragmentos :: acciones"></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 	
+	<!-- 
+	Cuando se llame a este fragmento hay que añadir la variable 'id' al contenedor
+	Si tiene la accion ACTIVAR debe tener la variable 'activo'
+	
+	Ejemplo:
+		<td th:with="id=${user.idUsuario}, activo=${user.activo}" th:insert="fragmentos :: acciones"></td>
+		
+	Las rutas de las acciones para los controladores serán la ruta base + accion
+	
+	Ejemplo:
+		Llamando desde pantalla de usuarios aunque su ruta es /administacion/usuario/usuarios 
+		el controllador tiene ruta base /administacion/usuario
+		la ruta para la accion modificar queda /administacion/usuario/modificar
+		
+	Las acciones devuelven el id para poder buscar y cargar el objeto
+	 -->
+	<div th:fragment="acciones" class="btn-group d-flex justify-content-center">
+		<button type="button" class="btn btn-link px-0" data-toggle="dropdown">
+			<i class="fas fa-cog"></i>
+		</button>
+		<div class="dropdown-menu">
+			<div th:each="accion : ${__${@atributos.ACCIONES}__}">
+				<div th:if="${accion == '__${@acciones.ACTIVAR}__'}">
+					<a th:if="*{activo}" class="dropdown-item" th:href="@{.__${@rutas.DESACTIVAR}__(id=*{id})}">Desactivar</a>
+					<a th:unless="*{activo}" class="dropdown-item" th:href="@{.__${@rutas.ACTIVAR}__(id=*{id})}">Activar</a>
+				</div>
+				<a th:unless="${accion == '__${@acciones.ACTIVAR}__'}" class="dropdown-item" th:href="@{./__${accion}__(id=*{id})}"
+				th:text="${#strings.capitalize('__${accion}__')}"></a>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 
+	Fragmento que muestra un mensaje al cargar la vista si llega el atributo alerta con el mensajer
+	Se carga el el navbar si tiene alerta
+	-->
 	<div th:fragment="modal_alerta" id="modal_alerta" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" th:text="${alerta_titulo}? ${alerta_titulo} : 'Alerta!'"></h4>
+					<h4 class="modal-title" th:text="${__${@atributos.ALERTA_TITULO}__}? ${__${@atributos.ALERTA_TITULO}__} : 'Alerta!'"></h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 			  
-				<div class="modal-body" th:text="${alerta}"></div>
+				<div class="modal-body" th:text="${__${@atributos.ALERTA}__}"></div>
 			
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>

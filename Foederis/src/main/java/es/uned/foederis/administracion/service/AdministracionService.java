@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import es.uned.foederis.Constantes;
+import es.uned.foederis.constantes.Acciones;
+import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.constantes.Constantes;
+import es.uned.foederis.constantes.Pantallas;
+import es.uned.foederis.constantes.Rutas;
+import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.sesion.constante.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
@@ -43,7 +49,7 @@ public class AdministracionService {
 		for (Rol rol : rolRepo.findAll()) {
 			roles.add(rol);
 		}
-		model.addAttribute(Constantes.ROLES, roles);
+		model.addAttribute(Atributos.ROLES, roles);
 	}
 	
 	/**
@@ -57,7 +63,7 @@ public class AdministracionService {
 		Optional<Usuario> opUser = userRepo.findById(idUsuario);
 		if (opUser.isPresent()) {
 			Usuario user = opUser.get();
-			model.addAttribute(Constantes.USUARIO, user);
+			model.addAttribute(Atributos.USUARIO, user);
 			return true;
 		}
 		return false;
@@ -92,39 +98,44 @@ public class AdministracionService {
 			break;
 		}
 		if (usuarios!=null) {
-			model.addAttribute(Constantes.USUARIOS, usuarios);
+			model.addAttribute(Atributos.USUARIOS, usuarios);
 		}
 	}
 	
 	/**
-	 * Solo valida cuando es un usuario nuevo
-	 * En el resto de casos devuelve false
-	 * Valida que no exista ya un usuario con el mimso username
+	 * Valida que no exista otro usuario con el mimso username
 	 * @param usuario
 	 * @return true si existe algun usuario con ese username
 	 */
 	public boolean isUsernameRepetido(Usuario usuario) {
-		if (usuario.getIdUsuario() == null && usuario.getUsername() != null && !usuario.getUsername().isBlank()) {
+		if (usuario.getUsername() != null && !usuario.getUsername().isBlank()) {
 			Optional<Usuario> repetido = userRepo.findByUsername(usuario.getUsername());
-			return repetido.isPresent();
+			return repetido.isPresent() && usuario.getIdUsuario() != repetido.get().getIdUsuario();
 		}
 		return false;
 	}
 	
 	/**
-	 * Activa o desactiva el usuario
+	 * Activa o desactiva el ususario en funcion del valor de activar
 	 * @param model
 	 * @param idUsuario
 	 * @param activar
 	 * @return
 	 */
 	public boolean activarUsuario(Model model, Long idUsuario, boolean activar) {
-		Optional<Usuario> opUser = userRepo.findById(idUsuario);
-		if (opUser.isPresent()) {
-			Usuario user = opUser.get();
-			user.setActivo(activar);
-			userRepo.save(user);
-			return true;
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isAdmin()) {
+			Optional<Usuario> opUser = userRepo.findById(idUsuario);
+			if (opUser.isPresent()) {
+				Usuario usuario = opUser.get();
+				usuario.setActivo(activar);
+				userRepo.save(usuario);
+				return true;
+			} else {
+				mensajeUsuarioNoEncontrado(model);
+			}
+		} else {
+			mensajeNoAccesoUsuarios(model);
 		}
 		return false;
 	}
@@ -141,79 +152,94 @@ public class AdministracionService {
 			usuario.setApellidos(usuario.getApellidos().toLowerCase());
 			usuario.setNombre(usuario.getNombre().toLowerCase());
 			usuario.setUsername(usuario.getUsername().toLowerCase());
-			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 			Long idUsuario = usuario.getIdUsuario();
+			// Si es un nuevo usuario hay que cifrar la contraseña
+			if (idUsuario==null) {
+				usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+			}
 			userRepo.save(usuario);
 			mensajeUsuarioGuardado(model, idUsuario);
 			return true;
-		} catch(Exception e) {}
-		mensajeErrorGuardarSala(model);
-		return false;
+		} catch(Exception e) {
+			mensajeErrorGuardarSala(model);
+			return false;
+		}
 	}
 	
+	/**
+	 * Carga los parametros por los que se va a buscar los usuarios
+	 * Esta relacionada con la función cargarUsuarios
+	 * En esta función se agregan los diferentes filtros y en la otra
+	 * se filtra la busqueda por el parametro seleccionado
+	 * @param model
+	 */
 	public void cargarParamsBusqUsuarios(Model model) {
 		List<String> paramsBusqueda = new ArrayList<>();
 		paramsBusqueda.add(UsuarioConstantes.USERNAME);
 		paramsBusqueda.add(UsuarioConstantes.NOMBRE);
 		paramsBusqueda.add(UsuarioConstantes.ROL);
-		model.addAttribute(Constantes.PARAMS_BUSQUEDA, paramsBusqueda);
+		model.addAttribute(Atributos.PARAMS_BUSQUEDA, paramsBusqueda);
 	}
 	
+	/**
+	 * Carga las acciones que se pueden realizar 
+	 * @param model
+	 */
 	public void cargarAccionesUsuarios(Model model) {
 		List<String> acciones = new ArrayList<>();
-		acciones.add(Constantes.Accion.MODIFICAR);
-		acciones.add(Constantes.Accion.ACTIVAR);
-		model.addAttribute(Constantes.ACCIONES, acciones);
+		acciones.add(Acciones.MODIFICAR);
+		acciones.add(Acciones.ACTIVAR);
+		model.addAttribute(Atributos.ACCIONES, acciones);
 	}
 	
 	public void mensajeNoAccesoUsuarios(Model model) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Aceso Denegado");
-		model.addAttribute(Constantes.ALERTA, "No tiene permisos de acceso a la administración de usuarios");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Aceso Denegado");
+		model.addAttribute(Atributos.ALERTA, "No tiene permisos de acceso a la administración de usuarios");
 	}
 	
 	public void mensajeUsuarioNoEncontrado(Model model) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Error");
-		model.addAttribute(Constantes.ALERTA, "No se ha encontrado el usuario");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
+		model.addAttribute(Atributos.ALERTA, "No se ha encontrado el usuario");
 	}
 	
 	public void mensajeErrorGuardarUsuario(Model model) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Error");
-		model.addAttribute(Constantes.ALERTA, "No se ha podido guardar el usuario");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
+		model.addAttribute(Atributos.ALERTA, "No se ha podido guardar el usuario");
 	}
 	
 	public void mensajeErrorGuardarSala(Model model) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Error");
-		model.addAttribute(Constantes.ALERTA, "No se ha podido guardar la sala");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
+		model.addAttribute(Atributos.ALERTA, "No se ha podido guardar la sala");
 	}
 	
 	public void mensajeNoAccesoSalas(Model model) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Aceso Denegado");
-		model.addAttribute(Constantes.ALERTA, "No tiene permisos de acceso a la administración de salas");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Aceso Denegado");
+		model.addAttribute(Atributos.ALERTA, "No tiene permisos de acceso a la administración de salas");
 	}
 	
 	public void mensajeUsuarioGuardado(Model model, Long idUsuario) {
-		model.addAttribute(Constantes.ALERTA_TITULO, "Información");
+		model.addAttribute(Atributos.ALERTA_TITULO, "Información");
 		String mensaje;
 		if (idUsuario==null) {
 			mensaje = "El usuario se ha creado correctamente";
 		} else {
 			mensaje = "El usuario se ha modificado correctamente";
 		}
-		model.addAttribute(Constantes.ALERTA, mensaje);
+		model.addAttribute(Atributos.ALERTA, mensaje);
 	}
 	
 	public String irAPerfil(Model model) {
-		model.addAttribute(Constantes.PANTALLA, Constantes.Pantalla.USUARIOS);
-		return Constantes.Vista.PERFIL;
+		model.addAttribute(Atributos.PANTALLA, Pantallas.PERFIL);
+		return Vistas.PERFIL;
 	}
 	
 	public String irAUsuario(Model model) {
-		model.addAttribute(Constantes.PANTALLA, Constantes.Pantalla.USUARIOS);
-		return Constantes.Vista.PERFIL;
+		model.addAttribute(Atributos.PANTALLA, Pantallas.USUARIOS);
+		return Vistas.PERFIL;
 	}
 	
 	public String irAUsuarios(Model model) {
-		model.addAttribute(Constantes.PANTALLA, Constantes.Pantalla.USUARIOS);
-		return Constantes.Vista.USUARIOS;
+		model.addAttribute(Atributos.PANTALLA, Pantallas.USUARIOS);
+		return Vistas.USUARIOS;
 	}
 }

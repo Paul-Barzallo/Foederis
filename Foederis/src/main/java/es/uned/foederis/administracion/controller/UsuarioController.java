@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.uned.foederis.Constantes;
 import es.uned.foederis.administracion.service.AdministracionService;
+import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.constantes.Constantes;
+import es.uned.foederis.constantes.Rutas;
+import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.sesion.model.Usuario;
 
 @Controller
-@RequestMapping("/administracion/usuario")
+@RequestMapping(Rutas.ADM_USER)
 public class UsuarioController {
 	@Autowired
 	private AdministracionService service;
@@ -33,7 +36,7 @@ public class UsuarioController {
 	 * @param model
 	 * @return html
 	 */
-	@GetMapping("/usuarios")
+	@GetMapping(Rutas.USUARIOS)
 	public String getPantallaUsuarios(Model model) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
@@ -42,27 +45,55 @@ public class UsuarioController {
 			return service.irAUsuarios(model);
 		} 
 		service.mensajeNoAccesoUsuarios(model);
-		return "redirect:/";
+		return "redirect:"+Vistas.HOME;
 		
 	}
 	
 	/**
-	 * Devuelve el formulario de perfil vacio
-	 * para crear un nuevo usuario
+	 * Peticion ajax que busca los usuarios que coincidan con los parametros de busqueda
+	 * La busqueda no es case sensitive
+	 * Se busca que contenga el valor escrito no que empiece por el
+	 * @param model
+	 * @param busqueda
+	 * @param valor
+	 * @return
+	 */
+	@GetMapping(Rutas.BUSQ_USERS)
+	@ResponseBody
+	public ModelAndView ajaxUsuarios(Model model, Optional<String> paramBusq, Optional<String> valorBusq) {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isAdmin()) {
+			String parametro = (paramBusq.isPresent())? paramBusq.get() : "";
+			String valor = (valorBusq.isPresent())? valorBusq.get() : "";
+			// se cargan los usuarios, si los valores de busqueda estan vacios se carga la lista completa
+			service.cargarUsuarios(model, parametro, valor);	
+			// Se añaden las acciones que realizará el boton de acciones de la lista de resultados
+			service.cargarAccionesUsuarios(model);
+			return new ModelAndView("fragmentos :: tabla_usuarios");
+		} 
+		service.mensajeNoAccesoUsuarios(model);;
+		return new ModelAndView(Vistas.HOME);
+	}
+	
+	/**
+	 * Devuelve el formulario de perfil vacio para crear un nuevo usuario
+	 * Verifica que la petición la haga un administrador si no redirige a HOME
+	 * Busca y carga los roles en el fomrulario
+	 * Genera un nuevo usuario vacio donde poner los datos
 	 * @param model
 	 * @return html
 	 */
-	@GetMapping("/nuevo")
+	@GetMapping(Rutas.NUEVO)
 	public String getFormularioNuevo(Model model) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
 			service.cargarRoles(model);
 			Usuario usuario = new Usuario();
-			model.addAttribute(Constantes.USUARIO, usuario);
+			model.addAttribute(Atributos.USUARIO, usuario);
 			return service.irAUsuario(model);
 		}
 		service.mensajeNoAccesoUsuarios(model);
-		return Constantes.Vista.HOME;
+		return Vistas.HOME;
 	}
 	
 	/**
@@ -72,7 +103,7 @@ public class UsuarioController {
 	 * @param idUsuario id para buscar los datos del usuario a cargar 
 	 * @return html
 	 */
-	@GetMapping("/modificar")
+	@GetMapping(Rutas.MODIFICAR)
 	public String getFormularioModificar(Model model, Long idUsuario) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
@@ -88,39 +119,44 @@ public class UsuarioController {
 			// si el usuario no es admin se añade valores para mensaje de error
 			service.mensajeNoAccesoUsuarios(model);
 		}
-		return Constantes.Vista.HOME;
+		return Vistas.HOME;
 	}
 	
 	/**
-	 * Activa o desactiva un usuario
+	 * Activa un usuario
 	 * si el usuario se desactiva no podrá iniciar sesión
 	 * @param model
 	 * @param idUsuario
 	 * @param activar
 	 * @return
 	 */
-	@GetMapping("/activar")
-	public String getActivarUsuario(Model model, Long idUsuario, Boolean activar) {
-		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.isAdmin()) {
-			if (service.activarUsuario(model, idUsuario, activar)) {
-				return "redirect:"+"/administracion/usuarios";
-			} else {
-				service.mensajeUsuarioNoEncontrado(model);
-			}
-		} else {
-			service.mensajeNoAccesoUsuarios(model);
-		}
-		return Constantes.Vista.HOME;
+	@GetMapping(Rutas.ACTIVAR)
+	public String getActivarUsuario(Model model, Long id) {
+		return service.activarUsuario(model, id, true)? "redirect:"+Rutas.ADM_USER_USERS : Vistas.HOME;
+	}
+	
+	/**
+	 * Desactiva un usuario
+	 * si el usuario se desactiva no podrá iniciar sesión
+	 * @param model
+	 * @param idUsuario
+	 * @param activar
+	 * @return
+	 */
+	@GetMapping(Rutas.DESACTIVAR)
+	public String getDesactivarUsuario(Model model, Long id) {
+		return service.activarUsuario(model, id, false)? "redirect:"+Rutas.ADM_USER_USERS : Vistas.HOME;
 	}
 	
 	/**
 	 * Guarda la nueva información del usuario en la db
 	 * @param model
+	 * @param confirmPassword campo extra en el que se repite la contraseña
 	 * @param usuario
+	 * @param result
 	 * @return
 	 */
-	@PostMapping("/guardar")
+	@PostMapping(Rutas.GUARDAR)
 	public String postGuardarUsuario(Model model, Optional<String> confirmPassword, @Validated Usuario usuario, BindingResult result) {
 		if (usuario.getIdUsuario() == null && !confirmPassword.get().equals(usuario.getPassword())) {
 			result.rejectValue("password", "RepeatPassword.usuario.password");
@@ -130,8 +166,8 @@ public class UsuarioController {
 		}
 		if (result.hasErrors()) {
 			service.cargarRoles(model);
-			model.addAttribute(Constantes.USUARIO, usuario);
-	        return Constantes.Vista.PERFIL;
+			model.addAttribute(Atributos.USUARIO, usuario);
+	        return service.irAPerfil(model);
 	    }
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
@@ -139,33 +175,7 @@ public class UsuarioController {
 		} else {
 			service.mensajeNoAccesoUsuarios(model);
 		}
-		return Constantes.Vista.HOME;
-	}
-	
-	/**
-	 * Peticion ajax que busca los usuarios que coincidan con los parametros de busqueda
-	 * La busqueda no es case sensitive
-	 * Se busca que contenga el valor escrito no que empiece por el
-	 * @param model
-	 * @param busqueda
-	 * @param valor
-	 * @return
-	 */
-	@GetMapping("/usuarios/ajax/buscar")
-	@ResponseBody
-	public ModelAndView ajaxUsuarios(Model model, Optional<String> paramBusq, Optional<String> valorBusq) {
-		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.isAdmin()) {
-			String parametro = (paramBusq.isPresent())? paramBusq.get() : "";
-			String valor = (valorBusq.isPresent())? valorBusq.get() : "";
-			//se cargan los usuarios, si los valores de busqueda estan vacios se carga la lista completa
-			service.cargarUsuarios(model, parametro, valor);	
-			// Se añaden las acciones que realizará el boton de acciones de la lista de resultados
-			service.cargarAccionesUsuarios(model);
-			return new ModelAndView("fragmentos :: tabla_usuarios");
-		} 
-		service.mensajeNoAccesoUsuarios(model);;
-		return new ModelAndView(Constantes.Vista.HOME);
+		return Vistas.HOME;
 	}
 	
 }

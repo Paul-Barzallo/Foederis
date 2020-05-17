@@ -14,7 +14,7 @@
 	
 	<script th:inline="javascript">
 		function buscarUsuarios() {
-			var url = "/administracion/usuarios/ajax";
+			var url = [[${@rutas.ADM_USER_USERS_BUSQ}]];
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
@@ -40,7 +40,7 @@
    		<div class="border border-dark rounded d-flex flex-column mt-5">
    			<div class="bg-secondary d-flex justify-content-between p-3">
     			<h2 class="text-white mb-0">Buscar</h2>
-    			<a href="/administracion/usuarios/nuevo" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
+    			<a th:href="${@rutas.ADM_USER_NUEVO}" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
    			</div>
    			
    			<div class="py-lg-4 py-3 px-lg-5 px-3">
@@ -49,7 +49,7 @@
 						<select id="busqueda" class="form-control" required
 						style="border-top-right-radius:0!important; border-bottom-right-radius:0!important;">
 							<option value="" class="text-black-50">Parametro de busqueda</option>
-							<option th:each="param_busq : ${params_busqueda}" th:value="${param_busq}" th:text="${param_busq}"></option>
+							<option th:each="param_busq : ${__${@atributos.PARAMS_BUSQUEDA}__}" th:value="${param_busq}" th:text="${param_busq}"></option>
 						</select>
 					</div>
 					<div class="col-5 col-lg-7 px-0">
