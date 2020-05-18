@@ -32,7 +32,7 @@ public class Evento {
 	private Timestamp fechaInicio;
 	private Timestamp fechaFin;
 		
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name="usuario_creador_id")
 	private Usuario	UsuarioCreador;
 	
