@@ -12,9 +12,7 @@ import org.springframework.ui.Model;
 
 import es.uned.foederis.constantes.Acciones;
 import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.constantes.Pantallas;
-import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.sesion.constante.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Rol;
