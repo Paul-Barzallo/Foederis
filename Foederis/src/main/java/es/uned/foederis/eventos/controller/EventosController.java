@@ -1,12 +1,12 @@
 package es.uned.foederis.eventos.controller;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +26,12 @@ import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
+import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
-import es.uned.foederis.sesion.repository.IRolRepository;;
+import es.uned.foederis.sesion.repository.IRolRepository;
+import es.uned.foederis.sesion.repository.IUsuarioRepository;;
 
 @Controller
 @RequestMapping("Evento") //Empieces url navegador y asi evitamos este en todos los metodos
@@ -41,37 +43,56 @@ public class EventosController {
 	@Autowired
 	private IRolRepository rolRepo; 
 	
+	@Autowired
+	private IEventoUsuarioRepository eventoUsuarioRepo;
+	
+	@Autowired
+	IUsuarioRepository usuRepo;
+	
+	@Autowired
+	private Usuario user;
+	
 	//** Ver evento.HTML ***//
+	
+	
+	public void iniciarUsuario(){
+		 user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
 		
-	//NO FUNCIONA
+	
 	 @GetMapping("/baja")
-	    public ModelAndView baja(@RequestParam(value="id") Evento eventoSeleccionado) {
-		 Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    public String baja(@RequestParam(value="id") Evento eventoSeleccionado) {
 		 
-		 //modificamos la columna confirmado a false
+		     ActualizarCOnfirmacionEvento(0, eventoSeleccionado);
+		     return "redirect:../Evento/listarFiltro?filtroListado=sin";
+	 }
+	 
+	 @GetMapping("/confirmar")
+    public String confirmar(@RequestParam(value="id") Evento eventoSeleccionado) {
+		 
+		 ActualizarCOnfirmacionEvento(1, eventoSeleccionado);
+		 
+		 return "redirect:../Evento/listarFiltro?filtroListado=sin";
+    }
+	 
+	 private void ActualizarCOnfirmacionEvento(int pValor, Evento eventoSeleccionado) {
+		 
+		 if(user.getIdUsuario()== null)
+			 this.iniciarUsuario();
+		 
 		 Usuario_Evento usuEv =  eventoSeleccionado.getEventoDeUnUsuario(user.getIdUsuario());
-		 usuEv.setConfirmado(false);
 		 
-		 ModelAndView mav = new ModelAndView();    
-		 mav.setViewName("listarFiltro");           
-		 	    
-			return mav;      
-		 	
+		 List<Usuario_Evento> yy = user.getEventosDelUsuario();
+		 Usuario_Evento prueba = yy.get(usuEv.getIdUsuarioEvento());		 
+	
+		 prueba.setConfirmado(0);
+		 usuRepo.save(user);
 		 
-	    }
+		 
+	 }
 	 
 	 //NO ESTA ECHO
-	 @GetMapping("/confirmar")
-	    public String confirmar(@RequestParam(value="id") Integer idEvento) {
-		 
-		 
-		 
-		 //Salir del evento		 
-		 evento.eliminar(idEvento);
-		 	
-		 //Usamos redirect porque necesitamos que entre al controlador a cargar
-	        return "redirect:../listarEventos";
-	    }
+
 	 
 	 
 	//**Listar evento.HTML ***//
@@ -83,8 +104,9 @@ public class EventosController {
 	  */
 	 @GetMapping("/entrar")
 	    public ModelAndView entrar(@RequestParam(value="id") Evento evento) { 
-		 
-			Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		 if(user.getIdUsuario()== null)
+			 this.iniciarUsuario();
+			//user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		 	ModelAndView mav = new ModelAndView();
 		 	
@@ -108,8 +130,9 @@ public class EventosController {
 
 	 	@RequestMapping(value = "/listarFiltro")
 	    public ModelAndView listarFiltro(@RequestParam(required= false, name="filtroListado") String filtroListado) {
-	 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+	 		//user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	 		if(user.getIdUsuario()== null)
+				 this.iniciarUsuario();
 	 	
 	 		
 		 ModelAndView mav = new ModelAndView();  
@@ -120,7 +143,7 @@ public class EventosController {
 				//lstEventos =  evento.ObtenerEventos(user.getId());				
 				
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {    
-					if(aux.isConfirmado())  
+					if(aux.getConfirmado()==1)  
 						lstEventos.add(aux.getEvento());             
 				}				
 				
@@ -132,7 +155,7 @@ public class EventosController {
 				//lstEventos = evento.obtenerEventosFuturos(dt, user.getId()); 
 				
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {   
-					if(aux.isConfirmado()) {
+					if(aux.getConfirmado()==1) {
 						if(aux.getEvento().getFechaInicio().getDate() >= dt.getDate())
 							lstEventos.add(aux.getEvento());					
 						
@@ -145,7 +168,7 @@ public class EventosController {
 				Date dt = new Date();
 				
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {   
-					if(aux.isConfirmado()) {
+					if(aux.getConfirmado()==1) {
 						if(aux.getEvento().getFechaInicio().getDate() == dt.getDate())
 							lstEventos.add(aux.getEvento());
 
@@ -157,10 +180,10 @@ public class EventosController {
 				
 				//Ver sin confirmar
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {  
-					if(!aux.isConfirmado()) {
+					if(aux.getConfirmado()==-1) {
 						lstEventos.add(aux.getEvento());
 					}
-				}		
+				}	
 				
 			}
 
