@@ -71,7 +71,7 @@ public class UsuarioController {
 			service.cargarAccionesUsuarios(model);
 			return new ModelAndView("fragmentos :: tabla_usuarios");
 		} 
-		service.mensajeNoAccesoUsuarios(model);;
+		service.mensajeNoAccesoUsuarios(model);
 		return new ModelAndView(Vistas.HOME);
 	}
 	

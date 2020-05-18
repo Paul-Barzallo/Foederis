@@ -1,7 +1,6 @@
 package es.uned.foederis.chats.model;
 
-import java.util.Date;
-
+import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,13 +13,13 @@ public class Chat {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idChat;
 	
-	private String texto;
-	private Date timestamp;
+	private String 		texto;
+	private Timestamp 	timestamp;
 	
 	
 	//foreign key
-	private long idUsuarioPropietario;
-	private int idRepositorioCompartido;
+	private long idUsuario;
+	private int idEvento;
 	
 	// getters, setters
 	public int getIdChat() {
@@ -35,33 +34,33 @@ public class Chat {
 	public void setTexto(String texto) {
 		this.texto = texto;
 	}
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 
 		
-	public long getIdUsuarioPropietario() {
-		return idUsuarioPropietario;
+	public long getIdUsuario() {
+		return idUsuario;
 	}
-	public void setIdUsuarioPropietario(long idUsuarioPropietario) {
-		this.idUsuarioPropietario = idUsuarioPropietario;
+	public void setIdUsuario(long idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 	
-	public int getIdRepositorioCompartido() {
-		return idRepositorioCompartido;
+	
+	public int getIdEvento() {
+		return idEvento;
 	}
-	public void setIdRepositorioCompartido(int idRepositorioCompartido) {
-		this.idRepositorioCompartido = idRepositorioCompartido;
+	public void setIdEvento(int idEvento) {
+		this.idEvento = idEvento;
 	}
 	
 	@Override
 	public String toString() {
-		return "Chat [idChat=" + idChat + ", texto=" + texto + ", timestamp=" + timestamp + ", idUsuarioPropietario="
-				+ idUsuarioPropietario + ", idRepositorioConpartido="
-				+ idRepositorioCompartido + "]";
+		return "Chat [idChat=" + idChat + ", texto=" + texto + ", timestamp=" + timestamp + 
+				", idUsuario=" + idUsuario + ", idEvento=" + idEvento + "]";
 	}
 	
 	
