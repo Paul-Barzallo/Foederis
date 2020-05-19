@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.sesion.model.Usuario;
@@ -124,9 +123,8 @@ public class UsuarioController {
 	
 	/**
 	 * Activa un usuario
-	 * si el usuario se desactiva no podrá iniciar sesión
 	 * @param model
-	 * @param idUsuario
+	 * @param id
 	 * @param activar
 	 * @return
 	 */
@@ -139,7 +137,7 @@ public class UsuarioController {
 	 * Desactiva un usuario
 	 * si el usuario se desactiva no podrá iniciar sesión
 	 * @param model
-	 * @param idUsuario
+	 * @param id
 	 * @param activar
 	 * @return
 	 */
@@ -153,7 +151,7 @@ public class UsuarioController {
 	 * @param model
 	 * @param confirmPassword campo extra en el que se repite la contraseña
 	 * @param usuario
-	 * @param result
+	 * @param result errores de validación del formulario
 	 * @return
 	 */
 	@PostMapping(Rutas.GUARDAR)
@@ -162,7 +160,7 @@ public class UsuarioController {
 			result.rejectValue("password", "RepeatPassword.usuario.password");
 		}
 		if (service.isUsernameRepetido(usuario)) {
-			result.rejectValue("password", "RepeatUsername.usuario.username");
+			result.rejectValue("username", "RepeatUsername.usuario.username");
 		}
 		if (result.hasErrors()) {
 			service.cargarRoles(model);

@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
-import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 
 @Controller

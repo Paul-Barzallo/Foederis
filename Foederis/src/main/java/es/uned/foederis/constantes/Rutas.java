@@ -17,6 +17,7 @@ public class Rutas {
 	public static final String GUARDAR = 	"/guardar";
 	public static final String AJAX = 		"/ajax";
 	public static final String BUSCAR = 	"/buscar";
+	public static final String ELIMINAR =	"/eliminar";
 	
 	// Constantes administacion
 	public static final String ADMINISTRACION =	"/administracion";
@@ -41,10 +42,11 @@ public class Rutas {
 	public static final String ADM_USER_GUARDAR = 		ADM_USER+GUARDAR;
 	// Rutas controladores administracion/salas
 	public static final String ADM_SALA_SALAS = 		ADM_SALA+SALAS;
-	public static final String ADM_SALA_SALAS_BUSQ = 	ADM_SALA+BUSQ_USERS;
+	public static final String ADM_SALA_SALAS_BUSQ = 	ADM_SALA+BUSQ_SALAS;
 	public static final String ADM_SALA_MODIF = 		ADM_SALA+MODIFICAR;
 	public static final String ADM_SALA_NUEVO = 		ADM_SALA+NUEVO;
 	public static final String ADM_SALA_ACTIVAR = 		ADM_SALA+ACTIVAR;
 	public static final String ADM_SALA_DESACTI = 		ADM_SALA+DESACTIVAR;
 	public static final String ADM_SALA_GUARDAR = 		ADM_SALA+GUARDAR;
+	public static final String ADM_SALA_ELIMINAR = 		ADM_SALA+ELIMINAR;
 }

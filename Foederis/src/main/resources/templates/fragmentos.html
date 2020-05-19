@@ -39,7 +39,7 @@
 					<a class="nav-link" href="#">Salas</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/chat">Evento</a>
+					<a class="nav-link" href="/Evento/listarFiltro">Eventos</a>
 				</li>
 			
 				<!-- Dropdown -->
@@ -112,8 +112,12 @@
 					<a th:if="*{activo}" class="dropdown-item" th:href="@{.__${@rutas.DESACTIVAR}__(id=*{id})}">Desactivar</a>
 					<a th:unless="*{activo}" class="dropdown-item" th:href="@{.__${@rutas.ACTIVAR}__(id=*{id})}">Activar</a>
 				</div>
-				<a th:unless="${accion == '__${@acciones.ACTIVAR}__'}" class="dropdown-item" th:href="@{./__${accion}__(id=*{id})}"
-				th:text="${#strings.capitalize('__${accion}__')}"></a>
+				<form th:if="${accion == '__${@acciones.ELIMINAR}__'}" th:id="'eliminar'+*{id}" th:action="@{./__${accion}__(id=*{id})}" method="post">
+					<input name="id" th:value="*{id}" type="hidden">
+					<a class="dropdown-item" href="#" th:onclick="'document.getElementById(\'eliminar'+*{id}+'\').submit()'">Eliminar</a>
+				</form>
+				<a th:if="${accion != '__${@acciones.ACTIVAR}__' and accion != '__${@acciones.ELIMINAR}__'}"
+				class="dropdown-item" th:href="@{./__${accion}__(id=*{id})}" th:text="${#strings.capitalize('__${accion}__')}"></a>
 			</div>
 		</div>
 	</div>
@@ -159,7 +163,7 @@
 	<div th:fragment="buscar" class="border border-dark rounded d-flex flex-column mt-5">
 		<div class="bg-secondary d-flex justify-content-between p-3">
 			<h2 class="text-white mb-0">Buscar</h2>
-			<a th:if="*{ruta} and *{txt_boton}" th:href="${@rutas.ADM_USER_NUEVO}" class="btn btn-light btn-sm" role="button">
+			<a th:if="*{ruta} and *{txt_boton}" th:href="*{ruta}" class="btn btn-light btn-sm" role="button">
 				<span class="align-middle" th:text="*{txt_boton}"></span>
 			</a>
 		</div>
@@ -187,27 +191,36 @@
 	
 	
 	<div th:fragment="tabla_salas" th:if="${__${@atributos.SALAS}__}" class="border border-dark rounded">
-		<table class="table table-striped mb-0">
+		<table class="table table-striped mb-0 text-center">
 			<thead>
 				<tr>
 					<th>#</th>
-					<th th:text="${@SalaConstantes.USERNAME}"></th>
-					<th th:text="${@usuarioConstantes.NOMBRE}"></th>
-					<th th:text="${@usuarioConstantes.APELLIDOS}"></th>
-					<th th:text="${@usuarioConstantes.ROL}"></th>
-					<th th:text="${@usuarioConstantes.ESTADO}"></th>
+					<th th:text="${@salaConstantes.NOMBRE}"></th>
+					<th th:text="${@salaConstantes.AFORO}"></th>
+					<th th:text="${@salaConstantes.HORARIO}"></th>
+					<th th:text="${@salaConstantes.PRESENTACION}"></th>
+					<th th:text="${@salaConstantes.MEGAFONIA}"></th>
+					<th th:text="${@salaConstantes.GRABACION}"></th>
+					<th th:text="${@salaConstantes.STREAMING}"></th>
+					<th th:text="${@salaConstantes.WIFI}"></th>
 					<th class="pr-2"><span class="d-flex justify-content-center">Acciones</span></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="user,i : ${__${@atributos.USUARIOS}__}">
+				<tr th:each="sala,i : ${__${@atributos.SALAS}__}" th:class="${sala.activa}? '' : 'text-muted'">
 					<td class="align-middle" th:text="${i.count}"></td>
-					<td class="align-middle" th:text="${user.username}"></td>
-					<td class="align-middle" th:text="${#strings.capitalizeWords('__${user.nombre}__')}"></td>
-					<td class="align-middle" th:text="${user.apellidos}? ${#strings.capitalizeWords('__${user.apellidos}__')} : ''"></td>
-					<td class="align-middle" th:text="${user.rol.nombre}"></td>
-					<td class="align-middle" th:text="${user.activo}? 'Activo' : 'Inactivo'"></td>
-					<td th:with="id=${user.idUsuario}, activo=${user.activo}" th:insert="fragmentos :: acciones"></td>
+					<td class="align-middle" th:text="${#strings.capitalizeWords('__${sala.nombre}__')}"></td>
+					<td class="align-middle" th:text="${sala.aforo}"></td>
+					<td th:unless="${sala.activa}" class="align-middle">Inactiva</td>
+					<td th:if="${sala.horaInicio} == ${sala.horaFin} and ${sala.activa}" class="align-middle">Abierto 24h</td>
+					<td th:if="${sala.horaInicio} != ${sala.horaFin} and ${sala.activa}" class="align-middle"
+					th:text="${#dates.format(sala.horaInicio,'HH:mm')+' - '+#dates.format(sala.horaFin,'HH:mm')}"></td>
+					<td class="align-middle" th:text="${sala.presentacion}? 'Si' : 'No'"></td>
+					<td class="align-middle" th:text="${sala.megafonia}? 'Si' : 'No'"></td>
+					<td class="align-middle" th:text="${sala.grabacion}? 'Si' : 'No'"></td>
+					<td class="align-middle" th:text="${sala.streaming}? 'Si' : 'No'"></td>
+					<td class="align-middle" th:text="${sala.wifi}? 'Si' : 'No'"></td>
+					<td th:with="id=${sala.idSala}, activo=${sala.activa}" th:insert="fragmentos :: acciones"></td>
 				</tr>
 			</tbody>
 		</table>

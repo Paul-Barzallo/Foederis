@@ -24,7 +24,7 @@
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container mx-auto my-5 px-ms-5 h-100">
-   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.USUARIO}__}" th:action="@{__${@rutas.ADM_USER_GUARDAR}__}" method="post">
+   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.SALA}__}" th:action="@{__${@rutas.ADM_SALA_GUARDAR}__}" method="post">
            	<h1 class="mb-3 ml-n2">Sala</h1>
            	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
            		<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -38,11 +38,22 @@
 			</div>
 			<div class="form-group">
 				<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
-                    <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+					<div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
                     </div>
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
                 </div>
+			</div>
+			<div class="form-group">
+				<span>Medios técnicos:</span>
+				<div class="custom-control custom-checkbox">
+					<input th:field="*{presentacion}" class="custom-control-input" type="checkbox">
+					<label for="presentacion" class="custom-control-label" th:text="${@salaConstantes.PRESENTACION}"></label>
+				</div>
+				<div class="custom-control custom-checkbox">
+					<input th:field="*{megafonia}" class="custom-control-input" type="checkbox">
+					<label for="megafonia" class="custom-control-label" th:text="${@salaConstantes.MEGAFONIA}"></label>
+				</div>
 			</div>
 			<div th:insert="fragmentos :: guardar-salir"></div>
         </form>

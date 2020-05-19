@@ -12,9 +12,7 @@ import org.springframework.ui.Model;
 
 import es.uned.foederis.constantes.Acciones;
 import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.constantes.Pantallas;
-import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.salas.constantes.SalaConstantes;
 import es.uned.foederis.salas.model.Sala;
@@ -154,12 +152,25 @@ public class AdministracionService {
 	/**
 	 * Valida que no exista otro usuario con el mimso username
 	 * @param usuario
-	 * @return true si existe algun usuario con ese username
+	 * @return true si existe 
 	 */
 	public boolean isUsernameRepetido(Usuario usuario) {
 		if (usuario.getUsername() != null && !usuario.getUsername().isBlank()) {
 			Optional<Usuario> repetido = userRepo.findByUsername(usuario.getUsername());
 			return repetido.isPresent() && usuario.getIdUsuario() != repetido.get().getIdUsuario();
+		}
+		return false;
+	}
+	
+	/**
+	 * Valida que no exista otra sala con el mimso nombre
+	 * @param usuario
+	 * @return true si existe 
+	 */
+	public boolean isNombreSalaRepetido(Sala sala) {
+		if (sala.getNombre() != null && !sala.getNombre().isBlank()) {
+			Optional<Sala> repetido = salaRepo.findByNombre(sala.getNombre());
+			return repetido.isPresent() && sala.getIdSala() != repetido.get().getIdSala();
 		}
 		return false;
 	}
@@ -190,6 +201,54 @@ public class AdministracionService {
 	}
 	
 	/**
+	 * Activa o desactiva el ususario en funcion del valor de activar
+	 * @param model
+	 * @param idSala
+	 * @param activar
+	 * @return
+	 */
+	public boolean activarSala(Model model, Long idSala, boolean activar) {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isAdmin()) {
+			Optional<Sala> opSala = salaRepo.findById(idSala);
+			if (opSala.isPresent()) {
+				Sala sala = opSala.get();
+				sala.setActiva(activar);
+				salaRepo.save(sala);
+				return true;
+			} else {
+				mensajeSalaNoEncontrada(model);
+			}
+		} else {
+			mensajeNoAccesoSalas(model);
+		}
+		return false;
+	}
+	
+	/**
+	 * elimina la sala seleccionada
+	 * @param model
+	 * @param sala
+	 * @return
+	 */
+	public boolean eliminarSala(Model model, Long id) {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isAdmin()) {
+			Optional<Sala> opSala = salaRepo.findById(id);
+			if (opSala.isPresent()) {
+				Sala sala = opSala.get();
+				salaRepo.delete(sala);
+				return true;
+			} else {
+				mensajeSalaNoEncontrada(model);
+			}
+		} else {
+			mensajeNoAccesoSalas(model);
+		}
+		return false;
+	}
+	
+	/**
 	 * Guarda el usuario en la db y añade mensaje de confirmación al modelo
 	 * si hay algun error durante el guardado devuelve false
 	 * @param model
@@ -208,6 +267,26 @@ public class AdministracionService {
 			}
 			userRepo.save(usuario);
 			mensajeUsuarioGuardado(model, idUsuario);
+			return true;
+		} catch(Exception e) {
+			mensajeErrorGuardarSala(model);
+			return false;
+		}
+	}
+	
+	/**
+	 * Guarda el usuario en la db y añade mensaje de confirmación al modelo
+	 * si hay algun error durante el guardado devuelve false
+	 * @param model
+	 * @param usuario
+	 * @return true si se guarda correctamente
+	 */
+	public boolean guardarSala(Model model, Sala sala) {
+		try {
+			sala.setNombre(sala.getNombre().toLowerCase());
+			Long idSala = sala.getIdSala();
+			salaRepo.save(sala);
+			mensajeSalaGuardada(model, idSala);
 			return true;
 		} catch(Exception e) {
 			mensajeErrorGuardarSala(model);
@@ -261,6 +340,8 @@ public class AdministracionService {
 	public void cargarAccionesSalas(Model model) {
 		List<String> acciones = new ArrayList<>();
 		acciones.add(Acciones.MODIFICAR);
+		acciones.add(Acciones.ACTIVAR);
+		acciones.add(Acciones.ELIMINAR);
 		model.addAttribute(Atributos.ACCIONES, acciones);
 	}
 	
@@ -279,6 +360,11 @@ public class AdministracionService {
 		model.addAttribute(Atributos.ALERTA, "No se ha encontrado el usuario");
 	}
 	
+	public void mensajeSalaNoEncontrada(Model model) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
+		model.addAttribute(Atributos.ALERTA, "No se ha encontrado la sala");
+	}
+	
 	public void mensajeErrorGuardarUsuario(Model model) {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
 		model.addAttribute(Atributos.ALERTA, "No se ha podido guardar el usuario");
@@ -289,6 +375,16 @@ public class AdministracionService {
 		model.addAttribute(Atributos.ALERTA, "No se ha podido guardar la sala");
 	}
 	
+	public void mensajeErrorEliminarSala(Model model) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Error");
+		model.addAttribute(Atributos.ALERTA, "No se ha podido eliminar la sala");
+	}
+	
+	/**
+	 * Mensaje cuando se guarda o modifica un usuario
+	 * @param model
+	 * @param idUsuario id del usuaro antes de de hacer save
+	 */
 	public void mensajeUsuarioGuardado(Model model, Long idUsuario) {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Información");
 		String mensaje;
@@ -298,6 +394,27 @@ public class AdministracionService {
 			mensaje = "El usuario se ha modificado correctamente";
 		}
 		model.addAttribute(Atributos.ALERTA, mensaje);
+	}
+	
+	/**
+	 * Mensaje cuando se guarda o modifica una sala
+	 * @param model
+	 * @param idSala id de la sala antes de hacer save
+	 */
+	public void mensajeSalaGuardada(Model model, Long idSala) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Información");
+		String mensaje;
+		if (idSala==null) {
+			mensaje = "La sala se ha creado correctamente";
+		} else {
+			mensaje = "La sala se ha modificado correctamente";
+		}
+		model.addAttribute(Atributos.ALERTA, mensaje);
+	}
+	
+	public void mensajeSalaEliminada(Model model) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Información");
+		model.addAttribute(Atributos.ALERTA, "La sala se ha eliminado correctamente");
 	}
 	
 	public String irAPerfil(Model model) {
