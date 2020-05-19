@@ -64,7 +64,7 @@ public class EventosController {
 	    public String baja(@RequestParam(value="id") Evento eventoSeleccionado) {
 		 
 		     ActualizarCOnfirmacionEvento(0, eventoSeleccionado);
-		     return "redirect:../Evento/listarFiltro?filtroListado=sin";
+		     return "redirect:../Evento/listarFiltro?filtroListado=sin"; 
 	 }
 	 
 	 @GetMapping("/confirmar")
