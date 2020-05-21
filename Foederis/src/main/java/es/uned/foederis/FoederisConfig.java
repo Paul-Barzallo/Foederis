@@ -1,5 +1,6 @@
 package es.uned.foederis;
 
+import java.text.SimpleDateFormat;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -19,6 +20,7 @@ public class FoederisConfig {
 	
 	private IEventoService eventoService;
 	private Usuario userLogin;
+	private SimpleDateFormat sdf;
 
 	@Bean
 	public IEventoService eventoService() {
@@ -30,6 +32,12 @@ public class FoederisConfig {
 	public Usuario user() {
 		userLogin = new Usuario();
 		return userLogin;
+	}
+	
+	@Bean
+	public SimpleDateFormat timeFormat() {
+		sdf = new SimpleDateFormat("HH:mm");
+		return sdf;
 	}
 	
 }

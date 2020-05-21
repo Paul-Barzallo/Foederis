@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+	<title>Salas</title>
+	<meta charset="utf-8">
+	<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+	<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	
+	<script th:inline="javascript">
+		function buscarSalas() {
+			var url = [[${@rutas.ADM_SALA_SALAS_BUSQ}]];
+			var busqueda = $('#busqueda').val();
+			var valor = $('#valor').val();
+			
+			url += "?paramBusq=";
+			if (busqueda) {
+				url += busqueda;
+			} 
+			url += "&valorBusq=";
+			if (valor) {
+				url += valor;
+			}
+			$('#tabla_salas').empty();
+			$('#tabla_salas').load(url);
+		}
+		$(function() {
+			buscarSalas();
+			$('#btn_buscar').click(buscarSalas);
+		});
+	</script>
+</head>
+<body class="bg-light" style="height: 100vh">
+   	<div th:insert="fragmentos :: navbar"></div>
+   	<div class="container px-md-5">
+   		<div th:with="ruta=${'__${@rutas.ADM_SALA_NUEVO}__'}, txt_boton=${'Nueva sala'}" th:insert="fragmentos :: buscar"></div>
+   		<div id="tabla_salas" class="my-5"></div>
+	</div>
+</body>
+</html>

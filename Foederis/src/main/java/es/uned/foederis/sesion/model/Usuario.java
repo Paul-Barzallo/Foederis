@@ -2,9 +2,7 @@ package es.uned.foederis.sesion.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,20 +13,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import es.uned.foederis.sesion.constante.UsuarioConstantes;
-import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 
 /**
  * Implementa UserDetails para ser el objeto usuario de spring-security
