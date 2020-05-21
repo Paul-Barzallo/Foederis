@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+	<title>Formulario Sala</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+
+	<script type="text/javascript">
+		$(function () {
+			$('.dtp').datetimepicker({
+				format: 'HH:mm'
+			});
+		});
+	</script>
+</head>
+<body class="bg-light" style="height: 100vh">
+   	<div th:insert="fragmentos :: navbar"></div>
+   	<div class="container mx-auto my-5 px-ms-5 h-100">
+   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.SALA}__}" th:action="@{__${@rutas.ADM_SALA_GUARDAR}__}" method="post">
+           	<h1 class="mb-3 ml-n2">Sala</h1>
+           	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
+           		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		        <ul>
+		            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+		        </ul>
+		    </div>
+		
+		    <input type="hidden" th:field="*{idSala}"> 
+		    <input type="hidden" th:field="*{activa}"> 
+		    
+			<div class="row">
+				<div class="col-12 col-lg-6">
+					<div class="form-group">
+						<label for="nombre">Nombre:</label>
+						<input th:field="*{nombre}" type="text" class="form-control" th:errorclass="border-danger">
+					</div>
+				</div>
+				<div class="col-12 col-lg-6">
+					<div class="form-group">
+						<label for="aforo">Aforo:</label>
+						<input th:field="*{aforo}" type="number" class="form-control" th:errorclass="border-danger">
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col">
+					<div class="form-group">
+						<label for="horaInicio">Hora Apertura:</label>
+						<div class="input-group date dtp" id="datetimepicker1" data-target-input="nearest">
+							<input th:value="*{{horaInicio}}" th:field="*{horaInicio}" type="text" class="form-control datetimepicker-input" 
+							 data-target="#datetimepicker1" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<label for="horaFin">Hora Cierre:</label>
+						<div class="input-group date dtp" id="datetimepicker2" data-target-input="nearest">
+							<input th:field="*{{horaFin}}" type="text" class="form-control datetimepicker-input" 
+							 data-target="#datetimepicker2" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<span>Medios técnicos:</span>
+				<div class="d-flex flex-wrap justify-content-around mt-2">
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{presentacion}" class="custom-control-input" type="checkbox">
+						<label for="presentacion1" class="custom-control-label" th:text="${@salaConstantes.PRESENTACION}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{megafonia}" class="custom-control-input" type="checkbox">
+						<label for="megafonia1" class="custom-control-label" th:text="${@salaConstantes.MEGAFONIA}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{grabacion}" class="custom-control-input" type="checkbox">
+						<label for="grabacion1" class="custom-control-label" th:text="${@salaConstantes.GRABACION}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{streaming}" class="custom-control-input" type="checkbox">
+						<label for="streaming1" class="custom-control-label" th:text="${@salaConstantes.STREAMING}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{wifi}" class="custom-control-input" type="checkbox">
+						<label for="wifi1" class="custom-control-label" th:text="${@salaConstantes.WIFI}"></label>
+					</div>
+				</div>
+			</div>
+			<div th:insert="fragmentos :: guardar-salir"></div>
+        </form>
+	</div>
+</body>
+</html>

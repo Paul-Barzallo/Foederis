@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
 	/**
 	 * Implementación de busqueda de usuario del login
 	 * Se busca por username y se devuelve el usuario con los datos
-	 * Si no 
+	 * Si no devuelve un usuario sin datos inactivo
 	 * @param username
 	 * @return Usuario Spring-security
 	 */

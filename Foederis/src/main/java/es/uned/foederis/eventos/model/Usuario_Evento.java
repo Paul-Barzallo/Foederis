@@ -1,5 +1,7 @@
 package es.uned.foederis.eventos.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Null;
+
+import com.sun.istack.Nullable;
 
 import es.uned.foederis.sesion.model.Usuario;
 
@@ -19,15 +24,16 @@ public class Usuario_Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private int idUsuarioEvento;
 
-	@ManyToOne
-    @JoinColumn(name="id", nullable=false)
+	@ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="id", nullable=false )
 	private Usuario idUsuario;
 	
-	@ManyToOne//(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
     @JoinColumn(name="evento")
 	private Evento evento;
 	
-	private boolean confirmado;
+	//VAlores -1 aun sin confirmar, 0 no confirma, 1 si confirma
+	private int confirmado;
 	private boolean asistente;
 	private boolean presencial;
 	
@@ -56,13 +62,13 @@ public class Usuario_Evento {
 
 	public void setEvento(Evento idEvento) {
 		this.evento = idEvento;
-	}
+	}	
 
-	public boolean isConfirmado() {
+	public int getConfirmado() {
 		return confirmado;
 	}
 
-	public void setConfirmado(boolean confirmado) {
+	public void setConfirmado(int confirmado) {
 		this.confirmado = confirmado;
 	}
 

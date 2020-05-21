@@ -9,6 +9,8 @@ public class Atributos {
 	public static final String PARAMS_BUSQUEDA = "params_busqueda";
 	public static final String USUARIO = "usuario";
 	public static final String USUARIOS = "usuarios";
+	public static final String SALA = "sala";
+	public static final String SALAS = "salas";
 	public static final String ACCIONES = "acciones";
 	public static final String ALERTA = "alerta";
 	public static final String ALERTA_TITULO = "alerta_titulo";

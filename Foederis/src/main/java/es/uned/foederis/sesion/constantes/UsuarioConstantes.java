@@ -1,4 +1,4 @@
-package es.uned.foederis.sesion.constante;
+package es.uned.foederis.sesion.constantes;
 
 import org.springframework.stereotype.Component;
 
