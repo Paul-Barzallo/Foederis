@@ -103,6 +103,11 @@ public class EventoServiceImpl implements IEventoService {
 	public void eliminar(Integer id) {
 		EventoRepository.deleteById(id);	
 	}
+	
+	@Override
+	public Evento getEventById(int id){
+		return EventoRepository.findByidEvento(id);
+	}
 
 	@Override
 	public String toString() {

@@ -12,11 +12,6 @@ var uploadForm = document.querySelector('#uploadForm');
 var stompClient = null;
 var username = null;
 
-var colors = [
-    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
-];
-
 function connect(){
     username = document.querySelector('#userName').innerHTML.trim();
 
@@ -77,13 +72,14 @@ function onMessageReceived(payload) {
     var messageElement = document.createElement('li');
 
     if(message.type === 'JOIN') {
-        messageElement.classList.add('event-message');
+        messageElement.classList.add('list-group-item','list-group-item-success');
+        messageElement.style.textAlign='center';
         message.content = message.sender + ' joined!';
     } else if (message.type === 'LEAVE') {
-        messageElement.classList.add('event-message');
+        messageElement.classList.add('list-group-item','list-group-item-success');
         message.content = message.sender + ' left!';
     } else {
-        messageElement.classList.add('chat-message');
+        messageElement.classList.add('list-group-item','list-group-item-info');
 
         // var avatarElement = document.createElement('i');
         // var avatarText = document.createTextNode(message.sender[0]);
@@ -93,6 +89,7 @@ function onMessageReceived(payload) {
         // messageElement.appendChild(avatarElement);
 
         var usernameElement = document.createElement('span');
+        usernameElement.style.color='blue';
         var usernameText = document.createTextNode(message.sender);
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);

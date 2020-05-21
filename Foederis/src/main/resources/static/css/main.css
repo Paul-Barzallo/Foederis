@@ -159,7 +159,7 @@ input.upload {
     height: calc(100% - 160px);
     position: relative;
 }
-*/
+
 
 #chat-page ul {
     list-style-type: none;
@@ -229,7 +229,7 @@ input.upload {
 #chat-page .chat-message p {
     color: #43464b;
 }
-
+*/
 #messageForm .input-group input {
     float: left;
     width: calc(100% - 85px);
@@ -252,11 +252,11 @@ input.upload {
     border-bottom: 1px solid #ececec;
 }
 
-.chat-footer {
+/* .chat-footer {
     text-align: center;
     padding: 15px;
     height: 18%;
-}
+} */
 
 .chat-header h2 {
     margin: 0;

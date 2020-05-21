@@ -54,6 +54,5 @@ public class ChatEntityController {
     public void createChat(Chat chat) 
     {
         service.createChat(chat);
-        //return "redirect:/";
     }
 }

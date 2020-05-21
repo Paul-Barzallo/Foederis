@@ -50,5 +50,6 @@ public interface IEventoService {
 	void eliminar(Integer id);
 
 
+	Evento getEventById(int id);
 
 }

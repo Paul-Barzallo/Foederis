@@ -5,6 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.sesion.model.Usuario;
 
 
 @Entity
@@ -17,9 +22,9 @@ public class Chat {
 	private Timestamp 	timestamp;
 	
 	
-	//foreign key
-	private long idUsuario;
-	private int idEvento;
+    @ManyToOne
+    @JoinColumn(name="id_evento", nullable=false)
+	private Evento idEvento;
 	
 	// getters, setters
 	public int getIdChat() {
@@ -39,28 +44,19 @@ public class Chat {
 	}
 	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
-	}
-
-		
-	public long getIdUsuario() {
-		return idUsuario;
-	}
-	public void setIdUsuario(long idUsuario) {
-		this.idUsuario = idUsuario;
-	}
+	}	
 	
-	
-	public int getIdEvento() {
+	public Evento getIdEvento() {
 		return idEvento;
 	}
-	public void setIdEvento(int idEvento) {
+	public void setIdEvento(Evento idEvento) {
 		this.idEvento = idEvento;
 	}
 	
 	@Override
 	public String toString() {
 		return "Chat [idChat=" + idChat + ", texto=" + texto + ", timestamp=" + timestamp + 
-				", idUsuario=" + idUsuario + ", idEvento=" + idEvento + "]";
+				", idEvento=" + idEvento.toString() + "]";
 	}
 	
 	

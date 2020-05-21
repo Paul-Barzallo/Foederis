@@ -1,6 +1,6 @@
 package es.uned.foederis.chats.service;
 
-import java.util.Optional;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +13,19 @@ public class ChatService {
 	@Autowired
 	private IChatRepository ChatRepository;
 	
-	 public Chat createChat(Chat chat){
+	/*
+	 * public List<Chat>getChats(String userName, long eventId){ List<Chat> }
+	 */	
+	
+	public Chat createChat(Chat chat){
         chat = ChatRepository.save(chat);
          
         return chat;
-    } 
+    }
+
+	public List<Chat> findAll() {
+		List<Chat> result = (List<Chat>) ChatRepository.findAll();
+		return result;
+	} 
 
 }

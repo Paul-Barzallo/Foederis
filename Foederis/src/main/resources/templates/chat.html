@@ -36,6 +36,8 @@
 			    // Get form
 			    var form = $('#uploadForm')[0];
 			    var data = new FormData(form);
+			    //data.append('file',form);
+			    data.append('eventid',$("#eventId").text())
 			    
 			    var token = $('#_csrf').attr('content');
 			    var header = $('#_csrf_header').attr('content');
@@ -74,15 +76,18 @@
 
 <div th:insert="fragmentos :: navbar"></div>
 <div id="chat-page" class="container mx-auto my-5 px-ms-5 h-100">
-	<div class="chat-header">
-		<h2>Bienvenido al evento ...</h2>
-		<p id="userName" th:text="${user}" class="text-danger"></p>
+	<div class="bg-secondary d-flex justify-content-between p-3">
+		<h2 id="eventName" class="text-white mb-0" th:text="${eventname}"></h2>
+		<p id="userName" th:text="${user}" class="hidden"></p>
+		<p id="eventId" th:text="${eventid}" class="hidden"></p>
 	</div>
 	<div id="connecting" class="hidden">Conectando...</div>
-	<ul id="messageArea" class="list-group">
-
-	</ul>
-	<div class="chat-footer">
+	<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">
+		<ul id="messageArea" class="list-group" style="height: 90%">
+	
+		</ul>
+	</div>
+	<div class="bg-warning d-flex justify-content-between p-3 h-20">
 		<table class="table-chat">
 			<tr>
 				<td>
