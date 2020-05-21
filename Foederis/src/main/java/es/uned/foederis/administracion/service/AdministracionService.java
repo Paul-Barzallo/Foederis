@@ -1,5 +1,8 @@
 package es.uned.foederis.administracion.service;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +20,7 @@ import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.salas.constantes.SalaConstantes;
 import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.salas.repository.ISalaRepository;
+import es.uned.foederis.service.DateTimeServie;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
@@ -41,6 +45,9 @@ public class AdministracionService {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private SimpleDateFormat timeFormat;
 	
 	/**
 	 * Agrega los roles para la pantalla de formulario de usuario
@@ -292,6 +299,13 @@ public class AdministracionService {
 			mensajeErrorGuardarSala(model);
 			return false;
 		}
+	}
+	
+	public void setHorario (Sala sala, String horaInicio, String horaFin) throws ParseException {
+		long ms = timeFormat.parse(horaInicio).getTime();
+		sala.setHoraInicio( new Time(ms));
+		ms = timeFormat.parse(horaFin).getTime();
+		sala.setHoraFin(new Time(ms));
 	}
 	
 	/**

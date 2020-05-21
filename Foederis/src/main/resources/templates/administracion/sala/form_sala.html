@@ -15,8 +15,8 @@
 
 	<script type="text/javascript">
 		$(function () {
-			$('#datetimepicker3').datetimepicker({
-				format: 'LT'
+			$('.dtp').datetimepicker({
+				format: 'HH:mm'
 			});
 		});
 	</script>
@@ -32,27 +32,69 @@
 		            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
 		        </ul>
 		    </div>
-			<div class="form-group">
-				<label for="nombre">Nombre:</label>
-				<input th:field="*{nombre}" type="text" class="form-control" th:errorclass="border-danger">
+		
+		    <input type="hidden" th:field="*{idSala}"> 
+		    <input type="hidden" th:field="*{activa}"> 
+		    
+			<div class="row">
+				<div class="col-12 col-lg-6">
+					<div class="form-group">
+						<label for="nombre">Nombre:</label>
+						<input th:field="*{nombre}" type="text" class="form-control" th:errorclass="border-danger">
+					</div>
+				</div>
+				<div class="col-12 col-lg-6">
+					<div class="form-group">
+						<label for="aforo">Aforo:</label>
+						<input th:field="*{aforo}" type="number" class="form-control" th:errorclass="border-danger">
+					</div>
+				</div>
 			</div>
-			<div class="form-group">
-				<div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-					<div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
-                    </div>
-                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3"/>
-                </div>
+			
+			<div class="row">
+				<div class="col">
+					<div class="form-group">
+						<label for="horaInicio">Hora Apertura:</label>
+						<div class="input-group date dtp" id="datetimepicker1" data-target-input="nearest">
+							<input th:value="*{{horaInicio}}" th:field="*{horaInicio}" type="text" class="form-control datetimepicker-input" 
+							 data-target="#datetimepicker1" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<label for="horaFin">Hora Cierre:</label>
+						<div class="input-group date dtp" id="datetimepicker2" data-target-input="nearest">
+							<input th:field="*{{horaFin}}" type="text" class="form-control datetimepicker-input" 
+							 data-target="#datetimepicker2" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+						</div>
+					</div>
+				</div>
 			</div>
+			
 			<div class="form-group">
 				<span>Medios técnicos:</span>
-				<div class="custom-control custom-checkbox">
-					<input th:field="*{presentacion}" class="custom-control-input" type="checkbox">
-					<label for="presentacion" class="custom-control-label" th:text="${@salaConstantes.PRESENTACION}"></label>
-				</div>
-				<div class="custom-control custom-checkbox">
-					<input th:field="*{megafonia}" class="custom-control-input" type="checkbox">
-					<label for="megafonia" class="custom-control-label" th:text="${@salaConstantes.MEGAFONIA}"></label>
+				<div class="d-flex flex-wrap justify-content-around mt-2">
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{presentacion}" class="custom-control-input" type="checkbox">
+						<label for="presentacion1" class="custom-control-label" th:text="${@salaConstantes.PRESENTACION}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{megafonia}" class="custom-control-input" type="checkbox">
+						<label for="megafonia1" class="custom-control-label" th:text="${@salaConstantes.MEGAFONIA}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{grabacion}" class="custom-control-input" type="checkbox">
+						<label for="grabacion1" class="custom-control-label" th:text="${@salaConstantes.GRABACION}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{streaming}" class="custom-control-input" type="checkbox">
+						<label for="streaming1" class="custom-control-label" th:text="${@salaConstantes.STREAMING}"></label>
+					</div>
+					<div class="custom-control custom-checkbox mx-2">
+						<input th:field="*{wifi}" class="custom-control-input" type="checkbox">
+						<label for="wifi1" class="custom-control-label" th:text="${@salaConstantes.WIFI}"></label>
+					</div>
 				</div>
 			</div>
 			<div th:insert="fragmentos :: guardar-salir"></div>

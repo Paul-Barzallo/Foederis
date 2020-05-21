@@ -1,15 +1,17 @@
 package es.uned.foederis.salas.model;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Sala {
@@ -19,7 +21,8 @@ public class Sala {
 	@NotBlank
 	private String nombre;
 	@Min(4)
-	private int aforo;
+	@Digits(fraction = 0, integer = 2)
+	private Integer aforo;
 	@NotNull
 	private boolean presentacion;
 	@NotNull
@@ -32,9 +35,7 @@ public class Sala {
 	private boolean wifi;
 	@NotNull
 	private boolean activa;
-	@NotNull
 	private Time horaInicio;
-	@NotNull
 	private Time horaFin;
 	
 	public Sala() {}

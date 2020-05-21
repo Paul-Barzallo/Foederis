@@ -21,6 +21,10 @@
 		            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
 		        </ul>
 		    </div>
+		    
+		    <input type="hidden" th:field="*{idUsuario}"> 
+		    <input type="hidden" th:field="*{activo}"> 
+		    
            	<div class="form-group">
 				<label for="username">Usuario:</label>
 				<input th:field="*{username}" type="text" class="form-control" th:errorclass="border-danger">
@@ -39,7 +43,7 @@
 			<div th:unless="*{idUsuario}">
 				<div class="form-group">
 					<label for="password">Contraseña:</label>
-					<input th:field="*{password}" type="password" class="form-control" th:errorclass="border-danger">
+					<input th:field="*{password}" type="password" class="form-control" th:errorclass="border-danger" autocomplete="new-password">
 				</div>
 				<div class="form-group">
 					<label for="confirmPassword">Confirmar contraseña:</label>
