@@ -29,18 +29,18 @@ VALUES
 	(7,  'daoval',		'david', 			'oviedo almeida', 	'user', 	2, TRUE),
 	(8,  'ambain',		'amparo', 			'bas infante', 		'user', 	2, TRUE),	
 	(9,  'sasetr',		'sandra', 			'seco triviño', 	'user', 	1, TRUE),
-	(10, 'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1, fALSE),	
+	(10, 'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1, FALSE),	
 	(11, 'virovi',		'vicente', 			'roura villalba', 	'user', 	1, TRUE),
 	(12, 'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1, TRUE)
 ;
 
 insert into Evento
-	( id_evento, nombre, usuario_creador_id, estado, id_sala, id_chat, id_repositorio_compartido, fecha_Inicio, fecha_fin)
+	( id_evento, nombre, usuario_creador_id, sala_Evento_id, id_chat, id_repositorio_compartido, fecha_Inicio, fecha_fin, estado)
 values
-	(0,'Evento 1', 1, 1, 1, 1, 1, '2020-05-09 09:00:00','2020-05-08 09:30:00'),
-	(1,'Evento 2', 3, 2, 2, 2, 2, '2020-05-25 13:30:00','2020-05-25 14:30:00'),
-	(2,'Evento 3', 4, 2, 2, 2, 2, null,null),
-	(3,'Evento 2', 5, 2, 2, 2, 2, '2020-05-14 13:30:00','2020-05-15 14:30:00')
+	(0,			'Evento 1', 1, 2, 1, 1, 														'2020-05-09 09:00:00','2020-05-08 09:30:00', 0),
+	(1,			'Evento 2', 3, 2, 2, 2, 														'2020-05-25 13:30:00','2020-05-25 14:30:00', 0),
+	(2,			'Evento 3', 4, 2, 2, 2, 														null,null, 0),
+	(3,			'Evento 2', 5, 2, 2, 2,  														'2020-05-14 13:30:00','2020-05-15 14:30:00', 0)
 		
 ;
 
@@ -58,9 +58,27 @@ insert into Usuario_Evento
 insert into Horarios
 	(id_horario, id_evento, Horario_Fecha_Inicio, Horario_Fecha_fin)
 	values
-	(1, 1, '2020-05-19 09:00:00','2020-05-19 10:30:00'),
-	(2, 0, '2020-05-19 10:00:00','2020-05-19 11:30:00'),
-	(3, 2, '2020-05-10 09:00:00','2020-05-10 10:30:00'),
-	(4, 2, '2020-05-29 10:00:00','2020-05-29 11:30:00'),
-	(5, 2, '2020-05-29 10:00:00','2020-05-29 11:30:00')
+	(0, 1, '2020-05-25 09:00:00','2020-05-25 10:30:00'),
+	(1, 0, '2020-05-19 10:00:00','2020-05-19 11:30:00'),
+	--(2, 2, '2020-05-10 09:00:00','2020-05-10 10:30:00'),
+	(3, 2, '2020-05-29 10:00:00','2020-05-29 11:30:00'),
+	(4, 2, '2020-05-28 10:00:00','2020-05-28 11:30:00'),
+	(5, 3, '2020-05-20 10:00:00','2020-05-20 11:30:00')
 	;
+	
+update  Evento
+set id_horario= 1
+where id_evento = 0;
+
+update  Evento
+set id_horario= 0
+where id_evento = 1;
+
+--update  Evento
+--set id_horario= 2
+--where id_evento = 2;
+
+update  Evento
+set id_horario= 5
+where id_evento = 3;
+

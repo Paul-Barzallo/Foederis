@@ -4,30 +4,28 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import es.uned.foederis.chats.service.ChatService;
-import es.uned.foederis.constantes.Atributos;
-import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.FoederisApplication;
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.chats.model.Chat;
-import es.uned.foederis.websocket.model.ChatMessage;
-import es.uned.foederis.sesion.constante.UsuarioConstantes;
+import es.uned.foederis.chats.service.ChatService;
+import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
+import es.uned.foederis.websocket.model.ChatMessage;
 
 
 //import es.uned.foederis.sesion.service.UserService;

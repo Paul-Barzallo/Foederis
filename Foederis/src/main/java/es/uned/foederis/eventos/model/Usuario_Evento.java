@@ -38,8 +38,11 @@ public class Usuario_Evento {
 	private boolean presencial;
 	
 	@OneToOne
+	@JoinColumn(name="horario")
 	private Horarios horario;
 
+	//Get y Set
+	
 	public int getIdUsuarioEvento() {
 		return idUsuarioEvento;
 	}
