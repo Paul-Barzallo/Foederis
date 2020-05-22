@@ -24,35 +24,32 @@ import es.uned.foederis.sesion.model.Usuario;
 
 @Entity
 public class Evento {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
 	private String nombre;
 	private Date fechaInicio;
 	private Date fechaFin;
-		
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="usuario_creador_id")
-	private Usuario	UsuarioCreador;
-	
 	private int estado;
 	private int idChat;
 	private int idRepositorioCompartido;
 	private int idSala;	
-	
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="usuario_creador_id")
+	private Usuario	UsuarioCreador;
 	
 	@OneToMany(mappedBy="idEvento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Horarios> horarios;
-	
-		
+
 	@OneToMany(mappedBy="evento", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Usuario_Evento> eventosDelUsuario = new ArrayList<Usuario_Evento>();
-	
+
 	@OneToOne
 	private Horarios horarioElegido;
-	
-	  public Horarios getHorarioElegido() {
+
+	public Horarios getHorarioElegido() {
 		return horarioElegido;
 	}
 
@@ -61,48 +58,52 @@ public class Evento {
 	}
 
 	public void addEvento(Usuario_Evento comment) {
-		  eventosDelUsuario.add(comment);
-	        comment.setEvento(this);
-	    }
-	 
-	    public void removeEvento(Usuario_Evento comment) {
-	    	eventosDelUsuario.remove(comment);
-	        comment.setEvento(this);
-	    }
-	
+		eventosDelUsuario.add(comment);
+		comment.setEvento(this);
+	}
 
-	
+	public void removeEvento(Usuario_Evento comment) {
+		eventosDelUsuario.remove(comment);
+		comment.setEvento(this);
+	}
 	
 	public Evento(int idEvento) {
 		super();
 		this.idEvento = idEvento;
 	}
-	
+
 	public Evento() {
-		
+
 	}
-		
+
 	public int getIdEvento() {
 		return idEvento;
 	}
+	
 	public void setIdEvento(int idEvento) {
 		this.idEvento = idEvento; 
 	}
+	
 	public String getNombre() {
 		return nombre;
 	}
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}
+	
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
+	
 	public Date getFechaFin() {
 		return fechaFin;
 	}
+	
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
@@ -110,9 +111,11 @@ public class Evento {
 	public int getEstado() {
 		return estado;
 	}
+	
 	public void setEstado(int estado) {
-		estado = estado;
+		this.estado = estado;
 	}
+	
 	public int getIdChat() {
 		return idChat;
 	}
@@ -143,9 +146,9 @@ public class Evento {
 	public List<Usuario_Evento> getEventosDelUsuario() {
 		return eventosDelUsuario;
 	}
-	
+
 	public Usuario_Evento getEventoDeUnUsuario(long idUsuario) {
-		
+
 		for(Usuario_Evento aux: eventosDelUsuario) {
 			if(aux.getIdUsuario().getIdUsuario() == idUsuario)
 				return aux;
@@ -165,7 +168,7 @@ public class Evento {
 		this.horarios = horarios;
 	}
 
-	
-	
+
+
 
 }

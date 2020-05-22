@@ -16,4 +16,6 @@ public class Atributos {
 	public static final String ALERTA_TITULO = "alerta_titulo";
 	public static final String PARAM_BUSQUEDA = "param_busqueda";
 	public static final String VALOR_BUSQUEDA = "valor_busqueda";
+	public static final String ERROR_HORA_INI = "erroe_hora_inicio";
+	public static final String ERROR_HORA_FIN = "erroe_hora_fin";
 }
