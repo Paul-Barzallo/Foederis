@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface IEvento_Usuario_Repository extends CrudRepository<Usuario_Evento, Integer>{
+public interface IEventoUsuarioRepository extends CrudRepository<Usuario_Evento, Integer>{
 	
 	//List<Usuario_Evento> findByfechaInicioAfter(Date fechaInicio, Sort sort); 
 

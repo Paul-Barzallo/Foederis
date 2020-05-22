@@ -2,7 +2,7 @@ package es.uned.foederis.eventos.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +29,9 @@ public class Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
 	private String nombre;
-	private Date fechaInicio;
-	private Date fechaFin;
+	private Timestamp fechaInicio;
+	private Timestamp fechaFin;
+
 	private int estado;
 	private int idChat;
 	private int idRepositorioCompartido;
@@ -91,20 +92,17 @@ public class Evento {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	
-	public Date getFechaInicio() {
+
+	public Timestamp getFechaInicio() {
 		return fechaInicio;
 	}
-	
-	public void setFechaInicio(Date fechaInicio) {
+	public void setFechaInicio(Timestamp fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
-	
-	public Date getFechaFin() {
+	public Timestamp getFechaFin() {
 		return fechaFin;
 	}
-	
-	public void setFechaFin(Date fechaFin) {
+	public void setFechaFin(Timestamp fechaFin) {
 		this.fechaFin = fechaFin;
 	}
 
