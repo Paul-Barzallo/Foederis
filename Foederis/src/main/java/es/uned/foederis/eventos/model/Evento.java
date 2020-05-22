@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
 
@@ -31,28 +32,44 @@ public class Evento {
 	private String nombre;
 	private Timestamp fechaInicio;
 	private Timestamp fechaFin;
-		
-	@OneToOne
-	@JoinColumn(name="usuario_creador_id")
-	private Usuario	UsuarioCreador;
-	
 	private int estado;
 	private int idChat;
 	private int idRepositorioCompartido;
-	private int idSala;	
+	
+	@OneToOne
+	@JoinColumn(name="usuario_creador_id")
+	private Usuario	UsuarioCreador;	
+	
+	@OneToOne
+	@JoinColumn(name="sala_Evento_id")
+	private Sala salaEvento;	
 	
 	
 	@OneToMany(mappedBy="idEvento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Horarios> horarios;
+	public List<Horarios> lstHorarios;
 	
 		
 	@OneToMany(mappedBy="evento", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Usuario_Evento> eventosDelUsuario = new ArrayList<Usuario_Evento>();
 	
 	@OneToOne
+	@JoinColumn(name="idHorario")
 	private Horarios horarioElegido;
 	
-	  public Horarios getHorarioElegido() {
+	
+	//Constructores	
+	public Evento(int idEvento) {
+		super();
+		this.idEvento = idEvento;
+	}
+	
+	public Evento() {
+		
+	}
+	
+	//Get y Set
+
+	public Horarios getHorarioElegido() {
 		return horarioElegido;
 	}
 
@@ -63,25 +80,12 @@ public class Evento {
 	public void addEvento(Usuario_Evento comment) {
 		  eventosDelUsuario.add(comment);
 	        comment.setEvento(this);
-	    }
-	 
-	    public void removeEvento(Usuario_Evento comment) {
-	    	eventosDelUsuario.remove(comment);
-	        comment.setEvento(this);
-	    }
-	
-
-	
-	
-	public Evento(int idEvento) {
-		super();
-		this.idEvento = idEvento;
-	}
-	
-	public Evento() {
-		
-	}
-		
+    }
+ 
+    public void removeEvento(Usuario_Evento comment) {
+    	eventosDelUsuario.remove(comment);
+        comment.setEvento(this);
+    }		
 	public int getIdEvento() {
 		return idEvento;
 	}
@@ -125,11 +129,12 @@ public class Evento {
 	public void setIdRepositorioCompartido(int idRepositorioCompartido) {
 		this.idRepositorioCompartido = idRepositorioCompartido;
 	}
-	public int getIdSala() {
-		return idSala;
+	public Sala getSalaEvento() {
+		return salaEvento;
 	}
-	public void setIdSala(int idSala) {
-		this.idSala = idSala;
+
+	public void setSalaEvento(Sala salaEvento) {
+		this.salaEvento = salaEvento;
 	}
 
 	public Usuario getUsuarioCreador() {
@@ -158,14 +163,10 @@ public class Evento {
 	}
 
 	public List<Horarios> getHorarios() {
-		return horarios;
+		return lstHorarios;
 	}
 
-	public void setHorarios(List<Horarios> horarios) {
-		this.horarios = horarios;
+	public void setHorarios(List<Horarios> lstHorarios) {
+		this.lstHorarios = lstHorarios;
 	}
-
-	
-	
-
 }

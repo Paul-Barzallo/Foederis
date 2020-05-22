@@ -31,5 +31,6 @@ public class FoederisConfig {
 		userLogin = new Usuario();
 		return userLogin;
 	}
+
 	
 }
