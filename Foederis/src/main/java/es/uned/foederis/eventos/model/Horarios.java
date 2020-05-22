@@ -2,6 +2,7 @@ package es.uned.foederis.eventos.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,16 +16,16 @@ public class Horarios {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "idHorario")
 	private int idHorario;
+	private Timestamp Horario_Fecha_Inicio;
+	private Timestamp Horario_Fecha_Fin;
 	
 	@ManyToOne
     @JoinColumn(name="idEvento", nullable=false)
 	private Evento idEvento;
 	
-	
-	private Timestamp Horario_Fecha_Inicio;
-	private Timestamp Horario_Fecha_Fin;
-	
+	//Get y Set
 	
 	public int getIdHorario() {
 		return idHorario;
