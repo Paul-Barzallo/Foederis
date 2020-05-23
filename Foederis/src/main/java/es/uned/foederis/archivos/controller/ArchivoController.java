@@ -19,7 +19,7 @@ public class ArchivoController {
     @PostMapping("/create")
     public void createFile(Archivo file) 
     {
-        service.createChat(file);
+        service.createFile(file);
     }
 
 }

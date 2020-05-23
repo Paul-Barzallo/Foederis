@@ -80,19 +80,13 @@ function onMessageReceived(payload) {
         message.content = message.sender + ' left!';
     } else {
         messageElement.classList.add('list-group-item','list-group-item-info');
-
-        // var avatarElement = document.createElement('i');
-        // var avatarText = document.createTextNode(message.sender[0]);
-        // avatarElement.appendChild(avatarText);
-        // avatarElement.style['background-color'] = getAvatarColor(message.sender);
-
-        // messageElement.appendChild(avatarElement);
-
+    
         var usernameElement = document.createElement('span');
         usernameElement.style.color='blue';
         var usernameText = document.createTextNode(message.sender);
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
+        $('#messageArea').animate({scrollTop: $('#messageArea').prop("scrollHeight")}, 500);
     }
 
     var textElement = document.createElement('p');
@@ -102,7 +96,7 @@ function onMessageReceived(payload) {
     messageElement.appendChild(textElement);
 
     messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
+    // messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 /*

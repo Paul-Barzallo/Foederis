@@ -74,6 +74,7 @@ public class ChatController {
     			c.setTimestamp(new Timestamp((new Date()).getTime())); 
     			c.setTexto(chatMessage.getContent());
     			c.setIdEvento(MyEvent);
+    			c.setIdUsuario(usr);
 
     			MyChatService.createChat(c);
     		}
