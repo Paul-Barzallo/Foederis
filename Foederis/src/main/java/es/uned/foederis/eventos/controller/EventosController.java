@@ -2,37 +2,26 @@ package es.uned.foederis.eventos.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.uned.foederis.constantes.Constantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.repository.IHorarioRepository;
 import es.uned.foederis.eventos.service.IEventoService;
-import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
 import es.uned.foederis.sesion.repository.IUsuarioRepository;;
@@ -164,6 +153,8 @@ public class EventosController {
 			}  
 		 	
 		 	
+		 	
+		 	
 		 	mav.addObject("userLogin", user);   
 		 	
 		 	
@@ -182,7 +173,12 @@ public class EventosController {
 	    public ModelAndView listarFiltro(@RequestParam(required= false, name="filtroListado") String filtroListado) {
 
 	 		if(user.getIdUsuario()== null)
-				 this.iniciarUsuario();	 	
+				 this.iniciarUsuario();	 
+	 		
+	 		//Fecha de hoy formato timestamp
+	 		Date dt = new Date();
+			 long time = dt.getTime();
+			 Timestamp ts = new Timestamp(time);
 	 		
 	 		ModelAndView mav = new ModelAndView();  
 			List<Evento> lstEventos = new ArrayList<Evento>(); 
@@ -198,24 +194,30 @@ public class EventosController {
 			}else if(filtroListado.equalsIgnoreCase("futuro")){
 				lstEventos.clear();
 				//Buscar fechas a partir de la fecha y hora actual del sistema
-				Date dt = new Date();				
+								
 			
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {   
 					if(aux.getConfirmado()==1) {
-						if(aux.getEvento().getFechaInicio().getDate() >= dt.getDate())
-							lstEventos.add(aux.getEvento());			
 						
+						//Si hay horario elegido por el JP
+						if((aux.getEvento().getHorarioElegido() != null && aux.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().after(ts))) {
+							lstEventos.add(aux.getEvento());	
+						}else if(aux.getHorario()!= null &&  aux.getHorario().getHorario_Fecha_Inicio().after(ts)) {
+							//Si el usuario ya ha confirmado su horario
+							lstEventos.add(aux.getEvento());	
+						}
+							
 					}
 				}
 				
 				
 			}else if(filtroListado.equalsIgnoreCase("hoy")){  
 				lstEventos.clear();
-				Date dt = new Date();
+				
 				
 				for(Usuario_Evento aux: user.getEventosDelUsuario()) {   
 					if(aux.getConfirmado()==1) {
-						if(aux.getEvento().getFechaInicio().getDate() == dt.getDate())
+						if((aux.getHorario()!= null && aux.getHorario().getHorario_Fecha_Fin().getDate() ==ts.getDate()) ||( aux.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().getDate() ==ts.getDate()))
 							lstEventos.add(aux.getEvento());
 
 					}
@@ -247,6 +249,6 @@ public class EventosController {
 			
 			mav.setViewName("listarEventos");
 			return mav;
-	    }		
+	    }	
 		
 }

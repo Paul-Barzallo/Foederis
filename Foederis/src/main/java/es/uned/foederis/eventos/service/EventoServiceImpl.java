@@ -23,29 +23,29 @@ public class EventoServiceImpl implements IEventoService {
 	private IEventoRepository EventoRepository;
 	
 	
-	@Override
-	public List<Evento> obtenerEventosFuturos(Date fechaInicio, long usuarioLogado) {
-		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicioAfter(fechaInicio, Sort.by(Sort.Direction.ASC, "fechaInicio"));
-						
-		return lst;
-	}
+//	@Override
+//	public List<Evento> obtenerEventosFuturos(Date fechaInicio, long usuarioLogado) {
+//		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicioAfter(fechaInicio, Sort.by(Sort.Direction.ASC, "fechaInicio"));
+//						
+//		return lst;
+//	}
 	
 	
-	@Override
-	public List<Evento> obtenerEventosHoy(Date fechaInicio, long usuarioLogado) {
-		//return (List<Evento>) EventoRepository.findAllByOrderByfechaInicioAscfechaInicioAfter(fechaInicio); 
-		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicio(fechaInicio);
-				
-		return lst;				
-		
-	}
+//	@Override
+//	public List<Evento> obtenerEventosHoy(Date fechaInicio, long usuarioLogado) {
+//		//return (List<Evento>) EventoRepository.findAllByOrderByfechaInicioAscfechaInicioAfter(fechaInicio); 
+//		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicio(fechaInicio);
+//				
+//		return lst;				
+//		
+//	}
 
-	@Override
-	public List<Evento> ObtenerEventos(long usuarioLogado) {
-		List<Evento> lst= (List<Evento>) EventoRepository.findAll();	
-				
-		return lst;					
-	}
+//	@Override
+//	public List<Evento> ObtenerEventos(long usuarioLogado) {
+//		List<Evento> lst= (List<Evento>) EventoRepository.findAll();	
+//				
+//		return lst;					
+//	}
 
 	@Override
 	public void eliminar(Integer id) {

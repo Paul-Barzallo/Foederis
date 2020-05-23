@@ -22,9 +22,9 @@ public interface IEventoRepository extends CrudRepository<Evento, Integer> {
 	//List<Evento> findByfechaInicioAfterOrderByidEventoAsc(Date fechaInicio);
 	
 	
-	List<Evento> findByfechaInicioAfter(Date fechaInicio, Sort sort); 
-	
-	List<Evento> findByfechaInicio(Date fechaInicio); 
+//	List<Evento> findByfechaInicioAfter(Date fechaInicio, Sort sort); 
+//	
+//	List<Evento> findByfechaInicio(Date fechaInicio); 
 	
 		
 	

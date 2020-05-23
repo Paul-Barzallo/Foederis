@@ -15,7 +15,6 @@ import java.util.List;
 @Repository
 public interface IEventoUsuarioRepository extends CrudRepository<Usuario_Evento, Integer>{
 	
-	//List<Usuario_Evento> findByfechaInicioAfter(Date fechaInicio, Sort sort); 
 
 }
 
