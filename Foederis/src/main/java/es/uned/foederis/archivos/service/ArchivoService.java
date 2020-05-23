@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import es.uned.foederis.archivos.model.Archivo;
 import es.uned.foederis.archivos.repository.IArchivoRepository;
+import es.uned.foederis.eventos.model.Evento;
 
 @Service
 public class ArchivoService {
@@ -18,7 +19,7 @@ public class ArchivoService {
 	 * public List<Chat>getChats(String userName, long eventId){ List<Chat> }
 	 */	
 	
-	public Archivo createChat(Archivo file){
+	public Archivo createFile(Archivo file){
         file = FileRepository.save(file);
          
         return file;
@@ -26,6 +27,11 @@ public class ArchivoService {
 
 	public List<Archivo> findAll() {
 		List<Archivo> result = (List<Archivo>) FileRepository.findAll();
+		return result;
+	}
+
+	public List<Archivo> findByIdEvento(Evento event) {
+		List<Archivo> result = (List<Archivo>)FileRepository.findByidEvento(event);
 		return result;
 	} 
 

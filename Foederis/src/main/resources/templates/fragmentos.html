@@ -225,6 +225,43 @@
 			</tbody>
 		</table>
 	</div>
-  
+ 
+ 	<div th:if="${!__${@atributos.FILES}__.isEmpty()}" th:fragment="resultDownload" class="border border-dark rounded">
+		<div class="bg-secondary d-flex justify-content-between p-3">
+			<h2 id="eventName" class="text-white mb-0" th:text="${__${@atributos.FILES}__[0].idEvento.nombre}"></h2>
+			<p id="userName" th:text="${user}" class="hidden"></p>
+			<p id="eventId" th:text="${eventid}" class="hidden"></p>
+		</div>
+		<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">
+			<ul class="list-group" style="height: 100%; overflow-y: auto">
+				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
+					<span th:text="${chat.idUsuario.username}">
+					</span>
+						<p th:text="${chat.texto}">
+					</p>
+				</li>
+			</ul>
+		</div>
+		<table class="table table-striped mb-0 text-center">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th th:text="${@archivos.NOMBRE}"></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Propietario</span></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Fecha - Hora</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="file : ${__${@atributos.FILES}__}">
+					<td class="align-middle" th:text="${file.idArchivo}"></td>
+					<td class="align-middle">
+						<a th:href="@{/chat/download/file?filename=} + ${file.nombreArchivo}" th:text="${file.nombreArchivo}"></a>
+					</td>
+					<td class="align-middle" th:text="${file.idEvento.UsuarioCreador.nombre} + ' ' + ${file.idEvento.UsuarioCreador.apellidos}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+ 
 </body>
 </html>

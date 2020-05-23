@@ -26,6 +26,10 @@ public class Chat {
     @JoinColumn(name="id_evento", nullable=false)
 	private Evento idEvento;
 	
+    @ManyToOne
+    @JoinColumn(name="id_usuario", nullable=false)
+    private Usuario idUsuario;
+    
 	// getters, setters
 	public int getIdChat() {
 		return idChat;
@@ -52,11 +56,18 @@ public class Chat {
 	public void setIdEvento(Evento idEvento) {
 		this.idEvento = idEvento;
 	}
+
+	public Usuario getIdUsuario() {
+		return idUsuario;
+	}
+	public void setIdUsuario(Usuario idUsuario) {
+		this.idUsuario = idUsuario;
+	}
 	
 	@Override
 	public String toString() {
 		return "Chat [idChat=" + idChat + ", texto=" + texto + ", timestamp=" + timestamp + 
-				", idEvento=" + idEvento.toString() + "]";
+				", idEvento=" + idEvento.toString() + ",idUsuario=" + idUsuario.toString() + "]";
 	}
 	
 	

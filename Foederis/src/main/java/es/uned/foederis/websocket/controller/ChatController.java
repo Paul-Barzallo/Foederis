@@ -26,7 +26,7 @@ import es.uned.foederis.FoederisApplication;
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.websocket.model.ChatMessage;
-import es.uned.foederis.sesion.constante.UsuarioConstantes;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 
 
@@ -76,6 +76,7 @@ public class ChatController {
     			c.setTimestamp(new Timestamp((new Date()).getTime())); 
     			c.setTexto(chatMessage.getContent());
     			c.setIdEvento(MyEvent);
+    			c.setIdUsuario(usr);
 
     			MyChatService.createChat(c);
     		}

@@ -83,7 +83,7 @@
 	</div>
 	<div id="connecting" class="hidden">Conectando...</div>
 	<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">
-		<ul id="messageArea" class="list-group" style="height: 90%">
+		<ul id="messageArea" class="list-group" style="height: 100%; overflow-y: auto">
 	
 		</ul>
 	</div>
@@ -103,8 +103,7 @@
 					</form>
 				</td>
 				<td>
-					<form id="uploadForm" name="uploadForm" method="POST"
-						enctype="multipart/form-data">
+					<form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
 						<div class="form-group">
 							<div class="input-group clearfix">
 								<input type="file" name="file" placeholder="Upload File" /> <input
