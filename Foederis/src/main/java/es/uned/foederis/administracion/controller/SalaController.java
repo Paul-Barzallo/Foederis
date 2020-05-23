@@ -1,8 +1,6 @@
 package es.uned.foederis.administracion.controller;
 
-import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -161,31 +158,27 @@ public class SalaController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(Rutas.GUARDAR)
-	public String postGuardarSala(Model model, String horaInicio, String horaFin, @Validated Sala sala, BindingResult result) throws ParseException {
-		if (!dtService.isHoraValida(horaInicio)) {
+	public String postGuardarSala(Model model, @Validated String horaApertura, @Validated String horaCierre, @Validated Sala sala, BindingResult result) throws ParseException {
+		if (!dtService.isHoraValida(horaApertura)) {
+			//Falta setear el valor de la hora porque se pierde al volver al fomrulario
+			model.addAttribute(Atributos.ERROR_HORA_INI, true);
 			result.rejectValue("horaInicio", "Time.sala.horaInicio");
 		}
-		if (!dtService.isHoraValida(horaFin)) {
+		if (!dtService.isHoraValida(horaCierre)) {
+			//Falta setear el valor de la hora porque se pierde al volver al fomrulario
+			model.addAttribute(Atributos.ERROR_HORA_FIN, true);
 			result.rejectValue("horaInicio", "Time.sala.horaFin");
 		}
 		if (service.isNombreSalaRepetido(sala)) {
 			result.rejectValue("nombre", "RepeatNombre.sala.nombre");
 		}
 		if (result.hasErrors()) {
-			boolean soloErroresTime = true;
-			for (FieldError error : result.getFieldErrors()) {
-				if (!"horaInicio".equals(error.getField()) && !"horaFin".equals(error.getField())) {
-					soloErroresTime = false;
-				}
-			}
-			if (!soloErroresTime) {
-				model.addAttribute(Atributos.SALA, sala);
-		        return service.irASala(model);
-			} 
+			model.addAttribute(Atributos.SALA, sala);
+	        return service.irASala(model);
 	    }
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
-			service.setHorario(sala, horaInicio, horaFin);
+			service.setHorario(sala, horaApertura, horaCierre);
 			service.guardarSala(model, sala);
 		} else {
 			service.mensajeNoAccesoSalas(model);

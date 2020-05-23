@@ -13,11 +13,19 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 
-	<script type="text/javascript">
+	<script th:inline="javascript">
 		$(function () {
 			$('.dtp').datetimepicker({
 				format: 'HH:mm'
 			});
+			var erroHoraIni = [[${__${@atributos.ERROR_HORA_INI}__}]];
+			var erroHoraFin = [[${__${@atributos.ERROR_HORA_FIN}__}]];
+			if (erroHoraIni) {
+				$("#horaApertura").addClass("border-danger");
+			}
+			if (erroHoraIni) {
+				$("#horaCierre").addClass("border-danger");
+			}
 		});
 	</script>
 </head>
@@ -54,19 +62,19 @@
 			<div class="row">
 				<div class="col">
 					<div class="form-group">
-						<label for="horaInicio">Hora Apertura:</label>
+						<label for="horaApertura">Hora Apertura:</label>
 						<div class="input-group date dtp" id="datetimepicker1" data-target-input="nearest">
-							<input th:value="*{{horaInicio}}" th:field="*{horaInicio}" type="text" class="form-control datetimepicker-input" 
-							 data-target="#datetimepicker1" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+							<input id="horaApertura" name="horaApertura" th:value="${sala.horaInicio}" type="text"
+							 class="form-control datetimepicker-input" data-target="#datetimepicker1" data-toggle="datetimepicker" />
 						</div>
 					</div>
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<label for="horaFin">Hora Cierre:</label>
+						<label for="horaCierre">Hora Cierre:</label>
 						<div class="input-group date dtp" id="datetimepicker2" data-target-input="nearest">
-							<input th:field="*{{horaFin}}" type="text" class="form-control datetimepicker-input" 
-							 data-target="#datetimepicker2" data-toggle="datetimepicker" th:errorclass="border-danger"/>
+							<input id="horaCierre" name="horaCierre" th:value="${sala.horaFin}" type="text"
+							 class="form-control datetimepicker-input" data-target="#datetimepicker2" data-toggle="datetimepicker"/>
 						</div>
 					</div>
 				</div>

@@ -33,6 +33,7 @@ public class FoederisConfig {
 		userLogin = new Usuario();
 		return userLogin;
 	}
+
 	
 	@Bean
 	public SimpleDateFormat timeFormat() {
