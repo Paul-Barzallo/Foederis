@@ -49,4 +49,10 @@ public class Rutas {
 	public static final String ADM_SALA_DESACTI = 		ADM_SALA+DESACTIVAR;
 	public static final String ADM_SALA_GUARDAR = 		ADM_SALA+GUARDAR;
 	public static final String ADM_SALA_ELIMINAR = 		ADM_SALA+ELIMINAR;
+	
+	// Constantes eventos
+	public static final String EVENTOS = 			"/Evento";
+	public static final String EVENTOS_NUEVO = 		EVENTOS+NUEVO;
+	public static final String EVENTOS_GUARDAR = 	EVENTOS+GUARDAR;
+	
 }

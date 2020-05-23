@@ -10,8 +10,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
-
+import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.constantes.Pantallas;
+import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.*;
@@ -61,4 +64,17 @@ public class EventoServiceImpl implements IEventoService {
 	public String toString() {
 		return "EventoServiceImpl [EventoRepository=" + EventoRepository + "]";
 	}
+	
+	@Override
+	public String irANuevoEvento(Model model) {
+		model.addAttribute(Atributos.PANTALLA, Pantallas.EVENTOS);
+		return Vistas.NUEVO_EVENTO;
+	}
+	
+	@Override
+	public void mensajeNoAccesoEventos(Model model) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Aceso Denegado");
+		model.addAttribute(Atributos.ALERTA, "No tiene permisos de acceso a los eventos");
+	}
+	
 }

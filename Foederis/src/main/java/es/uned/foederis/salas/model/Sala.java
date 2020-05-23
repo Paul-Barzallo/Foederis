@@ -38,7 +38,10 @@ public class Sala {
 	private Time horaInicio;
 	private Time horaFin;
 	
-	public Sala() {}
+	public Sala() {
+		this.activa = true;
+		this.aforo = 4;
+	}
 
 	public Sala(String nombre, int aforo, boolean presentacion, boolean megafonia, boolean grabacion, boolean streaming,
 			boolean wifi) {

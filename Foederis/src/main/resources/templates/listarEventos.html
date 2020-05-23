@@ -15,23 +15,31 @@
     <div class="container">
     	<div class="card bg-light">
     	
-    		<div class="card-header">    		
+    		<div class="card-header bg-secondary">   
+    		
+    		
+	    		<div class="d-flex justify-content-between p-3" >
+					<div class="text-white" th:switch="${filtroListado}"> 
+						<h3 th:case="'todos'">Lista de Eventos - Todos</h3>
+						<h3 th:case="'futuro'">Lista de Eventos - Proximos Eventos</h3>
+						<h3 th:case="hoy">Lista de Eventos - Hoy</h3>
+						<h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
+						<h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
+					</div>
+					<a th:href="${@rutas.EVENTOS_NUEVO}" class="btn btn-light btn-sm" role="button">
+						<span class="align-middle">Nuevo Evento</span>
+					</a>
+				</div> 		
     			
-    			<div th:switch="${filtroListado}"> 
-				  <h3 th:case="'todos'">Lista de Eventos - Todos</h3>
-				  <h3 th:case="'futuro'">Lista de Eventos - Proximos Eventos</h3>
-				  <h3 th:case="hoy">Lista de Eventos - Hoy</h3>
-				  <h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
-				  <h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
-				</div>
+    			
     		</div>
     		<div class="card-body">	    			
 		    	<div class="btn-group btn-group-toggle" data-toggle="buttons">		
-		    		 <a th:href="@{listarFiltro?filtroListado=todos}" class="btn btn-secondary btn-sm  " role="button">Ver todos los eventos</a>
-		    		  <a th:href="@{listarFiltro?filtroListado=hoy}" class="btn btn-secondary btn-sm " role="button">Ver los de hoy</a>
-		    		   <a th:href="@{listarFiltro?filtroListado=futuro}" class="btn btn-secondary btn-sm" role="button">Ver los proximos</a>
-		    		   <a th:href="@{listarFiltro?filtroListado=rechazados}" class="btn btn-secondary btn-sm  " role="button">Ver Rechazados</a>			    		   
-		    		   <a th:href="@{listarFiltro?filtroListado=sin}" class="btn btn-secondary btn-sm" role="button">Ver sin Confirmar</a>
+					<a th:href="@{listarFiltro?filtroListado=todos}" class="btn btn-secondary btn-sm  " role="button">Ver todos los eventos</a>
+					<a th:href="@{listarFiltro?filtroListado=hoy}" class="btn btn-secondary btn-sm " role="button">Ver los de hoy</a>
+					<a th:href="@{listarFiltro?filtroListado=futuro}" class="btn btn-secondary btn-sm" role="button">Ver los proximos</a>
+					<a th:href="@{listarFiltro?filtroListado=rechazados}" class="btn btn-secondary btn-sm  " role="button">Ver Rechazados</a>			    		   
+					<a th:href="@{listarFiltro?filtroListado=sin}" class="btn btn-secondary btn-sm" role="button">Ver sin Confirmar</a>
 		    	</div>		
 	    	</div>
    			
@@ -54,7 +62,7 @@
    							<td th:text="${reunion.idEvento}"></td>
    							<td th:text="${reunion.nombre}"></td>
    							<td th:text="${reunion.horarioElegido != null ? #dates.format(reunion.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') : ''}" ></td>
-   							<td th:text="${reunion.salaEvento.id}"></td>
+   							<td th:text="${reunion.salaEvento.idSala}"></td>
 <!--    							<td th:text="${reunion.estado}"></td> -->
    							<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
    							<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">

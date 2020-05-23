@@ -54,6 +54,14 @@
 					</div>
 				</li>
 			</ul>
+				
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+			      	<form th:action="@{/logout}" method="post">
+						<button type="submit" class="btn btn-link px-0 text-light"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+					</form>
+				</li>
+		    </ul>			
 		</nav>
 	</div>
 	
@@ -160,14 +168,44 @@
 	Si no trae alguno de estos 2 variables no se mostrará el boton
 	Debe venir cargado desde el controlador el atributo @atributos.PARAMS_BUSQUEDA
 	 -->
-	<div th:fragment="buscar" class="border border-dark rounded d-flex flex-column mt-5">
+	<div th:fragment="buscar" class="border border-dark rounded d-flex flex-column">
 		<div class="bg-secondary d-flex justify-content-between p-3">
 			<h2 class="text-white mb-0">Buscar</h2>
-			<a th:if="*{ruta} and *{txt_boton}" th:href="*{ruta}" class="btn btn-light btn-sm" role="button">
+			<a th:if="${ruta} and ${txt_boton}" th:href="${ruta}" class="btn btn-light btn-sm" role="button">
 				<span class="align-middle" th:text="*{txt_boton}"></span>
 			</a>
 		</div>
 		<div class="py-lg-4 py-3 px-lg-5 px-3">
+		
+			<div th:if="${isSala}" class="row">
+				<div class="col">
+					<div class="form-group">
+						<div class="d-flex flex-wrap justify-content-around">
+							<div class="custom-control custom-checkbox mx-2">
+								<input id ="presentacion"  name="mediosTecnicos" th:value="${@salaConstantes.PRESENTACION}" class="custom-control-input" type="checkbox">
+								<label for="presentacion" class="custom-control-label" th:text="${@salaConstantes.PRESENTACION}"></label>
+							</div>
+							<div class="custom-control custom-checkbox mx-2">
+								<input id ="megafonia" name="mediosTecnicos" th:value="${@salaConstantes.MEGAFONIA}" class="custom-control-input" type="checkbox">
+								<label for="megafonia" class="custom-control-label" th:text="${@salaConstantes.MEGAFONIA}"></label>
+							</div>
+							<div class="custom-control custom-checkbox mx-2">
+								<input id ="grabacion" name="mediosTecnicos" th:value="${@salaConstantes.GRABACION}" class="custom-control-input" type="checkbox">
+								<label for="grabacion" class="custom-control-label" th:text="${@salaConstantes.GRABACION}"></label>
+							</div>
+							<div class="custom-control custom-checkbox mx-2">
+								<input id ="streaming" name="mediosTecnicos" th:value="${@salaConstantes.STREAMING}" class="custom-control-input" type="checkbox">
+								<label for="streaming" class="custom-control-label" th:text="${@salaConstantes.STREAMING}"></label>
+							</div>
+							<div class="custom-control custom-checkbox mx-2">
+								<input id ="wifi" name="mediosTecnicos" th:value="${@salaConstantes.WIFI}" class="custom-control-input" type="checkbox">
+								<label for="wifi" class="custom-control-label" th:text="${@salaConstantes.WIFI}"></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 			<div class="row">
 				<div class="col-5 col-lg-4 pr-0">
 					<select id="busqueda" class="form-control" required

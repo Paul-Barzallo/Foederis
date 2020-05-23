@@ -16,7 +16,7 @@
 	<script th:inline="javascript">
 		$(function () {
 			$('.dtp').datetimepicker({
-				format: 'HH:mm'
+				format: 'HH:00'
 			});
 			var erroHoraIni = [[${__${@atributos.ERROR_HORA_INI}__}]];
 			var erroHoraFin = [[${__${@atributos.ERROR_HORA_FIN}__}]];
@@ -54,7 +54,7 @@
 				<div class="col-12 col-lg-6">
 					<div class="form-group">
 						<label for="aforo">Aforo:</label>
-						<input th:field="*{aforo}" type="number" class="form-control" th:errorclass="border-danger">
+						<input th:field="*{aforo}" type="number" min="4" max="99" class="form-control" th:errorclass="border-danger">
 					</div>
 				</div>
 			</div>
