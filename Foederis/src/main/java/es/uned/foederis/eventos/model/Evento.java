@@ -30,8 +30,8 @@ public class Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
 	private String nombre;
-	private Timestamp fechaInicio;
-	private Timestamp fechaFin;
+//	private Timestamp fechaInicio;
+//	private Timestamp fechaFin;
 	private int estado;
 	private int idChat;
 	private int idRepositorioCompartido;
@@ -98,18 +98,18 @@ public class Evento {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public Timestamp getFechaInicio() {
-		return fechaInicio;
-	}
-	public void setFechaInicio(Timestamp fechaInicio) {
-		this.fechaInicio = fechaInicio;
-	}
-	public Timestamp getFechaFin() {
-		return fechaFin;
-	}
-	public void setFechaFin(Timestamp fechaFin) {
-		this.fechaFin = fechaFin;
-	}
+//	public Timestamp getFechaInicio() {
+//		return fechaInicio;
+//	}
+//	public void setFechaInicio(Timestamp fechaInicio) {
+//		this.fechaInicio = fechaInicio;
+//	}
+//	public Timestamp getFechaFin() {
+//		return fechaFin;
+//	}
+//	public void setFechaFin(Timestamp fechaFin) {
+//		this.fechaFin = fechaFin;
+//	}
 
 	public int getEstado() {
 		return estado;
