@@ -1,6 +1,7 @@
 package es.uned.foederis.eventos.service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,9 @@ import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.*;
+import es.uned.foederis.salas.model.Sala;
+import es.uned.foederis.salas.repository.ISalaRepository;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 
 public class EventoServiceImpl implements IEventoService {
@@ -25,6 +29,8 @@ public class EventoServiceImpl implements IEventoService {
 	@Autowired
 	private IEventoRepository EventoRepository;
 	
+	@Autowired
+	private ISalaRepository salaRepo;
 	
 	@Override
 	public List<Evento> obtenerEventosFuturos(Date fechaInicio, long usuarioLogado) {
@@ -75,6 +81,33 @@ public class EventoServiceImpl implements IEventoService {
 	public void mensajeNoAccesoEventos(Model model) {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Aceso Denegado");
 		model.addAttribute(Atributos.ALERTA, "No tiene permisos de acceso a los eventos");
+	}
+	
+	/**
+	 * Añade las salas que coincidan con la busqueda al model
+	 * @param model
+	 * @param paramBusq tipos de busqueda: NOMBRE, ...
+	 * @param valorBusq 
+	 */
+	public void cargarSalas(Model model, String paramBusq, String valorBusq) {
+		List<Sala> salas = null;
+		// ponemos el valor de la busqueda en minusculas porque así se guarda en base de datos
+		valorBusq = valorBusq.toLowerCase();
+		
+		switch (paramBusq) {
+		case UsuarioConstantes.NOMBRE:
+			salas = salaRepo.findByNombreContainingAndActivaTrue(valorBusq);
+			break;
+		default:
+			salas = new ArrayList<>();
+			for(Sala sala : salaRepo.findByActivaTrue()) {
+				salas.add(sala);
+			}
+			break;
+		}
+		if (salas!=null) {
+			model.addAttribute(Atributos.SALAS, salas);
+		}
 	}
 	
 }

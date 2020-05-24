@@ -14,4 +14,6 @@ public interface ISalaRepository extends CrudRepository<Sala, Long> {
 
 	Optional<Sala> findByNombre(String nombre);
 	List<Sala> findByNombreContaining(String nombre);
+	List<Sala> findByNombreContainingAndActivaTrue(String nombre);
+	List<Sala> findByActivaTrue();
 }

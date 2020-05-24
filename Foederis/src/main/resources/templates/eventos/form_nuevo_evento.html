@@ -15,7 +15,7 @@
 
 	<script th:inline="javascript">
 	function buscarSalas() {
-		var url = [[${@rutas.ADM_SALA_SALAS_BUSQ}]];
+		var url = [[${@rutas.EVENTOS_BUSQ_SALAS}]];
 		var busqueda = $('#busqueda').val();
 		var valor = $('#valor').val();
 		
@@ -27,15 +27,63 @@
 		if (valor) {
 			url += valor;
 		}
-		$('#tabla_salas').empty();
-		$('#tabla_salas').load(url);
+		$('#lista_salas').empty();
+		$('#lista_salas').load(url, hoverSalas);
 	}
+	
+	function setSala(sala) {
+		$('#inputSala').val($(sala).data("nombre"));
+		$('#idSala').val($(sala).data("idSala"));
+		$('#maxUsuarios').text($(sala).data("aforo"));
+		$('#salasModal').modal('toggle');
+		$('#listaUsuarios').show();
+		$('#filtrarUsuarios').prop("disabled", false);
+		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
+	}
+	
+	function validarMaxUsuarios() {
+		var maxUsuarios = $("#maxUsuarios").text();
+		var nUsuarios = $("#nUsuarios").text();
+		if($(this).is(':checked')) {
+			nUsuarios++;
+			if (maxUsuarios == nUsuarios) {
+				$("#listaUsuarios input:checkbox:not(:checked)").prop('disabled', true);
+			}
+		} else {
+			nUsuarios--;
+			if ((maxUsuarios-1) == nUsuarios) {
+				$("#listaUsuarios input:checkbox:not(:checked)").prop('disabled', false);
+			}
+		}
+		$("#nUsuarios").text(nUsuarios);	
+	}
+	
+	function hoverSalas(){
+		$('#accordion > .card').hover(
+			function(){
+				$(this).children(".card-header").addClass("bg-primary");
+			},
+			function(){
+				$(this).children(".card-header").removeClass("bg-primary");
+			}
+		);
+	}
+	
 	$(function () {
 		$('.dtp').datetimepicker({
-			format: 'HH:00'
+			format: 'DD/MM/YYYY HH:00'
 		});
-		//buscarSalas();
+		$("#listaUsuarios input:checkbox").change(validarMaxUsuarios);
+		$('#listaUsuarios').hide();
+		$('#inputSala').click(buscarSalas);
 		$('#btn_buscar').click(buscarSalas);
+		$('#horario1').addClass('show');
+		$("#filtrarUsuarios").on("keyup", function() {
+			var value = $(this).val().toLowerCase();
+			$("#listaUsuarios li").filter(function() {
+				$(this).toggle($(this).children("div").children("label").text().toLowerCase().indexOf(value) > -1)
+			});
+		});
 	});
 	</script>
 </head>
@@ -53,6 +101,7 @@
 				
 		    <input type="hidden" th:field="*{idEvento}"> 
 		    <input type="hidden" th:field="*{estado}"> 
+		    <input type="hidden" id="idSala" name="idSala"> 
 
 			<div class="form-group">
 				<label for="nombre">Nombre:</label>
@@ -61,114 +110,57 @@
 			
 			<div class="form-group">
 				<label for="nombre">Sala:</label>
-				<input type="text" class="form-control" data-toggle="modal" data-target="#myModal" maxlength="0">
+				<input id="inputSala" type="text" class="form-control" data-toggle="modal" data-target="#salasModal" readonly>
+			</div>
+			
+			<div class="form-group">
+				<label>Usuarios: <span id="nUsuarios">0</span>/<span id="maxUsuarios">0</span></label>
+				<input class="form-control" id="filtrarUsuarios" type="text" placeholder="Primero seleccione una sala" disabled>
+				<ul class="list-group" id="listaUsuarios">
+					<li th:each="usuario : ${__${@atributos.USUARIOS}__}" class="list-group-item">
+						<div class="ml-3">
+							<input th:id="${'usuario'+usuario.idUsuario}" name="usuarios" th:value="${usuario.idUsuario}"
+							 class="custom-control-input" type="checkbox">
+							<label th:for="${'usuario'+usuario.idUsuario}" class="custom-control-label"
+							 th:text="${#strings.capitalizeWords(usuario.nombre)+' '+#strings.capitalizeWords(usuario.apellidos)}">
+							</label>
+						</div>
+						
+					</li>
+				</ul>
+			</div>
+			
+			<label>Horarios:</label>
+			<div id="accordion" class="mb-3">
+				<div th:with="n=${1}" th:insert="fragmentos :: horario"></div>
+				<div th:with="n=${2}" th:insert="fragmentos :: horario"></div>
+				<div th:with="n=${3}" th:insert="fragmentos :: horario"></div>
 			</div>
 
-			<!-- Modal con la busqueda y selección de sala -->
-			<div class="modal fade" id="myModal">
-				<div class="modal-dialog modal-xl">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title">Salas</h4>
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-						</div>
-						
-						<div class="modal-body">
-							<div th:with="isSala=${'true'}, ruta=${'false'}" th:insert="fragmentos :: buscar"></div>
-   							
-   							<div th:if="${__${@atributos.SALAS}__}" class="border border-dark rounded my-5">
-   							
-   								<ul class="list-group">
-									<li class="list-group-item d-flex justify-content-between align-items-center">
-										Inbox
-										<span class="badge badge-primary badge-pill">12</span>
-									</li>
-								</ul>
-								
-								<div id="accordion">
-									<div class="card">
-										<div class="card-header">
-											<a class="card-link" data-toggle="collapse" href="#collapseOne">
-												Collapsible Group Item #1
-											</a>
-											<span class="badge badge-primary badge-pill">12</span>
-										</div>
-										<div id="collapseOne" class="collapse show" data-parent="#accordion">
-											<div class="card-body">
-												Lorem ipsum..
-											</div>
-										</div>
-									</div>
-								</div>
-   							
-   							
-   							
-								<table class="table table-striped mb-0 text-center">
-									<thead>
-										<tr>
-											<th>#</th>
-											<th th:text="${@salaConstantes.NOMBRE}"></th>
-											<th th:text="${@salaConstantes.AFORO}"></th>
-											<th th:text="${@salaConstantes.HORARIO}"></th>
-											<th th:text="${@salaConstantes.PRESENTACION}"></th>
-											<th th:text="${@salaConstantes.MEGAFONIA}"></th>
-											<th th:text="${@salaConstantes.GRABACION}"></th>
-											<th th:text="${@salaConstantes.STREAMING}"></th>
-											<th th:text="${@salaConstantes.WIFI}"></th>
-											<th class="pr-2"><span class="d-flex justify-content-center">Seleccionar</span></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr th:each="sala,i : ${__${@atributos.SALAS}__}" th:class="${sala.activa}? '' : 'text-muted'">
-											<td class="align-middle" th:text="${i.count}"></td>
-											<td class="align-middle" th:text="${#strings.capitalizeWords('__${sala.nombre}__')}"></td>
-											<td class="align-middle" th:text="${sala.aforo}"></td>
-											<td th:if="${sala.horaInicio} == ${sala.horaFin}" class="align-middle">Abierto 24h</td>
-											<td th:if="${sala.horaInicio} != ${sala.horaFin}" class="align-middle"
-											th:text="${#dates.format(sala.horaInicio,'HH:mm')+' - '+#dates.format(sala.horaFin,'HH:mm')}"></td>
-											<td class="align-middle" th:text="${sala.presentacion}? 'Si' : 'No'"></td>
-											<td class="align-middle" th:text="${sala.megafonia}? 'Si' : 'No'"></td>
-											<td class="align-middle" th:text="${sala.grabacion}? 'Si' : 'No'"></td>
-											<td class="align-middle" th:text="${sala.streaming}? 'Si' : 'No'"></td>
-											<td class="align-middle" th:text="${sala.wifi}? 'Si' : 'No'"></td>
-											<td th:with="id=${sala.idSala}, activo=${sala.activa}" th:insert="fragmentos :: acciones"></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						
-						
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col">
-					<div class="form-group">
-						<label for="horaApertura">Hora Apertura:</label>
-						<div class="input-group date dtp" id="datetimepicker1" data-target-input="nearest">
-							<input id="horaApertura" name="horaApertura" th:value="${sala.horaInicio}" type="text"
-							 class="form-control datetimepicker-input" data-target="#datetimepicker1" data-toggle="datetimepicker" />
-						</div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="form-group">
-						<label for="horaCierre">Hora Cierre:</label>
-						<div class="input-group date dtp" id="datetimepicker2" data-target-input="nearest">
-							<input id="horaCierre" name="horaCierre" th:value="${sala.horaFin}" type="text"
-							 class="form-control datetimepicker-input" data-target="#datetimepicker2" data-toggle="datetimepicker"/>
-						</div>
-					</div>
-				</div>
-			</div>
-			
 			<div th:insert="fragmentos :: guardar-salir"></div>
         </form>
 	</div>
+	
+	<!-- Modal con la busqueda y selección de sala -->
+	<div class="modal fade" id="salasModal">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Salas</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<div class="modal-body">
+					<div th:with="isSala=${'true'}, ruta=${'false'}" th:insert="fragmentos :: buscar"></div>
+					<div id="lista_salas" class="my-5"></div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 </body>
 </html>

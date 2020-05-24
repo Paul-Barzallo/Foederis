@@ -3,6 +3,7 @@ package es.uned.foederis.eventos.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
@@ -24,6 +27,7 @@ import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.repository.IHorarioRepository;
 import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.salas.model.Sala;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
 import es.uned.foederis.sesion.repository.IUsuarioRepository;;
@@ -49,6 +53,9 @@ public class EventosController {
 
 	@Autowired
 	private Usuario user;
+	
+	@Autowired
+	private AdministracionService administracionService;
 
 	//** Ver evento.HTML ***//
 
@@ -254,10 +261,36 @@ public class EventosController {
 		if (user.isJefeProyecto()) {
 			Evento evento = new Evento();
 			model.addAttribute(Atributos.EVENTO, evento);
+			administracionService.cargarParamsBusqSalas(model);
+			administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO, Long.toString(UsuarioConstantes.ROL_ADMIN));
 			return eventoService.irANuevoEvento(model);
 		}
 		eventoService.mensajeNoAccesoEventos(model);
 		return Vistas.HOME;
+	}
+	
+	/**
+	 * Peticion ajax que busca las salas activas que coincidan con los parametros de busqueda
+	 * La busqueda no es case sensitive
+	 * Se busca que contenga el valor escrito no que empiece por el
+	 * @param model
+	 * @param paramBusq
+	 * @param valorBusq
+	 * @return
+	 */
+	@GetMapping(Rutas.BUSQ_SALAS)
+	@ResponseBody
+	public ModelAndView ajaxSalas(Model model, Optional<String> paramBusq, Optional<String> valorBusq) {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isJefeProyecto()) {
+			String parametro = (paramBusq.isPresent())? paramBusq.get() : "";
+			String valor = (valorBusq.isPresent())? valorBusq.get() : "";
+			// se cargan las salas, si los valores de busqueda estan vacios se carga la lista completa
+			eventoService.cargarSalas(model, parametro, valor);
+			return new ModelAndView("fragmentos :: lista_salas");
+		} 
+		administracionService.mensajeNoAccesoSalas(model);;
+		return new ModelAndView(Vistas.HOME);
 	}
 
 }

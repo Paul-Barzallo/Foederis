@@ -57,5 +57,7 @@ public interface IEventoService {
 	public String irANuevoEvento(Model model);
 	
 	public void mensajeNoAccesoEventos(Model model);
+	
+	public void cargarSalas(Model model, String paramBusq, String valorBusq);
 
 }
