@@ -273,7 +273,9 @@
 		<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">
 			<ul class="list-group" style="height: 100%; overflow-y: auto">
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
-					<span th:text="${chat.idUsuario.username}">
+					<span class="d-flex justify-content-between bg-info mb-3">
+						<div th:text="${chat.idUsuario.username}"/>
+						<div th:text="${#dates.format(chat.timestamp, 'dd-MM-yyyy HH:mm:ss')}"/>
 					</span>
 						<p th:text="${chat.texto}">
 					</p>
@@ -296,6 +298,7 @@
 						<a th:href="@{/chat/download/file?filename=} + ${file.nombreArchivo}" th:text="${file.nombreArchivo}"></a>
 					</td>
 					<td class="align-middle" th:text="${file.idUsuario.username}"></td>
+					<td class="align-middle" th:text="${#dates.format(file.timestamp, 'dd-MM-yyyy HH:mm:ss')}"></td>
 				</tr>
 			</tbody>
 		</table>

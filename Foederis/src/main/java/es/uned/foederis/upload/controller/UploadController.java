@@ -40,6 +40,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -105,7 +107,11 @@ public class UploadController {
 
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            File directory = new File(Archivos.UPLOADED_FOLDER + eventId);
+            File directory = new File(Archivos.UPLOADED_FOLDER);
+            if (! directory.exists()){
+                directory.mkdir();
+            }
+            directory = new File(Archivos.UPLOADED_FOLDER + eventId);
             if (! directory.exists()){
                 directory.mkdir();
             }
@@ -113,7 +119,7 @@ public class UploadController {
             Path path = Paths.get(Archivos.UPLOADED_FOLDER + eventId + "//" + file.getOriginalFilename());
             Files.write(path, bytes);
 
-            Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
+            Message_ = "Fichero '" + file.getOriginalFilename() + "' subido correctamente.";
             
             CreateFileEntity(path, eventId, userId, model);
             
@@ -136,7 +142,11 @@ public class UploadController {
     }
 
     private void CreateFileEntity(Path pathFile, int eventId, String userId, Model model) {
-		// Localizar el evento en la BD
+    	
+    	// Generar timestap del momento de la subida
+    	Timestamp timestamp = new Timestamp((new Date()).getTime());
+    	
+    	// Localizar el evento en la BD
     	Evento ev = eventService_.getEventById(eventId);
 
 		if (myUserService_.cargarUsuario(model, Long.parseLong(userId))) {
@@ -147,6 +157,7 @@ public class UploadController {
 			file.setIdEvento(ev);
 			file.setNombreArchivo(pathFile.toString());
 			file.setIdUsuario(usr);
+			file.setTimestamp(timestamp);
 
 			myFileService_.createFile(file);
 

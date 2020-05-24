@@ -20,10 +20,19 @@ public class Archivo {
 	private int idArchivo;
 	
 	private String		nombreArchivo;
-	
+	private Timestamp 	timestamp;
+
 	//foreign key
     
-    @ManyToOne
+    public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	@ManyToOne
     @JoinColumn(name="id_evento", nullable=false)
 	private Evento idEvento;
 	
@@ -65,7 +74,7 @@ public class Archivo {
 
 	@Override
 	public String toString() {
-		return "Archivo [idArchivo=" + idArchivo + ", nombreArchivo=" + nombreArchivo + ", idEvento=" + idEvento.toString() + "]";
+		return "Archivo [idArchivo=" + idArchivo + ", nombreArchivo=" + nombreArchivo + ", idEvento=" + idEvento.toString() + ", Timestamp=" + timestamp.toString() + "]";
 	}
     
 }
