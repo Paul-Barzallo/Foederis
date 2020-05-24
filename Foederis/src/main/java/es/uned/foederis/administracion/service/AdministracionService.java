@@ -40,6 +40,7 @@ public class AdministracionService {
 	 
 	@Autowired
 	private IUsuarioRepository userRepo;
+	
 	@Autowired
 	private ISalaRepository salaRepo;
 	
@@ -117,6 +118,11 @@ public class AdministracionService {
 		case UsuarioConstantes.USERNAME:
 			usuarios = userRepo.findByUsernameContaining(valorBusq);
 			break;
+		case UsuarioConstantes.ESTADO:
+			Rol rol = new Rol();
+			rol.setIdRol(Long.parseLong(valorBusq));
+			usuarios = userRepo.findByRolLessThanAndActivoTrue(rol);
+			break;
 		default:
 			usuarios = new ArrayList<>();
 			for(Usuario usuario : userRepo.findAll()) {
@@ -132,7 +138,7 @@ public class AdministracionService {
 	/**
 	 * Añade las salas que coincidan con la busqueda al model
 	 * @param model
-	 * @param paramBusq tipos de busqueda: NOMBRE, USERNAME, ROL, ...
+	 * @param paramBusq tipos de busqueda: NOMBRE, ...
 	 * @param valorBusq 
 	 */
 	public void cargarSalas(Model model, String paramBusq, String valorBusq) {

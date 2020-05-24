@@ -44,7 +44,7 @@ public class UsuarioController {
 			return service.irAUsuarios(model);
 		} 
 		service.mensajeNoAccesoUsuarios(model);
-		return "redirect:"+Vistas.HOME;
+		return Vistas.HOME;
 		
 	}
 	

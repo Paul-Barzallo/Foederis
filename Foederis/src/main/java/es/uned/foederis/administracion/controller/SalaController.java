@@ -49,7 +49,7 @@ public class SalaController {
 			return service.irASalas(model);
 		} 
 		service.mensajeNoAccesoSalas(model);
-		return "redirect:"+Vistas.HOME;
+		return Vistas.HOME;
 		
 	}
 	
@@ -58,8 +58,8 @@ public class SalaController {
 	 * La busqueda no es case sensitive
 	 * Se busca que contenga el valor escrito no que empiece por el
 	 * @param model
-	 * @param busqueda
-	 * @param valor
+	 * @param paramBusq
+	 * @param valorBusq
 	 * @return
 	 */
 	@GetMapping(Rutas.BUSQ_SALAS)

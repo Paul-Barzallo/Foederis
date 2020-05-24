@@ -1,6 +1,5 @@
 package es.uned.foederis.eventos.model;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +25,8 @@ public class Evento {
 	private int idEvento;
 	@NotBlank
 	private String nombre;
-	private Timestamp fechaInicio;
-	private Timestamp fechaFin;
+//	private Timestamp fechaInicio;
+//	private Timestamp fechaFin;
 	@NotNull
 	private boolean estado;
 	private int idChat;
@@ -94,21 +93,18 @@ public class Evento {
 		this.nombre = nombre;
 	}
 
-	public Timestamp getFechaInicio() {
-		return fechaInicio;
-	}
-	
-	public void setFechaInicio(Timestamp fechaInicio) {
-		this.fechaInicio = fechaInicio;
-	}
-	
-	public Timestamp getFechaFin() {
-		return fechaFin;
-	}
-	
-	public void setFechaFin(Timestamp fechaFin) {
-		this.fechaFin = fechaFin;
-	}
+//	public Timestamp getFechaInicio() {
+//		return fechaInicio;
+//	}
+//	public void setFechaInicio(Timestamp fechaInicio) {
+//		this.fechaInicio = fechaInicio;
+//	}
+//	public Timestamp getFechaFin() {
+//		return fechaFin;
+//	}
+//	public void setFechaFin(Timestamp fechaFin) {
+//		this.fechaFin = fechaFin;
+//	}
 
 	public boolean getEstado() {
 		return estado;
