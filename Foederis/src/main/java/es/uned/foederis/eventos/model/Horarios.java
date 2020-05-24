@@ -22,7 +22,7 @@ public class Horarios {
 	private Timestamp Horario_Fecha_Fin;
 	
 	@ManyToOne
-    @JoinColumn(name="idEvento", nullable=false)
+    @JoinColumn(name="idEvento")
 	private Evento idEvento;
 	
 	//Get y Set

@@ -23,11 +23,11 @@ public class Chat {
 	
 	
     @ManyToOne
-    @JoinColumn(name="id_evento", nullable=false)
+    @JoinColumn(name="id_evento"/*, nullable=false*/)
 	private Evento idEvento;
 	
     @ManyToOne
-    @JoinColumn(name="id_usuario", nullable=false)
+    @JoinColumn(name="id_usuario"/*, nullable=false*/)
     private Usuario idUsuario;
     
 	// getters, setters

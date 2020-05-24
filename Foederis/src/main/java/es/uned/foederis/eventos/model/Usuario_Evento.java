@@ -25,7 +25,7 @@ public class Usuario_Evento {
 	private int idUsuarioEvento;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="id", nullable=false )
+    @JoinColumn(name="id")
 	private Usuario idUsuario;
 	
 	@ManyToOne(cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)

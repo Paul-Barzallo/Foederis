@@ -33,7 +33,7 @@
 	
 	function setSala(sala) {
 		$('#inputSala').val($(sala).data("nombre"));
-		$('#idSala').val($(sala).data("idSala"));
+		$('#idSala').val($(sala).data("idsala"));
 		$('#maxUsuarios').text($(sala).data("aforo"));
 		$('#salasModal').modal('toggle');
 		$('#listaUsuarios').show();
@@ -99,12 +99,11 @@
 		        </ul>
 		    </div>
 				
-		    <input type="hidden" th:field="*{idEvento}"> 
 		    <input type="hidden" th:field="*{estado}"> 
 		    <input type="hidden" id="idSala" name="idSala"> 
 
 			<div class="form-group">
-				<label for="nombre">Nombre:</label>
+				<label for="nombre">Titulo:</label>
 				<input th:field="*{nombre}" type="text" class="form-control" th:errorclass="border-danger">
 			</div>
 			

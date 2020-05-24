@@ -35,9 +35,15 @@ public class FoederisConfig {
 	}
 
 	
-	@Bean
+	@Bean("timeFormat")
 	public SimpleDateFormat timeFormat() {
 		sdf = new SimpleDateFormat("HH:mm");
+		return sdf;
+	}
+	
+	@Bean("dateTimeFormat")
+	public SimpleDateFormat dateTimeFormat() {
+		sdf = new SimpleDateFormat("DD/MM/YYY HH:mm");
 		return sdf;
 	}
 	

@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.sesion.model.Usuario;
 
@@ -29,7 +30,9 @@ public class Evento {
 //	private Timestamp fechaFin;
 	@NotNull
 	private boolean estado;
-	private int idChat;
+	@OneToOne
+	@JoinColumn(name="id_chat")
+	private Chat chat;
 	private int idRepositorioCompartido;
 	@NotNull
 	@OneToOne
@@ -114,12 +117,12 @@ public class Evento {
 		this.estado = estado;
 	}
 	
-	public int getIdChat() {
-		return idChat;
+	public Chat getChat() {
+		return chat;
 	}
 	
-	public void setIdChat(int idChat) {
-		this.idChat = idChat;
+	public void setChat(Chat chat) {
+		this.chat = chat;
 	}
 	
 	public int getIdRepositorioCompartido() {

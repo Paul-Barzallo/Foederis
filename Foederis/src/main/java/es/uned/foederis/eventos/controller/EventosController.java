@@ -1,15 +1,23 @@
 package es.uned.foederis.eventos.controller;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,15 +26,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.administracion.service.AdministracionService;
+import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
+import es.uned.foederis.eventos.repository.IEventoRepository;
 import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.repository.IHorarioRepository;
 import es.uned.foederis.eventos.service.IEventoService;
+import es.uned.foederis.salas.model.Sala;
+import es.uned.foederis.salas.repository.ISalaRepository;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
@@ -41,9 +53,15 @@ public class EventosController {
 
 	@Autowired
 	private IRolRepository rolRepo; 
+	
+	@Autowired
+	private ISalaRepository salaRepo; 
 
 	@Autowired
 	private IEventoUsuarioRepository eventoUsuarioRepo;
+	
+	@Autowired
+	private IEventoRepository eventoRepo;
 
 	@Autowired
 	IUsuarioRepository usuRepo;
@@ -56,6 +74,10 @@ public class EventosController {
 
 	@Autowired
 	private AdministracionService administracionService;
+	
+	@Autowired
+	@Qualifier("dateTimeFormat")
+	private SimpleDateFormat dateTimeFormat;
 
 	//** Ver evento.HTML ***//
 
@@ -296,8 +318,79 @@ public class EventosController {
 			eventoService.cargarSalas(model, parametro, valor);
 			return new ModelAndView("fragmentos :: lista_salas");
 		} 
-		administracionService.mensajeNoAccesoSalas(model);;
+		eventoService.mensajeNoAccesoEventos(model);
 		return new ModelAndView(Vistas.HOME);
 	}
 
+	/**
+	 * Guarda la nueva información del evento en la db
+	 * @param model
+	 * @param evento
+	 * @param result errores de validación del formulario
+	 * @return
+	 * @throws ParseException 
+	 */
+	@PostMapping(Rutas.GUARDAR)
+	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento/*, long idSala, long[] usuarios, String horarioApertura1, String horarioCierre*/) throws ParseException {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isJefeProyecto()) {
+			String idSala = request.getParameter("idSala");
+			String[] usuarios = request.getParameterValues("usuarios");
+			String hApertura1 = request.getParameter("horarioApertura1");
+			String hApertura2 = request.getParameter("horarioApertura2");
+			String hApertura3 = request.getParameter("horarioApertura3");
+			String hCierre1 = request.getParameter("horarioCierre1");
+			String hCierre2 = request.getParameter("horarioCierre2");
+			String hCierre3 = request.getParameter("horarioCierre3");
+			
+			Chat chat = new Chat();
+			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
+			List<Horarios> horarios = new ArrayList<>();
+			
+			for (String idUsuario : usuarios) {
+				Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
+				Usuario_Evento usuarioEvento = new Usuario_Evento();
+				usuarioEvento.setIdUsuario(usuario);
+				usuariosEvento.add(usuarioEvento);
+			}
+			
+			if (hApertura1!=null && hCierre1!=null) {
+				Horarios horario = new Horarios();
+				long ms = dateTimeFormat.parse(hApertura1).getTime();
+				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
+				ms = dateTimeFormat.parse(hCierre1).getTime();
+				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horarios.add(horario);
+			}
+			
+			if (hApertura2!=null && hCierre2!=null) {
+				Horarios horario = new Horarios();
+				long ms = dateTimeFormat.parse(hApertura2).getTime();
+				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
+				ms = dateTimeFormat.parse(hCierre2).getTime();
+				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horarios.add(horario);
+			}
+			
+			if (hApertura3!=null && hCierre3!=null) {
+				Horarios horario = new Horarios();
+				long ms = dateTimeFormat.parse(hApertura3).getTime();
+				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
+				ms = dateTimeFormat.parse(hCierre3).getTime();
+				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horarios.add(horario);
+			}
+			
+			evento.setEventosDelUsuario(usuariosEvento);
+			evento.setHorarios(horarios);
+			evento.setChat(chat);
+			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
+			evento.setUsuarioCreador(user);
+			eventoRepo.save(evento);
+		} else {
+			eventoService.mensajeNoAccesoEventos(model);
+		}
+		return Vistas.HOME;
+	}
+	
 }

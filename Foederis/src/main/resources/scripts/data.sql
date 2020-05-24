@@ -34,14 +34,22 @@ VALUES
 	(12, 'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1, TRUE)
 ;
 
+insert into chat
+	(id_chat)
+values
+	(1),
+	(2),
+	(3),
+	(4)
+;
+
 insert into Evento
 	( id_evento, nombre, usuario_creador_id, sala_Evento_id, id_chat, id_repositorio_compartido, estado)
 values
 	(0,			'Evento 1', 1, 2, 1, 1,0),
 	(1,			'Evento 2', 3, 2, 2, 2,0),
-	(2,			'Evento 3', 4, 2, 2, 2,0),
-	(3,			'Evento 2', 5, 2, 2, 2,0)
-		
+	(2,			'Evento 3', 4, 2, 3, 2,0),
+	(3,			'Evento 2', 5, 2, 4, 2,0)
 ;
 
 insert into Usuario_Evento
