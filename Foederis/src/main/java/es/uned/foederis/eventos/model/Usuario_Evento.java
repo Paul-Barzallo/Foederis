@@ -35,7 +35,7 @@ public class Usuario_Evento {
 	//VAlores -1 aun sin confirmar, 0 no confirma, 1 si confirma
 	private int confirmado;
 	private boolean asistente;
-	private boolean presencial;
+	private boolean presencial; 
 	
 	@OneToOne
 	@JoinColumn(name="horario")
