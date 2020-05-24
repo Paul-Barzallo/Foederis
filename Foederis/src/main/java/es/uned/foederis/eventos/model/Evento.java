@@ -21,13 +21,13 @@ import es.uned.foederis.sesion.model.Usuario;
 
 @Entity
 public class Evento {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
 	@NotBlank
 	private String nombre;
-//	private Timestamp fechaInicio;
-//	private Timestamp fechaFin;
+
 	@NotNull
 	private boolean estado;
 	@OneToOne
@@ -41,11 +41,14 @@ public class Evento {
 	@NotNull
 	@OneToOne
 	@JoinColumn(name="sala_Evento_id")
-	private Sala salaEvento;	
+	private Sala salaEvento;
+	
 	@OneToMany(mappedBy="idEvento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	public List<Horarios> lstHorarios;
+		
 	@OneToMany(mappedBy="evento", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Usuario_Evento> eventosDelUsuario = new ArrayList<Usuario_Evento>();
+	
 	@OneToOne
 	@JoinColumn(name="idHorario")
 	private Horarios horarioElegido;
@@ -62,6 +65,7 @@ public class Evento {
 	}
 	
 	//Get y Set
+
 	public Horarios getHorarioElegido() {
 		return horarioElegido;
 	}
@@ -79,23 +83,18 @@ public class Evento {
     	eventosDelUsuario.remove(comment);
         comment.setEvento(this);
     }		
-
 	public int getIdEvento() {
 		return idEvento;
 	}
-	
 	public void setIdEvento(int idEvento) {
 		this.idEvento = idEvento; 
 	}
-	
 	public String getNombre() {
 		return nombre;
 	}
-	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
 //	public Timestamp getFechaInicio() {
 //		return fechaInicio;
 //	}
@@ -124,15 +123,12 @@ public class Evento {
 	public void setChat(Chat chat) {
 		this.chat = chat;
 	}
-	
 	public int getIdRepositorioCompartido() {
 		return idRepositorioCompartido;
 	}
-	
 	public void setIdRepositorioCompartido(int idRepositorioCompartido) {
 		this.idRepositorioCompartido = idRepositorioCompartido;
 	}
-	
 	public Sala getSalaEvento() {
 		return salaEvento;
 	}
@@ -152,8 +148,29 @@ public class Evento {
 	public List<Usuario_Evento> getEventosDelUsuario() {
 		return eventosDelUsuario;
 	}
-
+	
+	public int getEventosDelUsuarioTotal() {
+		return eventosDelUsuario.size();
+	}
+	
+	/**
+	 * Devuelve un entero con el total de usuarios confirmados al evento.
+	 * @return total usuarios confirmados al evento
+	 */
+	public int getEventosDelUsuarioConfirmados() {
+		
+		int totalConfirmados=0;
+		for(Usuario_Evento aux: eventosDelUsuario) {
+			if(aux.getConfirmado()==1) {
+				totalConfirmados += 1;
+			}
+		}
+		
+		return totalConfirmados;
+	}
+	
 	public Usuario_Evento getEventoDeUnUsuario(long idUsuario) {
+		
 		for(Usuario_Evento aux: eventosDelUsuario) {
 			if(aux.getIdUsuario().getIdUsuario() == idUsuario)
 				return aux;
@@ -172,5 +189,4 @@ public class Evento {
 	public void setHorarios(List<Horarios> lstHorarios) {
 		this.lstHorarios = lstHorarios;
 	}
-
 }

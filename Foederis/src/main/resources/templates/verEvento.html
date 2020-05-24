@@ -26,11 +26,10 @@
     					<table style="table-layout: fixed; width: 100%" class="table table-striped">
  					   		<tbody>
 		   						<tr rowspan= "2">
-		   							<td><label style="color:#007bff;">Id evento:</label></td>
-<!-- 		   							<td th:text="*{idEvento}" readonly></td>  	 -->
-									<td>
+<!-- 		   							<td><label style="color:#007bff;">Id evento:</label></td> -->
+<!-- 									<td> -->
 									 	<input type="hidden" th:field="*{idEvento}">
-									</td>
+<!-- 									</td> -->
 		   						</tr> 
 		   						<tr>
 		   							<td ><label style="color:#007bff;">Nombre:</label></td>
@@ -42,10 +41,27 @@
 		   							<td th:text="*{UsuarioCreador.username}" readonly></td>
 		   							
 		   							<td><label style="color:#007bff;">Sala:</label></td>
-		   							<td th:text="*{salaEvento.idSala}" readonly></td>
-		   						</tr>  	
+		   							<td>
+		   								<a th:href="@{verSala?id=} +  *{salaEvento.idSala}" class="btn btn-outline-primary btn-block"  th:text="*{salaEvento.idSala}"></a>
+		   							
+		   							</td>
+		   							
+<!-- 		   							<td><a th:href="@{/verSala(id=${eventoSeleccionado.salaEvento.idSala})}"class="btn btn-outline-secondary btn-block" th:text="*{salaEvento.idSala}"></a></td> -->
+<!-- 		   							<td th:text="*{salaEvento.idSala}" readonly></td> -->
+		   						</tr> 
+		   						<tr>
+		   							<td><label style="color:#007bff;">Presencial:</label></td>
+		   							<td>
+		   								<input type="checkbox" th:name="checkPresencial" class="form-check-input" th:checked="${usuarioEventoSeleccionado.presencial}"/>
+		   							</td>
+		   							
+		   							<td><label style="color:#007bff;">Asistencia confirmada:</label></td>
+		   							<td>
+		   								<input type="checkbox" name="checkAsistente" class="form-check"  th:checked="${usuarioEventoSeleccionado.asistente}" disabled/>		   								
+		   							</td>
+		   						</tr> 	
 		   						<tr>		   							
-	   								<div th:if= "*{horarioElegido == null}"> 
+	   								<div th:if= "${usuarioEventoSeleccionado.horario== null && eventoSeleccionado.horarioElegido== null}"> 
 
 										<td colspan="1">
 											<label style="color:#007bff;">Opciones de horario:</label>										
@@ -75,20 +91,29 @@
    							</tbody>
    							<tfoot>
 		   						</br>
-		   						<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario != userLogin.idUsuario}">
+		   						
+		   						<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario != userLogin.idUsuario && eventoSeleccionado.horarioElegido == null && usuarioEventoSeleccionado.horario== null}">
 		   							<td colspan = "2">   							
 		   								<a th:href="@{baja?id=} + ${eventoSeleccionado.idEvento}" class="btn btn-outline-primary btn-block" >Darme de Baja</a>
 		   							</td>
 		   							
 		   							<td colspan = "2">  
-		   								<button class="btn btn-outline-primary btn-block" type="submit">Confirmar Asistencia</button>
+		   								<button class="btn btn-outline-primary btn-block" type="submit">Confirmar</button>
 		   							 							
 <!-- 		   							<a th:href="@{confirmar?idEv=}+ ${eventoSeleccionado.idEvento}" class="btn btn-outline-primary btn-block" >Confirmar Asistencia</a> -->
 		   							</td>		   						
+		   						</tr>
+
+		   						<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
+		   							<td><label style="color:#007bff;">Inscritos:</label></td>
+		   							<td th:text="${eventoSeleccionado.getEventosDelUsuarioTotal() + '-' + eventoSeleccionado.getEventosDelUsuarioConfirmados()}"></td>
+			   							
 		   						</tr>   						
 		   					</tfoot>
     					</table> 
     				</form>
+    				
+    				
     			</div>	
 	        </div>
         </div>
