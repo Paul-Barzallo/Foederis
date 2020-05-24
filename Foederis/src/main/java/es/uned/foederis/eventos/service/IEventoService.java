@@ -22,17 +22,17 @@ public interface IEventoService {
 	 * 
 	 * @return
 	 */
-	List<Evento> ObtenerEventos(long idUsuario);
+//	List<Evento> ObtenerEventos(long idUsuario);
 	
 	/**
 	 * Recupera la lista completa de eventos por fecha
 	 * 
 	 * @return
 	 */	
-
-	List<Evento> obtenerEventosFuturos(Date fechaInicio,long idUsuario);
-	
-	List<Evento> obtenerEventosHoy(Date fechaInicio,long idUsuario);
+//
+//	List<Evento> obtenerEventosFuturos(Date fechaInicio,long idUsuario);
+//	
+//	List<Evento> obtenerEventosHoy(Date fechaInicio,long idUsuario);
 	
 	
 	
