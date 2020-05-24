@@ -15,7 +15,6 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.sesion.model.Usuario;
 
@@ -30,10 +29,12 @@ public class Evento {
 
 	@NotNull
 	private boolean estado;
+	/*
 	@OneToOne
 	@JoinColumn(name="id_chat")
 	private Chat chat;
 	private int idRepositorioCompartido;
+	*/
 	@NotNull
 	@OneToOne
 	@JoinColumn(name="usuario_creador_id")
@@ -116,19 +117,6 @@ public class Evento {
 		this.estado = estado;
 	}
 	
-	public Chat getChat() {
-		return chat;
-	}
-	
-	public void setChat(Chat chat) {
-		this.chat = chat;
-	}
-	public int getIdRepositorioCompartido() {
-		return idRepositorioCompartido;
-	}
-	public void setIdRepositorioCompartido(int idRepositorioCompartido) {
-		this.idRepositorioCompartido = idRepositorioCompartido;
-	}
 	public Sala getSalaEvento() {
 		return salaEvento;
 	}

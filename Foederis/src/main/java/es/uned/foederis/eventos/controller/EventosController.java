@@ -400,7 +400,7 @@ public class EventosController {
 			
 			evento.setEventosDelUsuario(usuariosEvento);
 			evento.setHorarios(horarios);
-			evento.setChat(chat);
+//			evento.setChat(chat);
 			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
 			evento.setUsuarioCreador(user);
 			eventoRepo.save(evento);
