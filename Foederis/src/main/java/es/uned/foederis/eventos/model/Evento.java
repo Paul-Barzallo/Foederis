@@ -31,8 +31,7 @@ public class Evento {
 	private int idEvento;
 	@NotBlank
 	private String nombre;
-//	private Timestamp fechaInicio;
-//	private Timestamp fechaFin;
+
 	@NotNull
 	private boolean estado;
 	private int idChat;
@@ -152,6 +151,22 @@ public class Evento {
 	
 	public int getEventosDelUsuarioTotal() {
 		return eventosDelUsuario.size();
+	}
+	
+	/**
+	 * Devuelve un entero con el total de usuarios confirmados al evento.
+	 * @return total usuarios confirmados al evento
+	 */
+	public int getEventosDelUsuarioConfirmados() {
+		
+		int totalConfirmados=0;
+		for(Usuario_Evento aux: eventosDelUsuario) {
+			if(aux.getConfirmado()==1) {
+				totalConfirmados += 1;
+			}
+		}
+		
+		return totalConfirmados;
 	}
 	
 	public Usuario_Evento getEventoDeUnUsuario(long idUsuario) {

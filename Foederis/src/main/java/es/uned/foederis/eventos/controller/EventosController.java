@@ -27,6 +27,7 @@ import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.repository.IHorarioRepository;
 import es.uned.foederis.eventos.service.IEventoService;
+import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
@@ -66,6 +67,21 @@ public class EventosController {
 	public void iniciarUsuario(){
 		 user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
+	
+//	@GetMapping("/verSala")
+//    public ModelAndView verSala(@RequestParam(value="id") Sala sala) { 
+//		
+////		 modelMap.put("sala", sala.getIdSala());
+//	
+//	 	ModelAndView mav = new ModelAndView();	 	  	   
+//	 
+////	 	mav.addObject("salas", sala);   		 	
+//	 	
+//	 	//Vista a la que vamos
+//	 	mav.setViewName("salas");         
+//	 	
+//		return mav; 		
+//    }
 		
 	/**
 	 * Devuelve el listado de eventos sin confirmar.

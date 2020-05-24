@@ -41,17 +41,23 @@
 		   							<td th:text="*{UsuarioCreador.username}" readonly></td>
 		   							
 		   							<td><label style="color:#007bff;">Sala:</label></td>
-		   							<td th:text="*{salaEvento.idSala}" readonly></td>
+		   							<td>
+		   								<a th:href="@{verSala?id=} +  *{salaEvento.idSala}" class="btn btn-outline-primary btn-block"  th:text="*{salaEvento.idSala}"></a>
+		   							
+		   							</td>
+		   							
+<!-- 		   							<td><a th:href="@{/verSala(id=${eventoSeleccionado.salaEvento.idSala})}"class="btn btn-outline-secondary btn-block" th:text="*{salaEvento.idSala}"></a></td> -->
+<!-- 		   							<td th:text="*{salaEvento.idSala}" readonly></td> -->
 		   						</tr> 
 		   						<tr>
 		   							<td><label style="color:#007bff;">Presencial:</label></td>
 		   							<td>
-		   								<input type="checkbox" th:name="checkPresencial" class="inline checkbox" th:checked="${usuarioEventoSeleccionado.presencial}"/>
+		   								<input type="checkbox" th:name="checkPresencial" class="form-check-input" th:checked="${usuarioEventoSeleccionado.presencial}"/>
 		   							</td>
 		   							
 		   							<td><label style="color:#007bff;">Asistencia confirmada:</label></td>
 		   							<td>
-		   								<input type="checkbox" name="checkAsistente" class="inline checkbox"  th:checked="${usuarioEventoSeleccionado.asistente}" readonly/>		   								
+		   								<input type="checkbox" name="checkAsistente" class="form-check"  th:checked="${usuarioEventoSeleccionado.asistente}" disabled/>		   								
 		   							</td>
 		   						</tr> 	
 		   						<tr>		   							
@@ -100,12 +106,14 @@
 
 		   						<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 		   							<td><label style="color:#007bff;">Inscritos:</label></td>
-		   							<td th:text="${eventoSeleccionado.getEventosDelUsuarioTotal()}" readonly></td>
+		   							<td th:text="${eventoSeleccionado.getEventosDelUsuarioTotal() + '-' + eventoSeleccionado.getEventosDelUsuarioConfirmados()}"></td>
 			   							
 		   						</tr>   						
 		   					</tfoot>
     					</table> 
     				</form>
+    				
+    				
     			</div>	
 	        </div>
         </div>
