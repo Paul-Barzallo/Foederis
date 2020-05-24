@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.sesion.model.Usuario;
 
 @Entity
 public class Archivo {
@@ -25,8 +26,12 @@ public class Archivo {
     @ManyToOne
     @JoinColumn(name="id_evento", nullable=false)
 	private Evento idEvento;
+	
+    @ManyToOne
+    @JoinColumn(name="id_usuario", nullable=false)
+    private Usuario idUsuario;
 
-	public int getIdArchivo() {
+    public int getIdArchivo() {
 		return idArchivo;
 	}
 
@@ -48,6 +53,14 @@ public class Archivo {
 
 	public void setIdEvento(Evento idEvento) {
 		this.idEvento = idEvento;
+	}
+
+	public Usuario getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Usuario idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	@Override

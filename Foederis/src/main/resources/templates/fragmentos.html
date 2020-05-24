@@ -295,7 +295,7 @@
 					<td class="align-middle">
 						<a th:href="@{/chat/download/file?filename=} + ${file.nombreArchivo}" th:text="${file.nombreArchivo}"></a>
 					</td>
-					<td class="align-middle" th:text="${file.idEvento.UsuarioCreador.nombre} + ' ' + ${file.idEvento.UsuarioCreador.apellidos}"></td>
+					<td class="align-middle" th:text="${file.idUsuario.username}"></td>
 				</tr>
 			</tbody>
 		</table>

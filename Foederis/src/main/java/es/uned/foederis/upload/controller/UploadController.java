@@ -3,6 +3,7 @@ package es.uned.foederis.upload.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.FoederisApplication;
+import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.archivos.model.Archivo;
 import es.uned.foederis.archivos.service.ArchivoService;
 import es.uned.foederis.chats.model.Chat;
@@ -27,6 +29,7 @@ import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.service.EventoServiceImpl;
 import es.uned.foederis.eventos.service.IEventoService;
+import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.controller.ChatController;
 import es.uned.foederis.constantes.Archivos;
 import es.uned.foederis.constantes.Atributos;
@@ -49,17 +52,15 @@ public class UploadController {
     String Message_;
     
 	@Autowired
-	IEventoService 	eventService_;
+	IEventoService 			eventService_;
 
 	@Autowired
-    ArchivoService 	myFileService_;
+    ArchivoService 			myFileService_;
 	@Autowired
-    ChatService 	myChatService_;
+    ChatService 			myChatService_;
+	@Autowired
+	AdministracionService 	myUserService_;
 
-//    @GetMapping("/upload")
-//    public String index() {
-//        return "index";
-//    }
     
 	@GetMapping("/download")
 	public ModelAndView listEventFiles(@RequestParam("eventId") int eventId, Model model) throws IOException {
@@ -90,7 +91,9 @@ public class UploadController {
 	}
 
     @PostMapping("/upload")
-    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file, @RequestParam("eventid") int eventId , Model model){
+    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file, 
+    										@RequestParam("eventid") int eventId, 
+    										@RequestParam("userid") String userId , Model model){
         if (file.isEmpty()) {
         	Message_ = "Please select a file to upload";
             model.addAttribute("message", Message_);
@@ -112,7 +115,7 @@ public class UploadController {
 
             Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
             
-            CreateFileEntity(path,eventId);
+            CreateFileEntity(path, eventId, userId, model);
             
         } catch (IOException e) {
         	Message_= "Error -> message = " + e.getMessage();
@@ -132,20 +135,23 @@ public class UploadController {
         return new ModelAndView("fragmentos :: resultUpload");
     }
 
-    private void CreateFileEntity(Path pathFile, int eventId) {
+    private void CreateFileEntity(Path pathFile, int eventId, String userId, Model model) {
 		// Localizar el evento en la BD
     	Evento ev = eventService_.getEventById(eventId);
-    	// Genera entidad Archivo y la inserta en bd
 
-		
-		  Archivo file = new Archivo(); 
-		  file.setIdEvento(ev);
-		  file.setNombreArchivo(pathFile.toString());
-		  
-		  myFileService_.createFile(file);
-		 
-		  logFiles();
-		
+		if (myUserService_.cargarUsuario(model, Long.parseLong(userId))) {
+			Usuario usr = (Usuario) model.getAttribute(Atributos.USUARIO);
+
+			// Genera entidad Archivo y la inserta en bd
+			Archivo file = new Archivo();
+			file.setIdEvento(ev);
+			file.setNombreArchivo(pathFile.toString());
+			file.setIdUsuario(usr);
+
+			myFileService_.createFile(file);
+
+			logFiles();
+		}
 	}
 
 	private void logFiles() {

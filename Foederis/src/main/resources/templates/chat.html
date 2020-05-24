@@ -36,8 +36,9 @@
 			    // Get form
 			    var form = $('#uploadForm')[0];
 			    var data = new FormData(form);
-			    //data.append('file',form);
+			    
 			    data.append('eventid',$("#eventId").text())
+			    data.append('userid',$('#userId').text())
 			    
 			    var token = $('#_csrf').attr('content');
 			    var header = $('#_csrf_header').attr('content');
@@ -80,6 +81,7 @@
 		<h2 id="eventName" class="text-white mb-0" th:text="${eventname}"></h2>
 		<p id="userName" th:text="${user}" class="hidden"></p>
 		<p id="eventId" th:text="${eventid}" class="hidden"></p>
+		<p id="userId" th:text="${__${@atributos.USUARIO}__}" class="hidden"></p>
 	</div>
 	<div id="connecting" class="hidden">Conectando...</div>
 	<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">

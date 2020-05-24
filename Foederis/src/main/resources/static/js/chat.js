@@ -82,9 +82,22 @@ function onMessageReceived(payload) {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
         var usernameElement = document.createElement('span');
-        usernameElement.style.color='blue';
+        //usernameElement.style.color='blue';
+        usernameElement.classList.add('d-flex','justify-content-between','bg-info','mb-3');
+        
+        var userName = document.createElement('div');
+        var userTimestamp = document.createElement('div');
+        
+        
         var usernameText = document.createTextNode(message.sender);
-        usernameElement.appendChild(usernameText);
+        userName.appendChild(usernameText);
+        var userTimestampText = document.createTextNode(message.timestamp);
+        userTimestamp.appendChild(userTimestampText);
+        
+        
+        usernameElement.appendChild(userName);
+        usernameElement.appendChild(userTimestamp);
+        
         messageElement.appendChild(usernameElement);
         $('#messageArea').animate({scrollTop: $('#messageArea').prop("scrollHeight")}, 500);
     }
