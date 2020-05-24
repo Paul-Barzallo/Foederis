@@ -4,12 +4,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +68,7 @@ public class EventosController {
 	 @GetMapping("/baja")
 	    public String baja(@RequestParam(value="id") Evento eventoSeleccionado) {
 		 
-		 ActualizarConfirmacionEvento(0, eventoSeleccionado, new Horarios());
+		 ActualizarConfirmacionEvento(0, eventoSeleccionado, new Horarios(), false);
 		     
 		 return "redirect:../Evento/listarFiltro?filtroListado=sin"; 
 	 }
@@ -80,7 +81,7 @@ public class EventosController {
 		 * @return html
 		 */
 	@PostMapping("/confirmar")
-	public String confirmar(Model model, @RequestParam(value="seleccionHorario") String horarioElegido,Evento eventoSeleccionado) {		
+	public String confirmar(Model model, @RequestParam("checkPresencial") boolean chkPresencial, @RequestParam(value="seleccionHorario") String horarioElegido,Evento eventoSeleccionado) {		
 		 
 		//Obtener el Horario
 		List<Horarios> h = (List<Horarios>) HorarioRepo.findAll(); 
@@ -91,7 +92,7 @@ public class EventosController {
 		for(Usuario_Evento aux: user.getEventosDelUsuario()) {    
 			if(aux.getEvento().getIdEvento()==eventoSeleccionado.getIdEvento()) 
 			{
-				ActualizarConfirmacionEvento(1, aux.getEvento(), elegido);
+				ActualizarConfirmacionEvento(1, aux.getEvento(), elegido, chkPresencial);
 			}
 		}		
 				 
@@ -103,7 +104,7 @@ public class EventosController {
 	 * Actualiza el evento indicando si el usuario confirma asistencia
 	 * Si esta confirmando asistencia almacenamos el horario elegido.
 	 */
-	 private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido) {
+	 private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido, boolean pCheckPresencial) {
 		 
 		 if(user.getIdUsuario()== null)
 			 this.iniciarUsuario();
@@ -119,7 +120,9 @@ public class EventosController {
 		 if(pHorarioElegido != null) {
 			 
 			 //Guardamos horario
-			 usuEvento.setHorario(pHorarioElegido);			 
+			 usuEvento.setHorario(pHorarioElegido);		
+			 usuEvento.setPresencial(pCheckPresencial);
+			 
 		 }
 		 
 		 usuRepo.save(user); 		 
@@ -140,28 +143,26 @@ public class EventosController {
 			//user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		 	ModelAndView mav = new ModelAndView();
-		 	 
-		 	//Objetos que necesito   
-		 	mav.addObject("eventoSeleccionado", evento);     
+		 	  	   
+		 	Usuario_Evento usuarioEv= new Usuario_Evento();
 		 	
 		 	//Obtenemos el usuario_evento
 		 	for(Usuario_Evento aux: user.getEventosDelUsuario()) {    
-				if(aux.getIdUsuario().getIdUsuario() == evento.getIdEvento())  {					
-					mav.addObject("usuarioEventoSeleccionado", aux);             
+				if(aux.getEvento().getIdEvento() == evento.getIdEvento())  {					
+					usuarioEv= aux;
 					break;
 				}					                
-			}  
+			}   		 	
 		 	
-		 	
-		 	
-		 	
-		 	mav.addObject("userLogin", user);   
-		 	
+		 	mav.addObject("eventoSeleccionado", evento);  
+		 	mav.addObject("usuarioEventoSeleccionado", usuarioEv);
+		 	mav.addObject("userLogin", user);   		 	
 		 	
 		 	//Vista a la que vamos
 		 	mav.setViewName("verEvento");         
 		 	
 			return mav; 
+			
 	    }	
 	 
 	 /****

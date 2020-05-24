@@ -149,6 +149,10 @@ public class Evento {
 		return eventosDelUsuario;
 	}
 	
+	public int getEventosDelUsuarioTotal() {
+		return eventosDelUsuario.size();
+	}
+	
 	public Usuario_Evento getEventoDeUnUsuario(long idUsuario) {
 		
 		for(Usuario_Evento aux: eventosDelUsuario) {
