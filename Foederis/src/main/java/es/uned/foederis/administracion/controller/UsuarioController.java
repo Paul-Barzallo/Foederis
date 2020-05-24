@@ -27,7 +27,7 @@ public class UsuarioController {
 	private AdministracionService service;
 
 	/**
-	 * Cargar la pantalla de busqueda de clientes
+	 * Cargar la pantalla de busqueda de usuarios
 	 * La busqueda se puede realizar por:
 	 * 		Nombre -> Se busca en nombre y apellido
 	 * 		Username
@@ -44,7 +44,7 @@ public class UsuarioController {
 			return service.irAUsuarios(model);
 		} 
 		service.mensajeNoAccesoUsuarios(model);
-		return "redirect:"+Vistas.HOME;
+		return Vistas.HOME;
 		
 	}
 	
@@ -70,7 +70,7 @@ public class UsuarioController {
 			service.cargarAccionesUsuarios(model);
 			return new ModelAndView("fragmentos :: tabla_usuarios");
 		} 
-		service.mensajeNoAccesoUsuarios(model);;
+		service.mensajeNoAccesoUsuarios(model);
 		return new ModelAndView(Vistas.HOME);
 	}
 	
@@ -103,11 +103,11 @@ public class UsuarioController {
 	 * @return html
 	 */
 	@GetMapping(Rutas.MODIFICAR)
-	public String getFormularioModificar(Model model, Long idUsuario) {
+	public String getFormularioModificar(Model model, Long id) {
 		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdmin()) {
 			// se carga el usuario
-			if (service.cargarUsuario(model, idUsuario)) {
+			if (service.cargarUsuario(model, id)) {
 				// Se carga la lista de roles si se encontró usuario a cargar
 				service.cargarRoles(model);
 				return service.irAUsuario(model);
@@ -123,9 +123,8 @@ public class UsuarioController {
 	
 	/**
 	 * Activa un usuario
-	 * si el usuario se desactiva no podrá iniciar sesión
 	 * @param model
-	 * @param idUsuario
+	 * @param id
 	 * @param activar
 	 * @return
 	 */
@@ -138,7 +137,7 @@ public class UsuarioController {
 	 * Desactiva un usuario
 	 * si el usuario se desactiva no podrá iniciar sesión
 	 * @param model
-	 * @param idUsuario
+	 * @param id
 	 * @param activar
 	 * @return
 	 */
@@ -152,7 +151,7 @@ public class UsuarioController {
 	 * @param model
 	 * @param confirmPassword campo extra en el que se repite la contraseña
 	 * @param usuario
-	 * @param result
+	 * @param result errores de validación del formulario
 	 * @return
 	 */
 	@PostMapping(Rutas.GUARDAR)
@@ -161,7 +160,7 @@ public class UsuarioController {
 			result.rejectValue("password", "RepeatPassword.usuario.password");
 		}
 		if (service.isUsernameRepetido(usuario)) {
-			result.rejectValue("password", "RepeatUsername.usuario.username");
+			result.rejectValue("username", "RepeatUsername.usuario.username");
 		}
 		if (result.hasErrors()) {
 			service.cargarRoles(model);

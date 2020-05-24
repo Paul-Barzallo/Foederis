@@ -20,9 +20,7 @@
     			<h1 class="text-success px-5 mx-5"><strong>Evento seleccionado</strong></h1>
     		</div>	
     		</br>    				
-    			<div class="card-body">  			
-
-    			
+    			<div class="card-body">
     				<form th:action= "@{/Evento/confirmar}" method= "post" th:object="${eventoSeleccionado}">
     					
     					<table style="table-layout: fixed; width: 100%" class="table table-striped">
@@ -43,7 +41,7 @@
 		   							<td th:text="*{UsuarioCreador.username}" readonly></td>
 		   							
 		   							<td><label style="color:#007bff;">Sala:</label></td>
-		   							<td th:text="*{salaEvento.id}" readonly></td>
+		   							<td th:text="*{salaEvento.idSala}" readonly></td>
 		   						</tr> 
 		   						<tr>
 		   							<td><label style="color:#007bff;">Presencial:</label></td>

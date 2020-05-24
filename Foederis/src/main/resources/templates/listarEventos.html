@@ -1,88 +1,87 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-    <head>
-        <title>Listar Eventos</title>
-        <meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-		<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
-    </head>
-    <body class="bg-info" style="height: 100vh">
+<head>
+	<title>Listar Eventos</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-info" style="height: 100vh">
     <div th:insert="fragmentos :: navbar"></div>
     <div class="container">
-    	<div class="card bg-light">    	
-    		<div class="card-header"> 		
-    			
-    			<div th:switch="${filtroListado}"> 
-				  <h3 th:case="'todos'">Lista de Eventos - Todos</h3>
-				  <h3 th:case="'futuro'">Lista de Eventos - Proximos Eventos</h3>
-				  <h3 th:case="hoy">Lista de Eventos - Hoy</h3>
-				  <h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
-				  <h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
-				</div>
+    	<div class="card bg-light">
+    	
+    		<div class="card-header bg-secondary">   
+	    		<div class="d-flex justify-content-between p-3" >
+					<div class="text-white" th:switch="${filtroListado}"> 
+						<h3 th:case="'todos'">Lista de Eventos - Todos</h3>
+						<h3 th:case="'futuro'">Lista de Eventos - Proximos Eventos</h3>
+						<h3 th:case="hoy">Lista de Eventos - Hoy</h3>
+						<h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
+						<h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
+					</div>
+					<a th:href="${@rutas.EVENTOS_NUEVO}" class="btn btn-light btn-sm" role="button">
+						<span class="align-middle">Nuevo Evento</span>
+					</a>
+				</div> 		
     		</div>
+    		
     		<div class="card-body">	    			
 		    	<div class="btn-group btn-group-toggle" data-toggle="buttons">		
-		    		 <a th:href="@{listarFiltro?filtroListado=todos}" class="btn btn-secondary btn-sm  " role="button">Ver todos los eventos</a>
-		    		  <a th:href="@{listarFiltro?filtroListado=hoy}" class="btn btn-secondary btn-sm " role="button">Ver los de hoy</a>
-		    		   <a th:href="@{listarFiltro?filtroListado=futuro}" class="btn btn-secondary btn-sm" role="button">Ver los proximos</a>
-		    		   <a th:href="@{listarFiltro?filtroListado=rechazados}" class="btn btn-secondary btn-sm  " role="button">Ver Rechazados</a>			    		   
-		    		   <a th:href="@{listarFiltro?filtroListado=sin}" class="btn btn-secondary btn-sm" role="button">Ver sin Confirmar</a>
+					<a th:href="@{listarFiltro?filtroListado=todos}" class="btn btn-secondary btn-sm  " role="button">Ver todos los eventos</a>
+					<a th:href="@{listarFiltro?filtroListado=hoy}" class="btn btn-secondary btn-sm " role="button">Ver los de hoy</a>
+					<a th:href="@{listarFiltro?filtroListado=futuro}" class="btn btn-secondary btn-sm" role="button">Ver los proximos</a>
+					<a th:href="@{listarFiltro?filtroListado=rechazados}" class="btn btn-secondary btn-sm  " role="button">Ver Rechazados</a>			    		   
+					<a th:href="@{listarFiltro?filtroListado=sin}" class="btn btn-secondary btn-sm" role="button">Ver sin Confirmar</a>
 		    	</div>		
 	    	</div>
    			
-    			<table class="table table-striped">
-    				<thead>
-    					<tr>
-    						<th>ID</th>
-    						<th>Nombre</th>
-    						<th>Fecha Inicio</th>
-    						<th>Sala</th>
-<!--     						<th>Estado</th> -->
-    						<th>Creador</th>    						
-    						<th></th>
-    						<th></th>
-    						<th></th>    						
-   						</tr>
-   					</thead>
-   					<tbody>
-   						<tr th:each="reunion: ${lstEventos}">
-   							<td th:text="${reunion.idEvento}"></td>
-   							<td th:text="${reunion.nombre}"></td>
-   							<td th:text="${reunion.horarioElegido != null ? #dates.format(reunion.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') : ''}" ></td>
-   							<td th:text="${reunion.salaEvento.id}"></td>
-<!--    							<td th:text="${reunion.estado}"></td> -->
-   							<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
-   							<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
-   								<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles del Evento'" class="btn btn-warning"></a>
-   							</td>
+   			<table class="table table-striped">
+   				<thead>
+   					<tr>
+   						<th>ID</th>
+   						<th>Nombre</th>
+   						<th>Fecha Inicio</th>
+   						<th>Sala</th>
+<!--     				<th>Estado</th> -->
+   						<th>Creador</th>    						
+   						<th></th>
+   						<th></th>
+   						<th></th>    						
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="reunion: ${lstEventos}">
+						<td th:text="${reunion.idEvento}"></td>
+						<td th:text="${reunion.nombre}"></td>
+						<td th:text="${reunion.horarioElegido != null ? #dates.format(reunion.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') : ''}" ></td>
+						<td th:text="${reunion.salaEvento.idSala}"></td>
+<!--    				<td th:text="${reunion.estado}"></td> -->
+						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
+						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
+							<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles del Evento'" class="btn btn-warning"></a>
+						</td>
    							   							
-      						<td>
-   								<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados'}">	   							
-	   								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja del Evento'" class="btn btn-outline-danger"></a>
-	   							</div>	   							
-	   							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!='rechazados'}">
-	   								<label>Baja no disponible</label>
-	   							</div>	
-   							</td>
-   							<td><a th:href="@{ir?id=} + ${reunion.idEvento}" th:text="'Acceso al Evento'" class="btn btn-outline-success"></a></td>
-   						</tr>   							
-   					</tbody>
-   					<tfoot>
-   					<br/>
-   						<tr>
-   							<td colspan = "8">  
-   							<span th:if="${userLogin.isJefeProyecto()}">   														
-   								<a th:href="@{crear}" class="btn btn-outline-primary btn-block" >Añadir evento</a>
-   							</span>
-   							</td>
-   						</tr>   						
-   					</tfoot>
-    			</table>
-    		</div>
-    	</div> 
-    </body>
+						<td>
+							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados'}">	   							
+								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja del Evento'" class="btn btn-outline-danger"></a>
+							</div>	   							
+							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!='rechazados'}">
+								<label>Baja no disponible</label>
+							</div>	
+						</td>
+						<td><a th:href="@{/chat?id=} + ${reunion.idEvento}" th:text="'Ir al Evento'" class="btn btn-outline-success"></a></td>
+						<td>
+							<a th:href="@{/chat/download?eventId=} + ${reunion.idEvento}"><span th:text="'Descargar evento'"></span></a>
+						</td>
+					</tr>   							
+   				</tbody>
+    		</table>
+    	</div>
+    </div> 
+</body>
 </html>

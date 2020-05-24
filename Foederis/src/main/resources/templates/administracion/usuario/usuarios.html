@@ -31,39 +31,14 @@
 		}
 		$(function() {
 			buscarUsuarios();
+			$('#btn_buscar').click(buscarUsuarios);
 		});
 	</script>
 </head>
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container px-md-5">
-   		<div class="border border-dark rounded d-flex flex-column mt-5">
-   			<div class="bg-secondary d-flex justify-content-between p-3">
-    			<h2 class="text-white mb-0">Buscar</h2>
-    			<a th:href="${@rutas.ADM_USER_NUEVO}" class="btn btn-light btn-sm" role="button"><span class="align-middle">Nuevo Usuario</span></a>
-   			</div>
-   			
-   			<div class="py-lg-4 py-3 px-lg-5 px-3">
-           		<div class="row">
-					<div class="col-5 col-lg-4 pr-0">
-						<select id="busqueda" class="form-control" required
-						style="border-top-right-radius:0!important; border-bottom-right-radius:0!important;">
-							<option value="" class="text-black-50">Parametro de busqueda</option>
-							<option th:each="param_busq : ${__${@atributos.PARAMS_BUSQUEDA}__}" th:value="${param_busq}" th:text="${param_busq}"></option>
-						</select>
-					</div>
-					<div class="col-5 col-lg-7 px-0">
-						<input id="valor" class="form-control rounded-0" type="text" name="valor" placeholder="Filtro" required>
-					</div>
-					<div class="col-2 col-lg-1 pl-0">
-						<button id="btn_buscar" class="btn btn-success btn-block" onclick="buscarUsuarios()"
-						style="border-top-left-radius:0!important; border-bottom-left-radius:0!important;">
-							<i class="fas fa-search"></i>
-						</button>
-					</div>
-           		</div>
-   			</div>
-   		</div>
+   		<div class="mt-5" th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
    		<div id="tabla_usuarios" class="my-5"></div>
 	</div>
 </body>

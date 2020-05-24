@@ -26,7 +26,7 @@ public interface IEventoRepository extends CrudRepository<Evento, Integer> {
 //	
 //	List<Evento> findByfechaInicio(Date fechaInicio); 
 	
-		
+	Evento findByidEvento(int idEvento);
 	
 	//List<Evento>  
 	//OrderByfechaInicioAsc

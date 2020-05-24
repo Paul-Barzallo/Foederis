@@ -1,42 +1,98 @@
 package es.uned.foederis.upload.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-//import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.uned.foederis.FoederisApplication;
+import es.uned.foederis.archivos.model.Archivo;
+import es.uned.foederis.archivos.service.ArchivoService;
+import es.uned.foederis.chats.model.Chat;
+import es.uned.foederis.chats.service.ChatService;
+import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.eventos.service.EventoServiceImpl;
+import es.uned.foederis.eventos.service.IEventoService;
+import es.uned.foederis.websocket.controller.ChatController;
+import es.uned.foederis.constantes.Archivos;
+import es.uned.foederis.constantes.Atributos;
+
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @RequestMapping("/chat")
 public class UploadController {
-
-    //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = ".//uploadFiles//";
+	
+	private static final Logger LOGGER=LoggerFactory.getLogger(FoederisApplication.class);
+	
 
     String Message_;
     
+	@Autowired
+	IEventoService 	eventService_;
+
+	@Autowired
+    ArchivoService 	myFileService_;
+	@Autowired
+    ChatService 	myChatService_;
+
 //    @GetMapping("/upload")
 //    public String index() {
 //        return "index";
 //    }
     
-    
+	@GetMapping("/download")
+	public ModelAndView listEventFiles(@RequestParam("eventId") int eventId, Model model) throws IOException {
+		Evento ev = eventService_.getEventById(eventId);
+		
+		model.addAttribute(Atributos.CHATS, myChatService_.findByIdEvento(ev));
+		model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(ev));
+
+		return new ModelAndView("chat/resultDownload");
+	}
+
+	
+	@GetMapping("/download/file")
+	@ResponseBody
+	public ResponseEntity<Resource> serveFile(@RequestParam("filename") String filename) {
+		Path path = Paths.get(filename);
+		Resource resource = null;
+
+		try {
+			resource = new UrlResource(path.toUri());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
+
     @PostMapping("/upload")
-    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file,
-            Model model) {
+    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file, @RequestParam("eventid") int eventId , Model model){
         if (file.isEmpty()) {
         	Message_ = "Please select a file to upload";
-            //redirectAttributes.addFlashAttribute("message", Message_);
             model.addAttribute("message", Message_);
 
             return new ModelAndView("fragmentos :: resultUpload");
@@ -46,15 +102,18 @@ public class UploadController {
 
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            File directory = new File(Archivos.UPLOADED_FOLDER + eventId);
+            if (! directory.exists()){
+                directory.mkdir();
+            }
+
+            Path path = Paths.get(Archivos.UPLOADED_FOLDER + eventId + "//" + file.getOriginalFilename());
             Files.write(path, bytes);
 
             Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
             
-            //redirectAttributes.addFlashAttribute("message",Message_);
-            // model.addAttribute("message", Message_);
-
-            // return new ModelAndView("fragmentos :: resultUpload");
+            CreateFileEntity(path,eventId);
+            
         } catch (IOException e) {
         	Message_= "Error -> message = " + e.getMessage();
         }
@@ -62,60 +121,10 @@ public class UploadController {
         model.addAttribute("message", Message_);
 
         return new ModelAndView("fragmentos :: resultUpload");
-
-    	
-    	
-    	
-/*    	
-    	try {
-        // fileStorage.store(file);
-    	  Message_ = "You successfully uploaded"  + file.getOriginalFilename();
-    	  return Message_;
-      } catch (Exception e) {
-    	  Message_= "Error -> message = " + e.getMessage();
-    	  return Message_;
-      }  */  
     }
-/*
-    @PostMapping("/upload") 
-    @ResponseBody
-//    public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file,
-//            RedirectAttributes redirectAttributes) {
-        public ModelAndView singleFileUpload(@RequestParam("file") MultipartFile file,
-                Model model) {
 
-        if (file.isEmpty()) {
-        	Message_ = "Please select a file to upload";
-            //redirectAttributes.addFlashAttribute("message", Message_);
-            model.addAttribute("message", Message_);
 
-            return new ModelAndView("fragmentos :: resultUpload");
-        }
-
-        try {
-
-            // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
-            Files.write(path, bytes);
-
-            Message_ = "You successfully uploaded '" + file.getOriginalFilename() + "'";
-            
-            //redirectAttributes.addFlashAttribute("message",Message_);
-            model.addAttribute("message", Message_);
-
-            return new ModelAndView("fragmentos :: resultUpload");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        model.addAttribute("message", Message_);
-
-        return new ModelAndView("fragmentos :: resultUpload");
-    }
-*/
-    
-    @GetMapping("/uploadStatus")
+	@GetMapping("/uploadStatus")
     @ResponseBody
     public ModelAndView uploadStatus(Model model) {
     	model.addAttribute("message", Message_);
@@ -123,4 +132,27 @@ public class UploadController {
         return new ModelAndView("fragmentos :: resultUpload");
     }
 
+    private void CreateFileEntity(Path pathFile, int eventId) {
+		// Localizar el evento en la BD
+    	Evento ev = eventService_.getEventById(eventId);
+    	// Genera entidad Archivo y la inserta en bd
+
+		
+		  Archivo file = new Archivo(); 
+		  file.setIdEvento(ev);
+		  file.setNombreArchivo(pathFile.toString());
+		  
+		  myFileService_.createFile(file);
+		 
+		  logFiles();
+		
+	}
+
+	private void logFiles() {
+    	// Debug alta de chat
+		  List<Archivo> result = (List<Archivo>) myFileService_.findAll();
+		  for (Archivo f: result) {
+			  LOGGER.info("File uploades: {}", f.toString());
+		  }
+    }
 }

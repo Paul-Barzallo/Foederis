@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
 
 @Repository
@@ -15,4 +16,5 @@ public interface IUsuarioRepository extends CrudRepository<Usuario, Long> {
 	List<Usuario> findByNombreContainingOrApellidosContaining(String nombre, String apellidos);
 	List<Usuario> findByRolContaining(String rol);
 	List<Usuario> findByUsernameContaining(String rol);
+	List<Usuario> findByRolLessThanAndActivoTrue(Rol rol);
 }

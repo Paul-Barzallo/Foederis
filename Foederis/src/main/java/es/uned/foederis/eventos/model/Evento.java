@@ -15,12 +15,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import es.uned.foederis.salas.model.Sala;
-import es.uned.foederis.sesion.model.Rol;
 import es.uned.foederis.sesion.model.Usuario;
 
 @Entity
@@ -29,25 +29,25 @@ public class Evento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
+	@NotBlank
 	private String nombre;
 //	private Timestamp fechaInicio;
 //	private Timestamp fechaFin;
-	private int estado;
+	@NotNull
+	private boolean estado;
 	private int idChat;
 	private int idRepositorioCompartido;
-	
+	@NotNull
 	@OneToOne
 	@JoinColumn(name="usuario_creador_id")
 	private Usuario	UsuarioCreador;	
-	
+	@NotNull
 	@OneToOne
 	@JoinColumn(name="sala_Evento_id")
-	private Sala salaEvento;	
-	
+	private Sala salaEvento;
 	
 	@OneToMany(mappedBy="idEvento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	public List<Horarios> lstHorarios;
-	
 		
 	@OneToMany(mappedBy="evento", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Usuario_Evento> eventosDelUsuario = new ArrayList<Usuario_Evento>();
@@ -59,12 +59,12 @@ public class Evento {
 	
 	//Constructores	
 	public Evento(int idEvento) {
-		super();
 		this.idEvento = idEvento;
+		this.estado = true;
 	}
 	
 	public Evento() {
-		
+		this.estado = true;
 	}
 	
 	//Get y Set
@@ -111,11 +111,12 @@ public class Evento {
 //		this.fechaFin = fechaFin;
 //	}
 
-	public int getEstado() {
+	public boolean getEstado() {
 		return estado;
 	}
-	public void setEstado(int estado) {
-		estado = estado;
+	
+	public void setEstado(boolean estado) {
+		this.estado = estado;
 	}
 	public int getIdChat() {
 		return idChat;

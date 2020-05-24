@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.ui.Model;
+
 import es.uned.foederis.eventos.model.Evento;
 
 public interface IEventoService {
@@ -50,5 +52,12 @@ public interface IEventoService {
 	void eliminar(Integer id);
 
 
+	Evento getEventById(int id);
+	
+	public String irANuevoEvento(Model model);
+	
+	public void mensajeNoAccesoEventos(Model model);
+	
+	public void cargarSalas(Model model, String paramBusq, String valorBusq);
 
 }

@@ -17,7 +17,7 @@ public class FoederisApplication implements ApplicationRunner{
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+		
 	public static void main(String[] args) {
 		SpringApplication.run(FoederisApplication.class, args);
 	}
