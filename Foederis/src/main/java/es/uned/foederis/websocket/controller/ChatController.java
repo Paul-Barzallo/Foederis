@@ -3,11 +3,14 @@ package es.uned.foederis.websocket.controller;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -44,18 +47,20 @@ public class ChatController {
     
     private Model myModel_;
     
-    // Id del evento al que pertenece el chat
-    private Evento myEvent_;
+    // Lista del eventos
+    private HashMap <Integer,Evento> myEventList_ = new HashMap<Integer,Evento>();
 
 	@GetMapping("/chat")
     public String getChat(@RequestParam(value="id") Evento evento, Model model, Authentication authentication) {
 		myModel_ = model;
-		myEvent_ = evento;
+		if (!myEventList_.containsKey(evento.getIdEvento())) {
+			myEventList_.put(evento.getIdEvento(),evento);
+		}
 		
 		myModel_.addAttribute("user", authentication.getName());
 		myModel_.addAttribute("message", myModel_.getAttribute("message"));
-		myModel_.addAttribute("eventname", myEvent_.getNombre());
-		myModel_.addAttribute("eventid", myEvent_.getIdEvento());
+		myModel_.addAttribute("eventname", evento.getNombre());
+		myModel_.addAttribute("eventid", evento.getIdEvento());
     	
 		myUserService_.cargarUsuarios(model,UsuarioConstantes.USERNAME,authentication.getName());
 		@SuppressWarnings("unchecked")
@@ -71,10 +76,11 @@ public class ChatController {
     	return "/chat";
 	}
 
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    @MessageMapping("/chat.sendMessage/{eventId}")
+    @SendTo("/topic/public/{eventId}")
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
 
+    	// Comprobar que el mensaje recibido es del evento
     	Timestamp timestamp = new Timestamp((new Date()).getTime());
     	
     	myUserService_.cargarUsuarios(myModel_,UsuarioConstantes.USERNAME,chatMessage.getSender());
@@ -88,7 +94,7 @@ public class ChatController {
     			Chat c = new Chat();
     			c.setTimestamp(timestamp); 
     			c.setTexto(chatMessage.getContent());
-    			c.setIdEvento(myEvent_);
+    			c.setIdEvento(myEventList_.get(Integer.parseInt(eventId)));
     			c.setIdUsuario(usr);
 
     			myChatService_.createChat(c);
@@ -107,9 +113,9 @@ public class ChatController {
     	return chatMessage;
     }
 
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage,
+    @MessageMapping("/chat.addUser/{eventId}")
+    @SendTo("/topic/public/{eventId}")
+    public ChatMessage addUser(@Payload ChatMessage chatMessage, @DestinationVariable String eventId,
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
