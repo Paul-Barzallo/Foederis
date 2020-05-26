@@ -33,8 +33,10 @@ function onConnected() {
 
     eventId = $("#eventId").text();
     
-    // Suscribirse a topic public
+    // Suscribirse a topic/public/eventId para recibir los mensajes del chat
     stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
+    // Suscribirse a topic/publi para mensaje de desconexión
+    stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Notificar al servidor la conexión
     stompClient.send("/app/chat.addUser/" + eventId,
@@ -77,10 +79,11 @@ function onMessageReceived(payload) {
     if(message.type === 'JOIN') {
         messageElement.classList.add('list-group-item','list-group-item-success');
         messageElement.style.textAlign='center';
-        message.content = message.sender + ' joined!';
+        message.content = message.sender + ' se unió al evento!';
     } else if (message.type === 'LEAVE') {
         messageElement.classList.add('list-group-item','list-group-item-success');
-        message.content = message.sender + ' left!';
+        messageElement.style.textAlign='center';
+        message.content = message.sender + ' abandonó el evento!';
     } else {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
