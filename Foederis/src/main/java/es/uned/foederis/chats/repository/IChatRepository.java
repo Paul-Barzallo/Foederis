@@ -8,5 +8,5 @@ import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.eventos.model.Evento;
 
 public interface IChatRepository extends CrudRepository<Chat, Integer> {
-	List<Chat> findByidEvento(Evento idEvento);
+	List<Chat> findByEvento(Evento evento);
 }

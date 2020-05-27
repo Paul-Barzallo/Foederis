@@ -1,9 +1,5 @@
 package es.uned.foederis.eventos.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.ui.Model;
 
 import es.uned.foederis.eventos.model.Evento;

@@ -63,7 +63,7 @@ public class EventoServiceImpl implements IEventoService {
 	
 	@Override
 	public Evento getEventById(int id){
-		return EventoRepository.findByidEvento(id);
+		return EventoRepository.findByIdEvento(id);
 	}
 
 	@Override

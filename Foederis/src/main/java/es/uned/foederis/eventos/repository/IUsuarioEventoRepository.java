@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface IEventoUsuarioRepository extends CrudRepository<Usuario_Evento, Integer>{
+public interface IUsuarioEventoRepository extends CrudRepository<Usuario_Evento, Integer>{
 	
 
 }

@@ -22,6 +22,9 @@ import javax.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import es.uned.foederis.archivos.model.Archivo;
+import es.uned.foederis.chats.model.Chat;
+import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 
@@ -37,24 +40,39 @@ public class Usuario implements UserDetails{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long idUsuario;
-	@NotBlank
-	private String nombre;
-	private String apellidos;
-	@NotBlank
-	@Column(unique = true)
-	private String username;
-	@NotEmpty
-	@Size(min = 3)
-	private String password;
+	
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name="id_rol_fk")
 	private Rol rol;
+	
+	@NotBlank
+	private String nombre;
+	
+	private String apellidos;
+	
+	@NotBlank
+	@Column(unique = true)
+	private String username;
+	
+	@NotEmpty
+	@Size(min = 3)
+	private String password;
+	
 	@NotNull
 	private boolean activo;
 	
-	@OneToMany(mappedBy="idUsuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Usuario_Evento> eventosDelUsuario= new ArrayList<Usuario_Evento>();
+	@OneToMany(mappedBy="usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Usuario_Evento> eventosDelUsuario = new ArrayList<>();
+	
+	@OneToMany(mappedBy="usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Chat> mensajesChat = new ArrayList<>();
+	
+	@OneToMany(mappedBy="usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Archivo> archivos = new ArrayList<>();
+	
+	@OneToMany(mappedBy="UsuarioCreador", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Evento> eventosCreados = new ArrayList<>();
 	
 	/**
 	 * Por defecto el usuario está desactivado
@@ -65,34 +83,6 @@ public class Usuario implements UserDetails{
 		this.activo = true;
 	}
 	
-	public Usuario(String nombre, String apellidos, String username, String password, Rol rol) {
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.username = username;
-		this.password = password;
-		this.rol = rol;
-		this.activo = true;
-	
-	}
-	public Usuario(String username, String password) {
-		this.username = username;
-		this.password = password;
-		this.activo = false;
-	}
-	
-	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, List<Usuario_Evento> eventosDelUsuario) {
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.username = username;
-		this.password = password;
-		this.rol = rol;
-		this.eventosDelUsuario=eventosDelUsuario;
-		this.activo = true;
-	}
-	
-	public Long getIdUsuario() {
-		return idUsuario;
-	}
 	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, boolean activo, List<Usuario_Evento> eventosDelUsuario) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -103,21 +93,30 @@ public class Usuario implements UserDetails{
 		this.eventosDelUsuario=eventosDelUsuario;
 	}
 	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+	
 	public void setIdUsuario(Long id) {
 		this.idUsuario = id;
 	}
+	
 	public String getNombre() {
 		return nombre;
 	}
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
 	public String getApellidos() {
 		return apellidos;
 	}
+	
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
 	}
+	
 	/**
 	 * Implementación de metodo se spring-security
 	 */
@@ -125,9 +124,11 @@ public class Usuario implements UserDetails{
 	public String getUsername() {
 		return username;
 	}
+	
 	public void setUsername(String user) {
 		this.username = user;
 	}
+	
 	/**
 	 * Implementación de metodo se spring-security
 	 */
@@ -135,18 +136,23 @@ public class Usuario implements UserDetails{
 	public String getPassword() {
 		return password;
 	}
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
 	public Rol getRol() {
 		return rol;
 	}
+	
 	public void setRol(Rol rol) {
 		this.rol = rol;
 	}
+	
 	public boolean isActivo() {
 		return activo;
 	}
+	
 	public void setActivo(boolean estado) {
 		this.activo = estado;
 	}
@@ -209,8 +215,6 @@ public class Usuario implements UserDetails{
 		this.eventosDelUsuario = eventosDelUsuario;
 	}
 
-
-	
 	public boolean isAdmin() {
 		return this.rol.getIdRol() == UsuarioConstantes.ROL_ADMIN;
 	}
