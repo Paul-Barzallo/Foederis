@@ -54,7 +54,9 @@ insert into Usuario_Evento
 	(4,1, 0,1,1, 12),
 	(5,1, 0,1,3, 12),
 	(6, 1, 1, 1, 1, 6),
-	(7, 1, 1, 1, 2, 6)
+	(7, 1, 1, 1, 2, 6),
+	(8,1,1,1,0,2),
+	(9,1,1,1,0,3)
 	;
 	
 insert into Horarios
@@ -68,9 +70,9 @@ insert into Horarios
 	(5, 3, '2020-05-20 10:00:00','2020-05-20 11:30:00')
 	;
 	
-update  Evento
-set id_horario= 1
-where id_evento = 0;
+--update  Evento
+--set id_horario= 1
+--where id_evento = 0;
 
 update  Evento
 set id_horario= 0

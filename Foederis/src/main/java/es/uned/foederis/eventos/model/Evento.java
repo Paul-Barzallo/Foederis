@@ -145,7 +145,7 @@ public class Evento {
 	 * Devuelve un entero con el total de usuarios confirmados al evento.
 	 * @return total usuarios confirmados al evento
 	 */
-	public int getEventosDelUsuarioConfirmados() {
+	public int getTotalConfirmadosEvento() {
 		
 		int totalConfirmados=0;
 		for(Usuario_Evento aux: eventosDelUsuario) {
@@ -155,6 +155,30 @@ public class Evento {
 		}
 		
 		return totalConfirmados;
+	}
+	
+	/***
+	 * Obtenemos el total de asistentes al evento
+	 * @return total Asistentes
+	 */
+	public int getTotalAsistentesEvento() {
+		
+		int totalAsistentes = (int) eventosDelUsuario.stream().filter(obj -> obj.isAsistente() == true)
+				.count();
+		
+		return totalAsistentes;
+	}
+	
+	/***
+	 * Obtenemos el total de asistentes al evento
+	 * @return total Asistentes
+	 */
+	public int getTotalListaEsperaEvento() {
+		
+		int totalListaEspera = (int) eventosDelUsuario.stream()
+				.filter(obj -> obj.isAsistente() == false && obj.getConfirmado() == 1).count();
+		
+		return totalListaEspera;
 	}
 	
 	public Usuario_Evento getEventoDeUnUsuario(long idUsuario) {

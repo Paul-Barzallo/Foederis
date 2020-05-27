@@ -58,6 +58,11 @@ public interface IEventoService {
 	
 	public void mensajeNoAccesoEventos(Model model);
 	
+	public void mensajeConfirmacion(Model model);
+	
 	public void cargarSalas(Model model, String paramBusq, String valorBusq);
+
+
+	void mensajeInfoSala(Model model, String paramBusq);
 
 }
