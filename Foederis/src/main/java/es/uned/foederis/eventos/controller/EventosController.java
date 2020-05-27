@@ -4,9 +4,14 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -193,7 +198,7 @@ public class EventosController {
 		usuRepo.save(user);
 	}
 
-	/** NO ACABADO FALTA HORARIOS
+	/** TODO
 	 * Solo visible el boton para los jefes de proyecto creadores del evento.
 	 * Confirmamos los asistentes al evento que elija el jefe de proyecto 
 	 * Confirmamos el horario mas legido por los confirmados al evento.
@@ -217,6 +222,9 @@ public class EventosController {
 				break;
 			aforo--;
 		}
+		
+		//Guardo el horario que ha sido mas elegido
+		
 		usuRepo.save(user);
 				
 		mav.setViewName("listarEventos");
@@ -248,6 +256,38 @@ public class EventosController {
 				break;
 			}
 		}
+		
+		//SOlo para el jefe de rproyecto creador muestro el horario mas elegido
+//		if ( user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
+//			
+//			Stream<List<Horarios>> lists = user.getEventosDelUsuario().parallelStream().collect(Collectors.groupingBy(w -> w.getHorario(), Collectors.counting()));
+//			
+//			long totalListaEspera =user.getEventosDelUsuario().stream().filter(obj -> obj.getHorario()).count();
+//
+////			Stream<List<Horarios>> lists = user.getEventosDelUsuario().parallelStream().collect(Collectors.groupingBy(w -> w.getHorario(), Collectors.counting()));
+//			
+////			<>
+////			for(Horarios aux: user.getEventosDelUsuario().forEach(c->c.getHorario())) {
+////				
+////			}
+//						    
+//				    Map<String, Long> repeticiones = Arrays.asList(valores).stream().
+//                            collect(Collectors.groupingBy(w -> w, Collectors.counting()));
+//				    
+//				    Stream<Map.Entry<String, Long>> ordenados = repeticiones.entrySet().stream()
+//				    		.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+//				    
+//				    String masFrecuente = ordenados.findFirst().get().getKey();
+//				    
+//				    for (Map.Entry<String, Long> entry : repeticiones.entrySet())
+//				        System.out.println("Palabra : " + entry.getKey()+
+//				                            " , Se Repite : " + entry.getValue()+ " Veces");
+//			
+//
+//			
+//			mav.addObject("avisoAforo",
+//					"Aforo: " + aforo + " Asistentes: " + evento.getTotalAsistentesEvento() + " lista de espera: " + evento.getTotalListaEsperaEvento());
+//		}
 			
 		//PARA PRUEBAS
 		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
