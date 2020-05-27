@@ -11,13 +11,14 @@ var uploadForm = document.querySelector('#uploadForm');
 
 var stompClient = null;
 var username = null;
+var eventId = null;
 
 function connect(){
     username = document.querySelector('#userName').innerHTML.trim();
 
     //if(username) {
     //    usernamePage.classList.add('hidden');
-        chatPage.classList.remove('close');	// Hacer visible 
+    //    chatPage.classList.remove('close');	// Hacer visible 
 
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
@@ -30,16 +31,20 @@ function connect(){
 
 function onConnected() {
 
-    // Subscribe to the Public Topic
+    eventId = $("#eventId").text();
+    
+    // Suscribirse a topic/public/eventId para recibir los mensajes del chat
+    stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
+    // Suscribirse a topic/publi para mensaje de desconexión
     stompClient.subscribe('/topic/public', onMessageReceived);
 
-    // Tell your username to the server
-    stompClient.send("/app/chat.addUser",
+    // Notificar al servidor la conexión
+    stompClient.send("/app/chat.addUser/" + eventId,
         {},
         JSON.stringify({sender: username, type: 'JOIN'})
     )
 
-    connectingElement.classList.add('hidden');	// Ocultar
+    connectingElement.classList.add('d-none');	// Ocultar
 }
 
 
@@ -59,7 +64,7 @@ function sendMessage(event) {
             type: 'CHAT'
         };
 
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/chat.sendMessage/" + eventId, {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
     event.preventDefault();
@@ -74,10 +79,11 @@ function onMessageReceived(payload) {
     if(message.type === 'JOIN') {
         messageElement.classList.add('list-group-item','list-group-item-success');
         messageElement.style.textAlign='center';
-        message.content = message.sender + ' joined!';
+        message.content = message.sender + ' se unió al evento!';
     } else if (message.type === 'LEAVE') {
         messageElement.classList.add('list-group-item','list-group-item-success');
-        message.content = message.sender + ' left!';
+        messageElement.style.textAlign='center';
+        message.content = message.sender + ' abandonó el evento!';
     } else {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
