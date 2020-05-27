@@ -19,18 +19,8 @@ import es.uned.foederis.eventos.model.Evento;
 @Repository
 public interface IEventoRepository extends CrudRepository<Evento, Integer> {
 	
-	//List<Evento> findByfechaInicioAfterOrderByidEventoAsc(Date fechaInicio);
-	
-	
-//	List<Evento> findByfechaInicioAfter(Date fechaInicio, Sort sort); 
-//	
-//	List<Evento> findByfechaInicio(Date fechaInicio); 
 	
 	Evento findByidEvento(int idEvento);
-	
-	//List<Evento>  
-	//OrderByfechaInicioAsc
-	
-	//List<Evento> findAll();
+
 
 }

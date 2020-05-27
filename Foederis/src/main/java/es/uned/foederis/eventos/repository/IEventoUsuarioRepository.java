@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface IEventoUsuarioRepository extends CrudRepository<Usuario_Evento, Integer>{
-	
+	List<Usuario_Evento> findByevento(Integer idEvento); 
 
 }
 

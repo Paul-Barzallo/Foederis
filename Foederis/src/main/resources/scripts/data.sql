@@ -45,7 +45,7 @@ values
 ;
 
 insert into Usuario_Evento
-	(ID_USUARIO_EVENTO, confirmado, asistente, presencial,evento, id)
+	(ID_USUARIO_EVENTO, confirmado, asistente, presencial,evento, id) --id=idusuario
 	values
 	(0,1, 1,1,0, 1),
 	(1,1, 1,1,1, 1),
@@ -70,6 +70,11 @@ insert into Horarios
 	(5, 3, '2020-05-20 10:00:00','2020-05-20 11:30:00')
 	;
 	
+	
+update  Usuario_Evento
+set horario= 1
+where evento = 0;
+
 --update  Evento
 --set id_horario= 1
 --where id_evento = 0;

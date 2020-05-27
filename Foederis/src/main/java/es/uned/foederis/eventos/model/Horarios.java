@@ -30,6 +30,11 @@ public class Horarios {
 	public int getIdHorario() {
 		return idHorario;
 	}
+	@Override
+	public String toString() {
+		return "Horarios [idHorario=" + idHorario + ", Horario_Fecha_Inicio=" + Horario_Fecha_Inicio
+				+ ", Horario_Fecha_Fin=" + Horario_Fecha_Fin + ", idEvento=" + idEvento + "]";
+	}
 	public void setIdHorario(int idHorario) {
 		this.idHorario = idHorario;
 	}
