@@ -49,10 +49,10 @@ public class Evento {
 	private String estado;
 
 	@OneToMany(mappedBy="evento", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	public List<Horarios> lstHorarios;
+	public List<Horarios> lstHorarios = new ArrayList<>();
 		
 	@OneToMany(mappedBy="evento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<Usuario_Evento> usuariosEvento = new ArrayList<Usuario_Evento>();
+	private List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 	
 	@OneToMany(mappedBy="usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Chat> mensajesChat = new ArrayList<>();
@@ -196,4 +196,37 @@ public class Evento {
 	public void setHorarios(List<Horarios> lstHorarios) {
 		this.lstHorarios = lstHorarios;
 	}
+	
+	public void addUsuarioEvento(Usuario_Evento usuarioEvento) {
+		this.usuariosEvento.add(usuarioEvento);
+	}
+	
+	public void delUsuarioEvento(Usuario_Evento usuarioEvento) {
+		this.usuariosEvento.remove(usuarioEvento);
+	}
+	
+	public void addMensaje(Chat chat) {
+		this.mensajesChat.add(chat);
+	}
+	
+	public void delMensaje(Chat chat) {
+		this.mensajesChat.remove(chat);
+	}
+	
+	public void addArchivo(Archivo archivo) {
+		this.archivos.add(archivo);
+	}
+	
+	public void delArchivo(Archivo archivo) {
+		this.archivos.remove(archivo);
+	}
+	
+	public void addHorario(Horarios horario) {
+		this.lstHorarios.add(horario);
+	}
+	
+	public void delHorario(Horarios horario) {
+		this.lstHorarios.remove(horario);
+	}
+	
 }
