@@ -1,88 +1,132 @@
-INSERT INTO sala
-	(id_sala, nombre, aforo, presentacion, megafonia, grabacion, streaming, wifi, hora_inicio, hora_fin, activa)
-VALUES 
-	(1, 'Sala 1', 5, TRUE, FALSE, TRUE, FALSE, TRUE, '07:00:00', '20:00:00', TRUE),
-	(2, 'Sala 2', 20, TRUE, TRUE, TRUE, TRUE, TRUE, '08:00:00', '18:00:00', TRUE),
-	(3, 'Sala 3', 10, TRUE, FALSE, TRUE, FALSE, TRUE, '07:00:00', '14:00:00', FALSE),
-	(4, 'Sala 4', 10, TRUE, TRUE, FALSE, FALSE, TRUE, '13:00:00', '20:00:00', TRUE),
-	(5, 'Sala 5', 10, FALSE, FALSE, TRUE, TRUE, FALSE, '19:00:00', '06:00:00', TRUE),
-	(6, 'Sala 6', 15, FALSE, FALSE, TRUE, TRUE, FALSE, '15:00:00', '15:00:00', TRUE)
-;
-
 INSERT INTO rol
-	(id_rol, nombre)
+	(id_rol,    nombre)
 VALUES
-	(1, 'Usuario'),
-	(2, 'Jefe de Proyecto'),
-	(3, 'Administrador')
+	(1,         'Usuario'),
+	(2,         'Jefe de Proyecto'),
+	(3,         'Administrador')
 ;
 
 INSERT INTO usuario
-	(id_usuario, username, nombre, apellidos, password, id_rol_fk, activo)
+	(id_usuario,    username,       nombre,             apellidos,          password,   id_rol_fk,  activo)
 VALUES
-	(1,  'admin',		'administrador', 	null, 				'admin', 	3, TRUE),
-	(2,  'admin2',		'adminsitrador', 	'segundo',			'admin', 	3, FALSE),
-	(3,  'pbarza',		'paul', 			'barzallo', 		'foederis', 3, TRUE),	
-	(4,  'lidia',		'lidia', 			null, 				'1234', 	3, TRUE),	
-	(5,  'juancarlos',	'juan carlos', 		null, 				'1234', 	3, TRUE),
-	(6,  'albeas',		'alex', 			'bernat asensi', 	'user', 	2, TRUE),	
-	(7,  'daoval',		'david', 			'oviedo almeida', 	'user', 	2, TRUE),
-	(8,  'ambain',		'amparo', 			'bas infante', 		'user', 	2, TRUE),	
-	(9,  'sasetr',		'sandra', 			'seco triviño', 	'user', 	1, TRUE),
-	(10, 'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1, FALSE),	
-	(11, 'virovi',		'vicente', 			'roura villalba', 	'user', 	1, TRUE),
-	(12, 'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1, TRUE)
+	(1,             'admin',		'administrador', 	null, 				'admin', 	3,          TRUE),
+	(2,             'admin2',		'adminsitrador', 	'segundo',			'admin', 	3,          FALSE),
+	(3,             'pbarza',		'paul', 			'barzallo', 		'foederis', 3,          TRUE),	
+	(4,             'lidia',		'lidia', 			null, 				'1234', 	3,          TRUE),	
+	(5,             'juancarlos',	'juan carlos', 		null, 				'1234', 	3,          TRUE),
+	(6,             'albeas',		'alex', 			'bernat asensi', 	'user', 	2,          TRUE),	
+	(7,             'daoval',		'david', 			'oviedo almeida', 	'user', 	2,          TRUE),
+	(8,             'ambain',		'amparo', 			'bas infante', 		'user', 	2,          TRUE),	
+	(9,             'sasetr',		'sandra', 			'seco triviño', 	'user', 	1,          TRUE),
+	(10,            'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1,          TRUE),	
+	(11,            'virovi',		'vicente', 			'roura villalba', 	'user', 	1,          TRUE),
+	(12,            'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1,          TRUE)
 ;
 
+INSERT INTO sala
+	(id_sala,   nombre,         aforo,  presentacion,   megafonia,  grabacion,  streaming,  wifi,   hora_inicio,    hora_fin,   activa)
+VALUES 
+	(1,         'Sucellus',     5,      TRUE,           FALSE,      TRUE,       FALSE,      TRUE,   '07:00:00',     '20:00:00', TRUE),
+	(2,         'Tanaris',      5,      TRUE,           TRUE,       TRUE,       TRUE,       TRUE,   '08:00:00',     '18:00:00', TRUE),
+	(3,         'Dea Dama',     5,      TRUE,           FALSE,      TRUE,       FALSE,      TRUE,   '07:00:00',     '14:00:00', FALSE),
+	(4,         'Dagda',        8,      TRUE,           TRUE,       FALSE,      FALSE,      TRUE,   '13:00:00',     '20:00:00', TRUE),
+	(5,         'Lugh',         8,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '19:00:00',     '06:00:00', TRUE),
+	(6,         'Morrigan',     8,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+    (7,         'Epona',        10,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+    (8,         'Belenus',      15,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+    (9,         'Cernunnos',    15,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE)
+;
 
-insert into Evento
-	( id_evento, nombre, usuario_creador_id, sala_Evento_id, estado)
+insert into evento
+	(id_evento, id_usuario_creador_fk,  id_sala_evento_fk,  estado,         nombre)
 values
-	(0,			'Evento 1', 1, 2, 0),
-	(1,			'Evento 2', 3, 2, 0),
-	(2,			'Evento 3', 4, 2, 0),
-	(3,			'Evento 2', 5, 2, 0)
+	(1,         3,                      4,                  'FINALIZADO',   'Planificación Fase 3'),
+    (2,         4,                      5,                  'FINALIZADO',   'Campaña de Verano'),
+    (3,         5,                      6,                  'INACTIVO',     'Contabilidad Primer trimestre 2020'),
+    (4,         6,                      2,                  'INACTIVO',     'Planificar inversiones'),
+    (5,         7,                      3,                  'INACTIVO',     'Negociaciones: Ampliación de contrato')
 ;
 
-insert into Usuario_Evento
-	(ID_USUARIO_EVENTO, confirmado, asistente, presencial,evento, id)
-	values
-	(0,1, 1,1,0, 1),
-	(1,1, 1,1,1, 1),
-	(2,-1, 0,0,2, 1),
-	(3,1, 0,1,1, 11),
-	(4,1, 0,1,1, 12),
-	(5,1, 0,1,3, 12),
-	(6, 1, 1, 1, 1, 6),
-	(7, 1, 1, 1, 2, 6),
-	(8,1,1,1,0,2),
-	(9,1,1,1,0,3)
-	;
+insert into horarios
+	(id_horario,    id_evento_fk,   fecha_Inicio,           fecha_fin)
+values
+	(1,             1,              '2020-05-25 09:00:00',  '2020-05-25 12:00:00'),
+	(2,             1,              '2020-05-25 15:00:00',  '2020-05-25 18:00:00'),
+	(3,             1,              '2020-05-26 11:00:00',  '2020-05-26 14:00:00'),
+    
+	(4,             2,              '2020-05-26 10:00:00',  '2020-05-26 12:00:00'),
+	(5,             2,              '2020-05-26 12:00:00',  '2020-05-26 14:00:00'),
+    
+	(6,             3,              '2020-06-01 10:00:00',  '2020-06-01 12:00:00'),
+    (7,             3,              '2020-06-03 11:00:00',  '2020-06-03 13:00:00'),
+    (8,             3,              '2020-06-04 08:00:00',  '2020-06-04 10:00:00'),
+    
+    (9,             4,              '2020-06-02 10:00:00',  '2020-06-02 11:00:00'),
+    (10,            4,              '2020-06-02 15:00:00',  '2020-06-02 16:00:00'),
+    
+    (11,            5,              '2020-06-02 17:00:00',  '2020-06-02 18:00:00'),
+    (12,            5,              '2020-06-05 08:00:00',  '2020-06-05 09:00:00')
+;
+
+insert into usuario_evento
+	(id_usuario_evento, id_evento_fk,   id_usuario_fk,       id_horario_fk,  confirmado, asistente,  presencial)
+values
+	(1,                 1,              3,                          1,              1,          TRUE,       False),
+    (2,                 1,              4,                          1,              1,          TRUE,       True),
+    (3,                 1,              5,                          2,              1,          TRUE,       False),
+    (4,                 1,              6,                          1,              1,          TRUE,       False),
+    (5,                 1,              7,                          1,              1,          TRUE,       False),
+    (6,                 1,              8,                          2,              1,          TRUE,       True),
+    (7,                 1,              9,                          1,              1,          TRUE,       False),
+    (8,                 1,              10,                         3,              1,          TRUE,       False),
+    (9,                 1,              11,                         1,              1,          TRUE,       False),
+    (10,                1,              12,                         1,              1,          TRUE,       False),
+    
+    (11,                2,              3,                          4,              1,          TRUE,       False),
+    (12,                2,              4,                          4,              1,          TRUE,       True),
+    (13,                2,              5,                          5,              1,          TRUE,       False),
+    (14,                2,              6,                          5,              1,          TRUE,       False),
+    (15,                2,              7,                          4,              1,          TRUE,       False),
+    (16,                2,              8,                          4,              1,          TRUE,       True),
+    (17,                2,              9,                          5,              0,          FALSE,      False),
+    (18,                2,              10,                         5,              1,          TRUE,       False),
+    (19,                2,              11,                         5,              1,          TRUE,       False),
+    (20,                2,              12,                         5,              1,          TRUE,       False),
+    
+    (21,                3,              3,                          6,              1,          TRUE,       False),
+    (22,                3,              4,                          6,              1,          TRUE,       True),
+    (23,                3,              5,                          7,              1,          TRUE,       False),
+    (24,                3,              6,                          6,              1,          TRUE,       False),
+    (25,                3,              7,                          7,              1,          TRUE,       False),
+    (26,                3,              8,                          8,              1,          TRUE,       True),
+    (27,                3,              9,                          8,              1,          TRUE,       False),
+    (28,                3,              10,                         7,             -1,          FALSE,      False),
+    (29,                3,              11,                         7,              1,          TRUE,       False),
+    
+    (30,                4,              3,                          null,           1,          null,       null),
+    (31,                4,              6,                          null,           1,          null,       null),
+    (32,                4,              9,                          null,           1,          null,       null),
+    (33,                4,              11,                         null,           1,          null,       null),
+    (34,                4,              12,                         null,           1,          null,       null),
+    
+    (35,                5,              4,                          null,          -1,          null,       null),
+    (36,                5,              7,                          null,          -1,          null,       null),
+    (37,                5,              8,                          null,          -1,          null,       null),
+    (38,                5,              9,                          null,          -1,          null,       null),
+    (39,                5,              10,                         null,          -1,          null,       null) 
+;
 	
-insert into Horarios
-	(id_horario, id_evento, Horario_Fecha_Inicio, Horario_Fecha_fin)
-	values
-	(0, 1, '2020-05-25 09:00:00','2020-05-25 10:30:00'),
-	(1, 0, '2020-05-19 10:00:00','2020-05-19 11:30:00'),
-	(2, 2, '2020-05-10 09:00:00','2020-05-10 10:30:00'),
-	(3, 2, '2020-05-29 10:00:00','2020-05-29 11:30:00'),
-	(4, 2, '2020-05-22 10:00:00','2020-05-28 11:30:00'),
-	(5, 3, '2020-05-20 10:00:00','2020-05-20 11:30:00')
-	;
-	
---update  Evento
---set id_horario= 1
---where id_evento = 0;
+update  Evento
+    set id_horario_fk = 1
+    where id_evento = 1
+;
 
 update  Evento
-set id_horario= 0
-where id_evento = 1;
-
---update  Evento
---set id_horario= 2
---where id_evento = 2;
+    set id_horario_fk = 5
+    where id_evento = 2
+;
 
 update  Evento
-set id_horario= 5
-where id_evento = 3;
-
+    set id_horario_fk = 7
+    where id_evento = 3
+;

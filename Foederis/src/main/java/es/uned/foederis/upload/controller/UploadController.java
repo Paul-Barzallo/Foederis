@@ -154,9 +154,9 @@ public class UploadController {
 
 			// Genera entidad Archivo y la inserta en bd
 			Archivo file = new Archivo();
-			file.setIdEvento(ev);
+			file.setEvento(ev);
 			file.setNombreArchivo(pathFile.toString());
-			file.setIdUsuario(usr);
+			file.setUsuario(usr);
 			file.setTimestamp(timestamp);
 
 			myFileService_.createFile(file);

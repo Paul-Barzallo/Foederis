@@ -36,8 +36,8 @@ import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.IEventoRepository;
-import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
 import es.uned.foederis.eventos.repository.IHorarioRepository;
+import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
 import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.salas.repository.ISalaRepository;
@@ -60,17 +60,19 @@ public class EventosController {
 	private ISalaRepository salaRepo;
 
 	@Autowired
-	private IEventoUsuarioRepository eventoUsuarioRepo;
+
+	private IUsuarioEventoRepository usuarioEventoRepo;
 
 	@Autowired
 	private IEventoRepository eventoRepo;
 
 	@Autowired
-	IUsuarioRepository usuRepo;
 
+	private IUsuarioRepository usuRepo;
+	
 	@Autowired
-	IHorarioRepository HorarioRepo;
-
+	private IHorarioRepository HorarioRepo;
+	
 	@Autowired
 	private Usuario user;
 
@@ -162,41 +164,38 @@ public class EventosController {
 	 * Actualiza el evento indicando si el usuario confirma asistencia Si esta
 	 * confirmando asistencia almacenamos el horario elegido.
 	 */
-	private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido,
-			boolean pCheckPresencial) {
-
-		if (user.getIdUsuario() == null)
-			this.iniciarUsuario();
-
-		Usuario_Evento usuarioEvento = eventoSeleccionado.getEventoDeUnUsuario(user.getIdUsuario());
-
-		// Obtengo el usuario evento de la variable user para poner modificarla en el y
-		// guardarla actualizada.
-		List<Usuario_Evento> lstUsuariosEvento = user.getEventosDelUsuario();
-		Usuario_Evento usuEvento = lstUsuariosEvento.get(usuarioEvento.getIdUsuarioEvento());
-
+	private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido, boolean pCheckPresencial) {
+		 
+		 if(user.getIdUsuario()== null)
+			 this.iniciarUsuario();
+		 
+		 Usuario_Evento usuarioEvento =  eventoSeleccionado.getUsuariosEvento(user.getIdUsuario());
+		 
+		 //Obtengo el usuario evento de la variable user para poner modificarla en el y guardarla actualizada.
+		 List<Usuario_Evento> lstUsuariosEvento = user.getEventosDelUsuario();
+		 Usuario_Evento usuEvento = lstUsuariosEvento.get(usuarioEvento.getIdUsuarioEvento());		 
+	
 		//Confirmación evento
-		usuEvento.setConfirmado(pValor);
-		
+		 usuEvento.setConfirmado(pValor);
+		 
 		//Si se da de baja comprobar que si estuviera como asistente
 		if(pValor == 0 && usuEvento.isAsistente())
 			usuEvento.setAsistente(false);
-
-		if (pHorarioElegido != null) {
-
-			// Guardamos horario
-			usuEvento.setHorario(pHorarioElegido);
-			usuEvento.setPresencial(pCheckPresencial);
-			
-			
+		 
+		 if(pHorarioElegido != null) {
+			 
+			 //Guardamos horario
+			 usuEvento.setHorario(pHorarioElegido);		
+			 usuEvento.setPresencial(pCheckPresencial);
+			 
 			//Comprobamos si hay plazaas libres
 			if(usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
 				usuEvento.setAsistente(true);
-
-		}
-
-		usuRepo.save(user);
-	}
+			
+		 }
+		 
+		 usuRepo.save(user); 		 
+	 } 
 
 	/** TODO
 	 * Solo visible el boton para los jefes de proyecto creadores del evento.
@@ -408,7 +407,7 @@ public class EventosController {
 	@GetMapping(Rutas.NUEVO)
 	public String getFormularioNuevo(Model model) {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.isJefeProyecto()) {
+		if (user.isAdminOrJP()) {
 			Evento evento = new Evento();
 			model.addAttribute(Atributos.EVENTO, evento);
 			administracionService.cargarParamsBusqSalas(model);
@@ -433,12 +432,12 @@ public class EventosController {
 	@GetMapping(Rutas.BUSQ_SALAS)
 	@ResponseBody
 	public ModelAndView ajaxSalas(Model model, Optional<String> paramBusq, Optional<String> valorBusq) {
+
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.isJefeProyecto()) {
-			String parametro = (paramBusq.isPresent()) ? paramBusq.get() : "";
-			String valor = (valorBusq.isPresent()) ? valorBusq.get() : "";
-			// se cargan las salas, si los valores de busqueda estan vacios se carga la
-			// lista completa
+		if (user.isAdminOrJP()) {
+			String parametro = (paramBusq.isPresent())? paramBusq.get() : "";
+			String valor = (valorBusq.isPresent())? valorBusq.get() : "";
+			// se cargan las salas, si los valores de busqueda estan vacios se carga la lista completa
 			eventoService.cargarSalas(model, parametro, valor);
 			return new ModelAndView("fragmentos :: lista_salas");
 		}
@@ -456,12 +455,10 @@ public class EventosController {
 	 * @throws ParseException
 	 */
 	@PostMapping(Rutas.GUARDAR)
-	public String postGuardarSala(Model model, HttpServletRequest request,
-			Evento evento/*
-							 * , long idSala, long[] usuarios, String horarioApertura1, String horarioCierre
-							 */) throws ParseException {
-		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (user.isJefeProyecto()) {
+
+	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento/*, long idSala, long[] usuarios, String horarioApertura1, String horarioCierre*/) throws ParseException {
+		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.isAdminOrJP()) {
 			String idSala = request.getParameter("idSala");
 			String[] usuarios = request.getParameterValues("usuarios");
 			String hApertura1 = request.getParameter("horarioApertura1");
@@ -474,11 +471,18 @@ public class EventosController {
 			Chat chat = new Chat();
 			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 			List<Horarios> horarios = new ArrayList<>();
+			
+			// EL primer usuario del evento es el creador es el creador
+			Usuario_Evento usuarioCreadorEvento = new Usuario_Evento();
+			usuarioCreadorEvento.setUsuario(user);
+			usuarioCreadorEvento.setEvento(evento);
+			usuariosEvento.add(usuarioCreadorEvento);
 
 			for (String idUsuario : usuarios) {
 				Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
 				Usuario_Evento usuarioEvento = new Usuario_Evento();
-				usuarioEvento.setIdUsuario(usuario);
+				usuarioEvento.setUsuario(usuario);
+				usuarioEvento.setEvento(evento);
 				usuariosEvento.add(usuarioEvento);
 			}
 
@@ -488,6 +492,7 @@ public class EventosController {
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
 				ms = dateTimeFormat.parse(hCierre1).getTime();
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horario.setEvento(evento);
 				horarios.add(horario);
 			}
 
@@ -497,6 +502,7 @@ public class EventosController {
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
 				ms = dateTimeFormat.parse(hCierre2).getTime();
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horario.setEvento(evento);
 				horarios.add(horario);
 			}
 
@@ -506,15 +512,19 @@ public class EventosController {
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
 				ms = dateTimeFormat.parse(hCierre3).getTime();
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
+				horario.setEvento(evento);
 				horarios.add(horario);
 			}
 
-			evento.setEventosDelUsuario(usuariosEvento);
+			evento.setUsuariosEvento(usuariosEvento);
 			evento.setHorarios(horarios);
-//			evento.setChat(chat);
 			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
 			evento.setUsuarioCreador(user);
+			
 			eventoRepo.save(evento);
+			usuarioEventoRepo.saveAll(usuariosEvento);
+			HorarioRepo.saveAll(horarios);
+			
 		} else {
 			eventoService.mensajeNoAccesoEventos(model);
 		}

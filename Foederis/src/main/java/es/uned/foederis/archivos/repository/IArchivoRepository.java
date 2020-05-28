@@ -8,5 +8,5 @@ import es.uned.foederis.archivos.model.Archivo;
 import es.uned.foederis.eventos.model.Evento;
 
 public interface IArchivoRepository extends CrudRepository<Archivo, Integer> {
-	List<Archivo> findByidEvento(Evento idEvento);
+	List<Archivo> findByEvento(Evento evento);
 }

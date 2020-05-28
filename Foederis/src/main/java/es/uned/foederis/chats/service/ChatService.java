@@ -31,7 +31,7 @@ public class ChatService {
 	}
 
 	public List<Chat> findByIdEvento(Evento event) {
-		List<Chat> result = (List<Chat>)ChatRepository.findByidEvento(event);
+		List<Chat> result = (List<Chat>)ChatRepository.findByEvento(event);
 		return result;
 	} 
 

@@ -43,26 +43,18 @@ public class Sala {
 		this.aforo = 4;
 	}
 
-	public Sala(String nombre, int aforo, boolean presentacion, boolean megafonia, boolean grabacion, boolean streaming,
-			boolean wifi) {
-		this.nombre = nombre;
-		this.aforo = aforo;
-		this.presentacion = presentacion;
-		this.megafonia = megafonia;
-		this.grabacion = grabacion;
-		this.streaming = streaming;
-		this.wifi = wifi;
-	}
-
 	public long getIdSala() {
 		return idSala;
 	}
+	
 	public void setIdSala(long id) {
 		this.idSala = id;
 	}
+	
 	public String getNombre() {
 		return nombre;
 	}
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
