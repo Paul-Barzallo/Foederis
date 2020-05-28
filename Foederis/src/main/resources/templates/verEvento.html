@@ -74,13 +74,13 @@
 							<tr>
 								<td><label style="color: #007bff;">Presencial:</label></td>
 								<td><input type="checkbox" th:name="checkPresencial"
-									class="form-check-input" checked 
-									th:checked="${usuarioEventoSeleccionado.presencial}" /></td>
+									class="form-check-input"
+									th:checked="${usuarioEventoSeleccionado.isPresencial()}" /></td>
 
 								<td><label style="color: #007bff;">Asistencia
 										confirmada:</label></td>
 								<td><input type="checkbox" name="checkAsistente"
-									class="form-check"
+									class="form-check" 
 									th:checked="${usuarioEventoSeleccionado.asistente}" disabled />
 								</td>
 							</tr>
@@ -159,7 +159,7 @@
 								th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 								<td><label style="color: #007bff;"> Horario mas	votado (actual):</label></td>
 								<td colspan="3"><label
-									th:text="${#dates.format(horarioVotado.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}" /></td>
+									th:text="${horarioVotado == null ? 'Sin confirmaciones' : #dates.format(horarioVotado.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}" /></td>
 							</tr>
 
 						</tfoot>
@@ -174,8 +174,10 @@
 						th:object="${eventoSeleccionado}">
 
 						<input type="hidden" th:name="horarioVotado"
-							th:value="${horarioVotado.idHorario}" />
-						<input type="hidden" th:name="checkAsistenteElegido" />									
+							th:value="${horarioVotado == null? null :horarioVotado.idHorario}" />
+						<input type="hidden" th:name="checkAsistenteElegido" />	
+							
+						<input type="hidden" th:name="eventoSeleccionado" th:value="${eventoSeleccionado.idEvento}" />								
 
 						<table style="table-layout: fixed; width: 100%"
 							class="table table-striped justify-content-center">
@@ -187,13 +189,13 @@
 							</thead>
 							<tbody>
 								<tr
-									th:each="usuariosInvitados : ${eventoSeleccionado.eventosDelUsuario}">
+									th:each="usuariosInvitados : ${eventoSeleccionado.getEventosDelUsuario()}">
 									<td><label
-										th:text="${usuariosInvitados.idUsuario.username}"></label></td>
+										th:text="${usuariosInvitados.usuario.username}"></label></td>
 									<td><label
-										th:text="${usuariosInvitados.idUsuario.nombre}"></label></td>
+										th:text="${usuariosInvitados.usuario.nombre}"></label></td>
 									<td><label
-										th:text="${usuariosInvitados.idUsuario.apellidos != null ? usuariosInvitados.idUsuario.apellidos:''}"></label></td>
+										th:text="${usuariosInvitados.usuario.apellidos != null ? usuariosInvitados.usuario.apellidos:''}"></label></td>
 									<td><input type="checkbox"
 										th:value="${usuariosInvitados.idUsuarioEvento}"
 										th:name="checkAsistenteElegido" class="form-check"

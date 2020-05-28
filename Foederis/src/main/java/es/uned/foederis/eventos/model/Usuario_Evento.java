@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import es.uned.foederis.sesion.model.Usuario;
 
@@ -33,11 +34,14 @@ public class Usuario_Evento {
 	
 	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma
 	private int confirmado;
+	@NotNull
 	private Boolean asistente;
+	@NotNull
 	private Boolean presencial; 
 	
 	public Usuario_Evento() {
 		this.confirmado = -1;
+		this.setPresencial(false);
 	}
 	
 	public int getIdUsuarioEvento() {

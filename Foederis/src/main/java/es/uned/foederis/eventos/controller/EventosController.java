@@ -72,10 +72,10 @@ public class EventosController {
 	@Autowired
 
 	private IUsuarioRepository usuRepo;
-	
+
 	@Autowired
 	private IHorarioRepository HorarioRepo;
-	
+
 	@Autowired
 	private Usuario user;
 
@@ -133,11 +133,13 @@ public class EventosController {
 	 * Devuelve el listado de eventos sin confirmar. Actualiza el evento, actualiza
 	 * la variable confirmado a 1 y y pasandole el horario elegido por el usuario.
 	 * 
-	 * @param model, checkBox presencial, radioButton con la seleccion del horario y el evento seleccionado
+	 * @param model, checkBox presencial, radioButton con la seleccion del horario y
+	 *               el evento seleccionado
 	 * @return html
 	 */
 	@PostMapping("/confirmar")
-	public ModelAndView confirmar(Model model, @RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
+	public ModelAndView confirmar(Model model,
+			@RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
 			@RequestParam(value = "seleccionHorario") String horarioElegido, Evento eventoSeleccionado) {
 
 		ModelAndView mav = new ModelAndView();
@@ -162,86 +164,95 @@ public class EventosController {
 	}
 
 	/**
-	 * Funcion que se ejecuta cuando un invitado al evento confirma o rechaza su asistencia al evento.
-	 * Se viene aqui desde confirmar y baja
-	 * Actualiza el evento indicando si el usuario confirma asistencia Si esta
-	 * confirmando asistencia almacenamos el horario elegido.
+	 * Funcion que se ejecuta cuando un invitado al evento confirma o rechaza su
+	 * asistencia al evento. Se viene aqui desde confirmar y baja Actualiza el
+	 * evento indicando si el usuario confirma asistencia Si esta confirmando
+	 * asistencia almacenamos el horario elegido.
 	 */
-	private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido, boolean pCheckPresencial) {
-		 
-		 if(user.getIdUsuario()== null)
-			 this.iniciarUsuario();
-		 
-		 Usuario_Evento usuarioEvento =  eventoSeleccionado.getUsuariosEvento(user.getIdUsuario());
-		 
-		 //Obtengo el usuario evento de la variable user para poner modificarla en el y guardarla actualizada.
-		 List<Usuario_Evento> lstUsuariosEvento = user.getEventosDelUsuario();
-		 Usuario_Evento usuEvento = lstUsuariosEvento.get(usuarioEvento.getIdUsuarioEvento());		 
-	
-		//Confirmación evento
-		 usuEvento.setConfirmado(pValor);
-		 
-		//Si se da de baja comprobar que si estuviera como asistente
-		if(pValor == 0 && usuEvento.isAsistente())
+	private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido,
+			boolean pCheckPresencial) {
+
+		this.iniciarUsuario();
+
+		Usuario_Evento usuarioEvento = eventoSeleccionado.getUsuariosEvento(user.getIdUsuario());
+
+		// Obtengo el usuario evento de la variable user para poner modificarla en el y
+		// guardarla actualizada.
+		List<Usuario_Evento> lstUsuariosEvento = user.getEventosDelUsuario();
+		Usuario_Evento usuEvento = lstUsuariosEvento.get(usuarioEvento.getIdUsuarioEvento());
+
+		// Confirmación evento
+		usuEvento.setConfirmado(pValor);
+
+		// Si se da de baja comprobar que si estuviera como asistente
+		if (pValor == 0 && usuEvento.isAsistente())
 			usuEvento.setAsistente(false);
-		 
-		 if(pHorarioElegido != null) {
-			 
-			 //Guardamos horario
-			 usuEvento.setHorario(pHorarioElegido);		
-			 usuEvento.setPresencial(pCheckPresencial);
-			 
-			//Comprobamos si hay plazaas libres
-			if(usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
+
+		if (pHorarioElegido != null) {
+
+			// Guardamos horario
+			usuEvento.setHorario(pHorarioElegido);
+			usuEvento.setPresencial(pCheckPresencial);
+
+			// Comprobamos si hay plazaas libres
+			if (usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
 				usuEvento.setAsistente(true);
-			
-		 }
-		 
-		 usuRepo.save(user); 		 
-	 } 
+
+		}
+
+		usuRepo.save(user);
+	}
 
 	/**
 	 * Solo visible el boton para los jefes de proyecto creadores del evento.
-	 * Confirmamos los asistentes al evento que elija el jefe de proyecto 
+	 * Confirmamos los asistentes al evento que elija el jefe de proyecto
 	 * Confirmamos el horario mas legido por los confirmados al evento.
 	 */
 	@PostMapping("/confirmarAsistenciaEvento")
-	public ModelAndView confirmarAsistenciaEvento(Model model, Evento eventoSeleccionado,
-			@RequestParam(value = "checkAsistenteElegido") List<Integer> lstCheckedAsistentes,
-			@RequestParam(value ="horarioVotado") String horarioVotado) {
-		ModelAndView mav = new ModelAndView();		
-		
-		 //Control de aforo
-		int aforo = user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento()==eventoSeleccionado.getIdEvento()).findFirst().get().getEvento().getSalaEvento().getAforo();
-		
-		Evento evento= user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == eventoSeleccionado.getIdEvento()).findFirst().get().getEvento();
-		
-		//marco todos los usuarios-evento del evento con asistencia a 0 y solo en los que traigo de la vista los pongo a true;
-		evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
-		
-		for(Integer id:lstCheckedAsistentes) {
-			if(id<0) {}
-			else if(aforo >0)
-				evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento()==id).findFirst().get().setAsistente(true);
-			else
-				break;
-			aforo--;
+	public ModelAndView confirmarAsistenciaEvento(Model model,
+			@RequestParam(value = "checkAsistenteElegido", required = false) List<Integer> lstCheckedAsistentes,
+			@RequestParam(value = "horarioVotado") String horarioVotado,
+			@RequestParam(value = "eventoSeleccionado") Integer idEvento) {
+		ModelAndView mav = new ModelAndView();
+
+		// Guardo el horario que ha sido mas elegido
+		if (horarioVotado.isEmpty() || horarioVotado == null) {			
+		} else {
+
+			// Control de aforo
+			int aforo = user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento() == idEvento)
+					.findFirst().get().getEvento().getSalaEvento().getAforo();
+
+			Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
+					.findFirst().get().getEvento();
+
+			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
+			// que traigo de la vista los pongo a true;
+			evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
+
+			for (Integer id : lstCheckedAsistentes) {
+				if (id < 0) {
+				} else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==1).count()>0)
+					evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==1).findFirst().get()
+							.setAsistente(true);
+				else
+					break;
+				aforo--;
+			}
+
+			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
+			evento.setHorarioElegido(horarioMasVotado.get());
+
+			usuRepo.save(user);
+			
+			eventoService.mensajeConfirmacion(model);
 		}
-		
-		//Guardo el horario que ha sido mas elegido
-		Optional<Horarios> horarioMasVotado=  HorarioRepo.findById(Integer.parseInt(horarioVotado));
-		evento.setHorarioElegido(horarioMasVotado.get());
-		
-		
-		usuRepo.save(user);
-				
+
 		mav.setViewName("listarEventos");
-		
-		eventoService.mensajeConfirmacion(model);
-		
+
 		return mav;
 	}
-	
+
 	// **Listar evento.HTML ***//
 
 	/****
@@ -253,8 +264,7 @@ public class EventosController {
 	 */
 	@GetMapping("/entrar")
 	public ModelAndView entrar(Model model, @RequestParam(value = "id") Evento evento) {
-		if (user.getIdUsuario() == null)
-			this.iniciarUsuario();	
+		this.iniciarUsuario();
 
 		ModelAndView mav = new ModelAndView();
 
@@ -267,37 +277,43 @@ public class EventosController {
 				break;
 			}
 		}
-		
-		//SOlo para el jefe de rproyecto creador muestro el horario mas elegido
-		if ( user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
-			
-			
-			List<Integer> lstH = new ArrayList<Integer>() ;	
-			
-			List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
-			
-			lstusuEvento =  lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento()).collect(Collectors.toList());
-				
-			lstusuEvento.forEach(c-> {if (c.getHorario()!= null && c.getHorario().getIdHorario()>-1 ) 
-														{lstH.add(c.getHorario().getIdHorario());}
-													else { lstH.add(0);}
-													});
 
-						    
-			    Map<Integer, Long> repeticiones =  lstH.stream().collect(Collectors.groupingBy(w -> w, Collectors.counting()));
-			    
-			    Stream<Map.Entry<Integer, Long>> ordenados = repeticiones.entrySet().stream()
-			    		.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
-			    
-			    Integer masFrecuente = ordenados.findFirst().get().getKey();
-			    
-			    //mostraremos el mas elegido a modo información
-			    Optional<Horarios> horarioMasVotado=  HorarioRepo.findById(masFrecuente);
-			    
-				mav.addObject("horarioVotado", horarioMasVotado.get());				
+		// SOlo para el jefe de rproyecto creador muestro el horario mas elegido
+		if (user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
+
+			List<Integer> lstH = new ArrayList<Integer>();
+
+			List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
+
+			lstusuEvento = lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento())
+					.collect(Collectors.toList());
+
+			lstusuEvento.forEach(c -> {
+				if (c.getHorario() != null && c.getHorario().getIdHorario() > -1) {
+					lstH.add(c.getHorario().getIdHorario());
+				} else {
+					lstH.add(0);
+				}
+			});
+
+			Map<Integer, Long> repeticiones = lstH.stream()
+					.collect(Collectors.groupingBy(w -> w, Collectors.counting()));
+
+			Stream<Map.Entry<Integer, Long>> ordenados = repeticiones.entrySet().stream()
+					.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+
+			Integer masFrecuente = ordenados.findFirst().get().getKey();
+
+			// mostraremos el mas elegido a modo información
+			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(masFrecuente);
+
+			if (horarioMasVotado.isEmpty() || horarioMasVotado == null)
+				mav.addObject("horarioVotado", null);
+			else
+				mav.addObject("horarioVotado", horarioMasVotado.get());
 		}
-			
-		//PARA PRUEBAS
+
+		// PARA PRUEBAS
 		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
 		mav.addObject("tsActual", tsActual);
 		mav.addObject("eventoSeleccionado", evento);
@@ -325,8 +341,7 @@ public class EventosController {
 	@RequestMapping(value = "/listarFiltro")
 	public ModelAndView listarFiltro(@RequestParam(required = false, name = "filtroListado") String filtroListado) {
 
-		if (user.getIdUsuario() == null)
-			this.iniciarUsuario();
+		this.iniciarUsuario();
 
 		// Fecha de hoy formato timestamp
 		Date dt = new Date();
@@ -399,6 +414,9 @@ public class EventosController {
 		mav.addObject("lstEventos", lstEventos);
 		mav.addObject("filtroListado", filtroListado);
 		mav.addObject("userLogin", user);
+		
+		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
+		mav.addObject("tsActual", tsActual);
 
 		mav.setViewName("listarEventos");
 		return mav;
@@ -444,9 +462,10 @@ public class EventosController {
 
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
-			String parametro = (paramBusq.isPresent())? paramBusq.get() : "";
-			String valor = (valorBusq.isPresent())? valorBusq.get() : "";
-			// se cargan las salas, si los valores de busqueda estan vacios se carga la lista completa
+			String parametro = (paramBusq.isPresent()) ? paramBusq.get() : "";
+			String valor = (valorBusq.isPresent()) ? valorBusq.get() : "";
+			// se cargan las salas, si los valores de busqueda estan vacios se carga la
+			// lista completa
 			eventoService.cargarSalas(model, parametro, valor);
 			return new ModelAndView("fragmentos :: lista_salas");
 		}
@@ -465,8 +484,11 @@ public class EventosController {
 	 */
 	@PostMapping(Rutas.GUARDAR)
 
-	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento/*, long idSala, long[] usuarios, String horarioApertura1, String horarioCierre*/) throws ParseException {
-		Usuario user = (Usuario)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public String postGuardarSala(Model model, HttpServletRequest request,
+			Evento evento/*
+							 * , long idSala, long[] usuarios, String horarioApertura1, String horarioCierre
+							 */) throws ParseException {
+		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
 			String idSala = request.getParameter("idSala");
 			String[] usuarios = request.getParameterValues("usuarios");
@@ -480,7 +502,7 @@ public class EventosController {
 			Chat chat = new Chat();
 			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 			List<Horarios> horarios = new ArrayList<>();
-			
+
 			// EL primer usuario del evento es el creador es el creador
 			Usuario_Evento usuarioCreadorEvento = new Usuario_Evento();
 			usuarioCreadorEvento.setUsuario(user);
@@ -529,11 +551,11 @@ public class EventosController {
 			evento.setHorarios(horarios);
 			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
 			evento.setUsuarioCreador(user);
-			
+
 			eventoRepo.save(evento);
 			usuarioEventoRepo.saveAll(usuariosEvento);
 			HorarioRepo.saveAll(horarios);
-			
+
 		} else {
 			eventoService.mensajeNoAccesoEventos(model);
 		}

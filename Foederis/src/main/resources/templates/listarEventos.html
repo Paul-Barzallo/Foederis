@@ -40,7 +40,7 @@
 		    	</div>		
 	    	</div>
    			
-   			<table class="table table-striped">
+   			<table class="table table-striped" width="100%">
    				<thead>
    					<tr>
    						<th>ID</th>
@@ -67,7 +67,8 @@
 						</td>
    							   							
 						<td>
-							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados'}">	   							
+							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados' 
+							and (reunion.horarioElegido != null and reunion.horarioElegido.Horario_Fecha_Inicio > tsActual)}">	   							
 								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
 							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!='rechazados'}">
