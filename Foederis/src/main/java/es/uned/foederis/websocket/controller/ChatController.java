@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
-import es.uned.foederis.eventos.repository.IEventoUsuarioRepository;
+import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.model.ChatMessage;
@@ -48,7 +47,7 @@ public class ChatController {
     @Autowired
     AdministracionService myUserService_;
     @Autowired
-    IEventoUsuarioRepository eventoUsuarioRepo_;
+    IUsuarioEventoRepository eventoUsuarioRepo_;
     
     private Model myModel_;
     
@@ -77,7 +76,7 @@ public class ChatController {
     			
     			// Generar registro en usuario_evento
     			Usuario_Evento userEv = new Usuario_Evento();
-    			userEv.setIdUsuario(usr);
+    			userEv.setUsuario(usr);
     			userEv.setEvento(evento);
     			
     			eventoUsuarioRepo_.save(userEv);
