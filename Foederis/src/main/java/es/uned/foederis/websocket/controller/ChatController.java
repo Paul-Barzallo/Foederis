@@ -75,15 +75,14 @@ public class ChatController {
     			myModel_.addAttribute(Atributos.USUARIO, usr.getIdUsuario());
     			
     			// Generar registro en usuario_evento
-    			Usuario_Evento userEv = new Usuario_Evento();
+/*    			Usuario_Evento userEv = new Usuario_Evento();
     			userEv.setUsuario(usr);
     			userEv.setEvento(evento);
     			
     			eventoUsuarioRepo_.save(userEv);
-    			break;
+*/    			break;
     		}
     	}
-
     	return "/chat";
 	}
 
