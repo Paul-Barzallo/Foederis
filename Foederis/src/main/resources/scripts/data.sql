@@ -127,6 +127,11 @@ update  Evento
 ;
 
 update  Evento
+<<<<<<< HEAD
+set id_horario= 5
+where id_evento = 3;
+=======
     set id_horario_fk = 7
     where id_evento = 3
 ;
+>>>>>>> 865d9ead412f71592a3ff712fb08c436b12cc22c
