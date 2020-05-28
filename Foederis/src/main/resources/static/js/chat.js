@@ -12,6 +12,7 @@ var uploadForm = document.querySelector('#uploadForm');
 var stompClient = null;
 var username = null;
 var eventId = null;
+var connected = false;
 
 function connect(){
     username = document.querySelector('#userName').innerHTML.trim();
@@ -26,17 +27,22 @@ function connect(){
         stompClient.connect({}, onConnected, onError);
     //}
     //event.preventDefault();
+        setTimeout(tryConnection,5000);
 }
 
+function tryConnection(){
+	if (!connected)
+		connect();
+}
 
 function onConnected() {
-
+	connected = true;
     eventId = $("#eventId").text();
     
     // Suscribirse a topic/public/eventId para recibir los mensajes del chat
     stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
     // Suscribirse a topic/publi para mensaje de desconexión
-    stompClient.subscribe('/topic/public', onMessageReceived);
+    // stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Notificar al servidor la conexión
     stompClient.send("/app/chat.addUser/" + eventId,
@@ -49,8 +55,7 @@ function onConnected() {
 
 
 function onError(error) {
-    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-    connectingElement.style.color = 'red';
+    connectingElement.textContent = 'No se pudo conectar al websocket. Por favor, espere o refresque la página para reintentarlo!';
 }
 
 

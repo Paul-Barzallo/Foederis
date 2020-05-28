@@ -274,7 +274,7 @@
 			<ul class="list-group" style="height: 100%; overflow-y: auto">
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
 					<span class="d-flex justify-content-between bg-info mb-3">
-						<div th:text="${chat.idUsuario.username}"/div>
+						<div th:text="${chat.idUsuario.username}"/>
 						<div th:text="${#dates.format(chat.timestamp, 'dd-MM-yyyy HH:mm:ss')}"/>
 					</span>
 						<p th:text="${chat.texto}">

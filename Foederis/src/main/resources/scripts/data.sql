@@ -38,16 +38,16 @@ VALUES
 insert into Evento
 	( id_evento, nombre, usuario_creador_id, sala_Evento_id, estado)
 values
-	(0,			'Evento 1', 1, 2, 0),
-	(1,			'Evento 2', 3, 2, 0),
-	(2,			'Evento 3', 4, 2, 0),
-	(3,			'Evento 2', 5, 2, 0)
+	(1,			'Evento 1', 1, 2, 0),
+	(2,			'Evento 2', 3, 2, 0),
+	(3,			'Evento 3', 4, 2, 0),
+	(4,			'Evento 2', 5, 2, 0)
 ;
 
 insert into Usuario_Evento
 	(ID_USUARIO_EVENTO, confirmado, asistente, presencial,evento, id)
 	values
-	(0,1, 1,1,0, 1),
+	(0,1, 1,1,2, 1),
 	(1,1, 1,1,1, 1),
 	(2,-1, 0,0,2, 1),
 	(3,1, 0,1,1, 11),
@@ -61,7 +61,7 @@ insert into Horarios
 	(id_horario, id_evento, Horario_Fecha_Inicio, Horario_Fecha_fin)
 	values
 	(0, 1, '2020-05-25 09:00:00','2020-05-25 10:30:00'),
-	(1, 0, '2020-05-19 10:00:00','2020-05-19 11:30:00'),
+	(1, 1, '2020-05-19 10:00:00','2020-05-19 11:30:00'),
 	(2, 2, '2020-05-10 09:00:00','2020-05-10 10:30:00'),
 	(3, 2, '2020-05-29 10:00:00','2020-05-29 11:30:00'),
 	(4, 2, '2020-05-22 10:00:00','2020-05-28 11:30:00'),
@@ -70,7 +70,7 @@ insert into Horarios
 	
 update  Evento
 set id_horario= 1
-where id_evento = 0;
+where id_evento = 4;
 
 update  Evento
 set id_horario= 0
@@ -83,4 +83,3 @@ where id_evento = 1;
 update  Evento
 set id_horario= 5
 where id_evento = 3;
-
