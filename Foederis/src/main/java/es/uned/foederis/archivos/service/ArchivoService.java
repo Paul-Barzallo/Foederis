@@ -31,7 +31,7 @@ public class ArchivoService {
 	}
 
 	public List<Archivo> findByIdEvento(Evento event) {
-		List<Archivo> result = (List<Archivo>)FileRepository.findByidEvento(event);
+		List<Archivo> result = (List<Archivo>)FileRepository.findByEvento(event);
 		return result;
 	} 
 

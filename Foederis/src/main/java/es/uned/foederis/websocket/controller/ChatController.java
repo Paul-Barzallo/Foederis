@@ -109,8 +109,8 @@ public class ChatController {
     			Chat c = new Chat();
     			c.setTimestamp(timestamp); 
     			c.setTexto(chatMessage.getContent());
-    			c.setIdEvento(myEventList_.get(Integer.parseInt(eventId)));
-    			c.setIdUsuario(usr);
+    			c.setEvento(myEventList_.get(Integer.parseInt(eventId)));
+    			c.setUsuario(usr);
 
     			myChatService_.createChat(c);
     			

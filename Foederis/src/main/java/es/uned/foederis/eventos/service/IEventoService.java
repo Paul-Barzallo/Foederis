@@ -1,9 +1,5 @@
 package es.uned.foederis.eventos.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.ui.Model;
 
 import es.uned.foederis.eventos.model.Evento;
@@ -58,6 +54,11 @@ public interface IEventoService {
 	
 	public void mensajeNoAccesoEventos(Model model);
 	
+	public void mensajeConfirmacion(Model model);
+	
 	public void cargarSalas(Model model, String paramBusq, String valorBusq);
+
+
+	void mensajeInfoSala(Model model, String paramBusq);
 
 }

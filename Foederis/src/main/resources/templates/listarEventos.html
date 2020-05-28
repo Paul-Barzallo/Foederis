@@ -47,7 +47,7 @@
    						<th>Nombre</th>
    						<th>Fecha Inicio</th>
    						<th>Sala</th>
-<!--     				<th>Estado</th> -->
+    					<th>Estado</th>
    						<th>Creador</th>    						
    						<th></th>
    						<th></th>
@@ -60,15 +60,15 @@
 						<td th:text="${reunion.nombre}"></td>
 						<td th:text="${reunion.horarioElegido != null ? #dates.format(reunion.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') : ''}" ></td>
 						<td th:text="${reunion.salaEvento.idSala}"></td>
-<!--    				<td th:text="${reunion.estado}"></td> -->
+   						<td th:text="${reunion.getEstado()}"></td>
 						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
 						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
-							<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles del Evento'" class="btn btn-warning"></a>
+							<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
 						</td>
    							   							
 						<td>
 							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados'}">	   							
-								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja del Evento'" class="btn btn-outline-danger"></a>
+								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
 							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!='rechazados'}">
 								<label>Baja no disponible</label>

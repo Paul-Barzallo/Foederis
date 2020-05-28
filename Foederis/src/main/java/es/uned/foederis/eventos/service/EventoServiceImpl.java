@@ -63,7 +63,7 @@ public class EventoServiceImpl implements IEventoService {
 	
 	@Override
 	public Evento getEventById(int id){
-		return EventoRepository.findByidEvento(id);
+		return EventoRepository.findByIdEvento(id);
 	}
 
 	@Override
@@ -82,6 +82,23 @@ public class EventoServiceImpl implements IEventoService {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Aceso Denegado");
 		model.addAttribute(Atributos.ALERTA, "No tiene permisos de acceso a los eventos");
 	}
+	
+	@Override
+	public void mensajeConfirmacion(Model model) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Confirmacion");
+		model.addAttribute(Atributos.ALERTA, "El evento se confirmó correctamente");
+	}
+	
+	@Override
+	public void mensajeInfoSala(Model model, String paramBusq) {
+		model.addAttribute(Atributos.ALERTA_TITULO, "Info");		
+		
+		List<Sala> salas = new ArrayList<Sala>();
+		salas.add(salaRepo.findById(Long.parseLong(paramBusq)).get());
+		
+		model.addAttribute(Atributos.SALAS, salas);
+	}
+	
 	
 	/**
 	 * Añade las salas que coincidan con la busqueda al model

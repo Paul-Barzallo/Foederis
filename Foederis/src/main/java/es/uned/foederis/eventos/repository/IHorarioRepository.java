@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import es.uned.foederis.eventos.model.Horarios;
 
 public interface IHorarioRepository extends CrudRepository<Horarios, Integer>{
-	Horarios findByIdHorario(Integer idH); 
+	Horarios findByIdHorario(Integer idHorario); 
 }
