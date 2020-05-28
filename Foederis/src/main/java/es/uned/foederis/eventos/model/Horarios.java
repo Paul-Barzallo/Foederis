@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Horarios {
@@ -58,6 +57,12 @@ public class Horarios {
 	
 	public void setHorario_Fecha_Fin(Timestamp horario_Fecha_Fin) {
 		Horario_Fecha_Fin = horario_Fecha_Fin;
+	}
+	
+	@Override
+	public String toString() {
+		return "Horarios [idHorario=" + idHorario + ", Horario_Fecha_Inicio=" + Horario_Fecha_Inicio
+				+ ", Horario_Fecha_Fin=" + Horario_Fecha_Fin + ", evento=" + evento + "]";
 	}
 
 }

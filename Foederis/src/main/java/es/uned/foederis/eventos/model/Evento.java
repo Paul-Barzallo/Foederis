@@ -126,9 +126,14 @@ public class Evento {
 		return usuariosEvento;
 	}
 	
+	/**
+	 * Devuelve un entero con los usuarios del evento da igual el estado
+	 * @return
+	 */
 	public int getEventosDelUsuarioTotal() {
 		return usuariosEvento.size();
 	}
+	
 	
 	/**
 	 * Devuelve un entero con el total de usuarios confirmados al evento.

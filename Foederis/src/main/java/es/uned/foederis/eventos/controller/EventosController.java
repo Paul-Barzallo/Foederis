@@ -5,9 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -134,7 +137,7 @@ public class EventosController {
 	 * @return html
 	 */
 	@PostMapping("/confirmar")
-	public ModelAndView confirmar(Model model, @RequestParam("checkPresencial") boolean chkPresencial,
+	public ModelAndView confirmar(Model model, @RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
 			@RequestParam(value = "seleccionHorario") String horarioElegido, Evento eventoSeleccionado) {
 
 		ModelAndView mav = new ModelAndView();
@@ -197,25 +200,28 @@ public class EventosController {
 		 usuRepo.save(user); 		 
 	 } 
 
-	/** TODO
+	/**
 	 * Solo visible el boton para los jefes de proyecto creadores del evento.
 	 * Confirmamos los asistentes al evento que elija el jefe de proyecto 
 	 * Confirmamos el horario mas legido por los confirmados al evento.
 	 */
 	@PostMapping("/confirmarAsistenciaEvento")
-	public ModelAndView confirmarAsistenciaEvento(Model model, Evento eventoSeleccionado, @RequestParam(value = "checkAsistenteElegido") List<Integer> lstCheckedAsistentes) {
-		ModelAndView mav = new ModelAndView();
-		
-		//marco todos los usuarios-evento del evento con asistencia a 0 y solo en los que traigo de la vista los pongo a true;
-		 user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento()==eventoSeleccionado.getIdEvento()).forEach(c-> c.setAsistente(false));
+	public ModelAndView confirmarAsistenciaEvento(Model model, Evento eventoSeleccionado,
+			@RequestParam(value = "checkAsistenteElegido") List<Integer> lstCheckedAsistentes,
+			@RequestParam(value ="horarioVotado") String horarioVotado) {
+		ModelAndView mav = new ModelAndView();		
 		
 		 //Control de aforo
 		int aforo = user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento()==eventoSeleccionado.getIdEvento()).findFirst().get().getEvento().getSalaEvento().getAforo();
 		
 		Evento evento= user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == eventoSeleccionado.getIdEvento()).findFirst().get().getEvento();
 		
+		//marco todos los usuarios-evento del evento con asistencia a 0 y solo en los que traigo de la vista los pongo a true;
+		evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
+		
 		for(Integer id:lstCheckedAsistentes) {
-			if(aforo >0)
+			if(id<0) {}
+			else if(aforo >0)
 				evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento()==id).findFirst().get().setAsistente(true);
 			else
 				break;
@@ -223,10 +229,16 @@ public class EventosController {
 		}
 		
 		//Guardo el horario que ha sido mas elegido
+		Optional<Horarios> horarioMasVotado=  HorarioRepo.findById(Integer.parseInt(horarioVotado));
+		evento.setHorarioElegido(horarioMasVotado.get());
+		
 		
 		usuRepo.save(user);
 				
 		mav.setViewName("listarEventos");
+		
+		eventoService.mensajeConfirmacion(model);
+		
 		return mav;
 	}
 	
@@ -257,36 +269,33 @@ public class EventosController {
 		}
 		
 		//SOlo para el jefe de rproyecto creador muestro el horario mas elegido
-//		if ( user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
-//			
-//			Stream<List<Horarios>> lists = user.getEventosDelUsuario().parallelStream().collect(Collectors.groupingBy(w -> w.getHorario(), Collectors.counting()));
-//			
-//			long totalListaEspera =user.getEventosDelUsuario().stream().filter(obj -> obj.getHorario()).count();
-//
-////			Stream<List<Horarios>> lists = user.getEventosDelUsuario().parallelStream().collect(Collectors.groupingBy(w -> w.getHorario(), Collectors.counting()));
-//			
-////			<>
-////			for(Horarios aux: user.getEventosDelUsuario().forEach(c->c.getHorario())) {
-////				
-////			}
-//						    
-//				    Map<String, Long> repeticiones = Arrays.asList(valores).stream().
-//                            collect(Collectors.groupingBy(w -> w, Collectors.counting()));
-//				    
-//				    Stream<Map.Entry<String, Long>> ordenados = repeticiones.entrySet().stream()
-//				    		.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
-//				    
-//				    String masFrecuente = ordenados.findFirst().get().getKey();
-//				    
-//				    for (Map.Entry<String, Long> entry : repeticiones.entrySet())
-//				        System.out.println("Palabra : " + entry.getKey()+
-//				                            " , Se Repite : " + entry.getValue()+ " Veces");
-//			
-//
-//			
-//			mav.addObject("avisoAforo",
-//					"Aforo: " + aforo + " Asistentes: " + evento.getTotalAsistentesEvento() + " lista de espera: " + evento.getTotalListaEsperaEvento());
-//		}
+		if ( user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
+			
+			
+			List<Integer> lstH = new ArrayList<Integer>() ;	
+			
+			List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
+			
+			lstusuEvento =  lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento()).collect(Collectors.toList());
+				
+			lstusuEvento.forEach(c-> {if (c.getHorario()!= null && c.getHorario().getIdHorario()>-1 ) 
+														{lstH.add(c.getHorario().getIdHorario());}
+													else { lstH.add(0);}
+													});
+
+						    
+			    Map<Integer, Long> repeticiones =  lstH.stream().collect(Collectors.groupingBy(w -> w, Collectors.counting()));
+			    
+			    Stream<Map.Entry<Integer, Long>> ordenados = repeticiones.entrySet().stream()
+			    		.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+			    
+			    Integer masFrecuente = ordenados.findFirst().get().getKey();
+			    
+			    //mostraremos el mas elegido a modo información
+			    Optional<Horarios> horarioMasVotado=  HorarioRepo.findById(masFrecuente);
+			    
+				mav.addObject("horarioVotado", horarioMasVotado.get());				
+		}
 			
 		//PARA PRUEBAS
 		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
