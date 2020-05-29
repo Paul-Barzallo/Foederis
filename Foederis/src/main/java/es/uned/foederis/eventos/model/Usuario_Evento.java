@@ -35,7 +35,8 @@ public class Usuario_Evento {
 	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma
 	private int confirmado;
 	private Boolean asistente;
-	private Boolean presencial; 
+	private Boolean presencial;
+	private Boolean conectado; 
 	
 	public Usuario_Evento() {
 		this.confirmado = -1;
@@ -96,5 +97,13 @@ public class Usuario_Evento {
 
 	public void setHorario(Horarios horario) {
 		this.horario = horario;
+	}
+
+	public boolean isConectado() {
+		return conectado;
+	}
+	
+	public void setConectado(boolean conectado) {
+		this.conectado = conectado;
 	}
 }
