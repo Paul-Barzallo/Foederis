@@ -103,11 +103,11 @@ values
     (28,                3,              10,                         7,             -1,          FALSE,      FALSE),
     (29,                3,              11,                         7,              1,          TRUE,       FALSE),
     
-    (30,                4,              3,                          null,          -1,          FALSE,       FALSE),
-    (31,                4,              6,                          null,          -1,          FALSE,       FALSE),
-    (32,                4,              9,                          null,          -1,          FALSE,       FALSE),
-    (33,                4,              11,                         null,          -1,          FALSE,       FALSE),
-    (34,                4,              12,                         null,          -1,          FALSE,       FALSE),
+    (30,                4,              3,                          null,          -1,          null,       null),
+    (31,                4,              6,                          null,          -1,          FALSE,       null),
+    (32,                4,              9,                          null,          -1,          FALSE,       null),
+    (33,                4,              11,                         null,          -1,          FALSE,       null),
+    (34,                4,              12,                         null,          -1,          FALSE,       null),
     
     (35,                5,              4,                          null,          -1,          FALSE,       FALSE),
     (36,                5,              7,                          null,          -1,          FALSE,       FALSE),

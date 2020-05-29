@@ -19,7 +19,7 @@ public class Usuario_Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private int idUsuarioEvento;
 
-	@NotEmpty
+	@NotNull
 	@ManyToOne
     @JoinColumn(name="id_usuario_fk")
 	private Usuario usuario;
@@ -32,16 +32,13 @@ public class Usuario_Evento {
 	@JoinColumn(name="id_horario_fk")
 	private Horarios horario;
 	
-	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma
-	private int confirmado;
-	@NotNull
-	private Boolean asistente;
-	@NotNull
+	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma(usuarioEventoConstantes)
+	private int confirmado;	
+	private Boolean asistente;	
 	private Boolean presencial; 
 	
 	public Usuario_Evento() {
 		this.confirmado = -1;
-		this.setPresencial(false);
 	}
 	
 	public int getIdUsuarioEvento() {
@@ -77,6 +74,8 @@ public class Usuario_Evento {
 	}
 
 	public boolean isAsistente() {
+		if(asistente == null)
+			asistente = false;
 		return asistente;
 	}
 
@@ -85,6 +84,8 @@ public class Usuario_Evento {
 	}
 
 	public boolean isPresencial() {
+		if(presencial == null)
+			presencial = false;
 		return presencial;
 	}
 

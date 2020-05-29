@@ -86,7 +86,7 @@
 							</tr>
 							<tr>
 								<div
-									th:if="${usuarioEventoSeleccionado.horario== null && eventoSeleccionado.horarioElegido== null}">
+									th:if="${eventoSeleccionado.UsuarioCreador.idUsuario != userLogin.idUsuario and usuarioEventoSeleccionado.horario== null && eventoSeleccionado.horarioElegido== null}">
 
 									<td colspan="1"><label style="color: #007bff;">Opciones
 											de horario:</label></td>
@@ -123,16 +123,20 @@
 						<tfoot>
 							</br>
 
-							<tr
-								th:if="${eventoSeleccionado.UsuarioCreador.idUsuario != userLogin.idUsuario && eventoSeleccionado.horarioElegido == null && usuarioEventoSeleccionado.horario== null}">
-								<td colspan="2"><a
+							<tr th:if="${eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
+								<td colspan="2" th:if="${eventoSeleccionado.UsuarioCreador.idUsuario != userLogin.idUsuario && eventoSeleccionado.horarioElegido == null && usuarioEventoSeleccionado.horario== null}"><a
 									th:href="@{baja?id=} + ${eventoSeleccionado.idEvento}"
 									class="btn btn-primary btn-block">Darme de Baja</a></td>
 
-								<td colspan="2">
+								<td colspan="2" th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario || (eventoSeleccionado.horarioElegido == null && usuarioEventoSeleccionado.horario== null)}">
 									<button class="btn btn-primary btn-block" type="submit">Confirmar</button>
 
 								</td>
+							</tr>
+							<tr><td colspan="4"><div></div></td></tr>
+							
+							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
+								<td colspan="4"><h3>Gestión del evento</h3></td>
 							</tr>
 
 							<tr
@@ -176,6 +180,7 @@
 						<input type="hidden" th:name="horarioVotado"
 							th:value="${horarioVotado == null? null :horarioVotado.idHorario}" />
 						<input type="hidden" th:name="checkAsistenteElegido" />	
+						<input type="hidden" th:name="checkPresencial"/>	
 							
 						<input type="hidden" th:name="eventoSeleccionado" th:value="${eventoSeleccionado.idEvento}" />								
 
@@ -203,7 +208,7 @@
 								</tr>
 							</tbody>
 							<tfoot>
-								<tr>
+								<tr th:if="${eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
 									<td colspan="2"><button class="btn btn-primary btn-lg btn-block"
 											type="submit">Confirmar asistentes y horario</button></td>
 									<td colspan="2"><a

@@ -176,6 +176,11 @@ public class Evento {
 	}
 	
 
+	/**
+	 * Se obtiene a partir del idUsuario el usuario_evento actual;
+	 * @param idUsuario
+	 * @return
+	 */
 	public Usuario_Evento getUsuariosEvento(long idUsuario) {
 		
 		for(Usuario_Evento aux: usuariosEvento) {
