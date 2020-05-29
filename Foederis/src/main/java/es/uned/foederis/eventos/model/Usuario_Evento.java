@@ -19,7 +19,7 @@ public class Usuario_Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private int idUsuarioEvento;
 
-	@NotEmpty
+	@NotNull
 	@ManyToOne
     @JoinColumn(name="id_usuario_fk")
 	private Usuario usuario;
@@ -34,9 +34,7 @@ public class Usuario_Evento {
 	
 	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma
 	private int confirmado;
-	@NotNull
 	private Boolean asistente;
-	@NotNull
 	private Boolean presencial; 
 	
 	public Usuario_Evento() {
