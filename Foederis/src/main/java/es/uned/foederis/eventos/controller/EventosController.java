@@ -64,7 +64,9 @@ public class EventosController {
 	private ISalaRepository salaRepo;
 
 	@Autowired
-
+	private IUsuarioRepository usuarioRepo;
+	
+	@Autowired
 	private IUsuarioEventoRepository usuarioEventoRepo;
 
 	@Autowired
@@ -499,14 +501,11 @@ public class EventosController {
 	 */
 	@PostMapping(Rutas.GUARDAR)
 
-	public String postGuardarSala(Model model, HttpServletRequest request,
-			Evento evento/*
-							 * , long idSala, long[] usuarios, String horarioApertura1, String horarioCierre
-							 */) throws ParseException {
+	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
 			String idSala = request.getParameter("idSala");
-			String[] usuarios = request.getParameterValues("usuarios");
+			String[] idUsuarios = request.getParameterValues("usuarios");
 			String hApertura1 = request.getParameter("horarioApertura1");
 			String hApertura2 = request.getParameter("horarioApertura2");
 			String hApertura3 = request.getParameter("horarioApertura3");
@@ -514,25 +513,33 @@ public class EventosController {
 			String hCierre2 = request.getParameter("horarioCierre2");
 			String hCierre3 = request.getParameter("horarioCierre3");
 
-			Chat chat = new Chat();
 			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 			List<Horarios> horarios = new ArrayList<>();
-
+			List<Usuario> usuarios = new ArrayList<>();
+			
 			// EL primer usuario del evento es el creador es el creador
+			usuarios.add(user);
 			Usuario_Evento usuarioCreadorEvento = new Usuario_Evento();
 			usuarioCreadorEvento.setUsuario(user);
 			usuarioCreadorEvento.setEvento(evento);
+			usuarioCreadorEvento.setAsistente(true);
+			usuarioCreadorEvento.setConfirmado(1);
 			usuariosEvento.add(usuarioCreadorEvento);
+			user.addEvento(usuarioCreadorEvento);
+			evento.addUsuarioEvento(usuarioCreadorEvento);
 
-			for (String idUsuario : usuarios) {
+			for (String idUsuario : idUsuarios) {
 				Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
+				usuarios.add(user);
 				Usuario_Evento usuarioEvento = new Usuario_Evento();
 				usuarioEvento.setUsuario(usuario);
 				usuarioEvento.setEvento(evento);
 				usuariosEvento.add(usuarioEvento);
+				usuario.addEvento(usuarioEvento);
+				evento.addUsuarioEvento(usuarioEvento);
 			}
 
-			if (hApertura1 != null && hCierre1 != null) {
+			if (hApertura1 != null && !hApertura1.isBlank() && hCierre1 != null && !hCierre1.isBlank()) {
 				Horarios horario = new Horarios();
 				long ms = dateTimeFormat.parse(hApertura1).getTime();
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
@@ -540,9 +547,10 @@ public class EventosController {
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
 				horario.setEvento(evento);
 				horarios.add(horario);
+				evento.addHorario(horario);
 			}
 
-			if (hApertura2 != null && hCierre2 != null) {
+			if (hApertura2 != null && !hApertura2.isBlank() && hCierre2 != null && !hCierre2.isBlank()) {
 				Horarios horario = new Horarios();
 				long ms = dateTimeFormat.parse(hApertura2).getTime();
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
@@ -550,9 +558,10 @@ public class EventosController {
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
 				horario.setEvento(evento);
 				horarios.add(horario);
+				evento.addHorario(horario);
 			}
 
-			if (hApertura3 != null && hCierre3 != null) {
+			if (hApertura3 != null && !hApertura3.isBlank() && hCierre3 != null && !hCierre3.isBlank()) {
 				Horarios horario = new Horarios();
 				long ms = dateTimeFormat.parse(hApertura3).getTime();
 				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
@@ -560,15 +569,15 @@ public class EventosController {
 				horario.setHorario_Fecha_Fin(new Timestamp(ms));
 				horario.setEvento(evento);
 				horarios.add(horario);
+				evento.addHorario(horario);
 			}
 
-			evento.setUsuariosEvento(usuariosEvento);
-			evento.setHorarios(horarios);
 			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
 			evento.setUsuarioCreador(user);
 
 			eventoRepo.save(evento);
 			usuarioEventoRepo.saveAll(usuariosEvento);
+			usuarioRepo.saveAll(usuarios);
 			HorarioRepo.saveAll(horarios);
 
 		} else {

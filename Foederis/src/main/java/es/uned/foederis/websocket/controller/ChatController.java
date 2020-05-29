@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,8 @@ import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.eventos.model.Usuario_Evento;
+import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.model.ChatMessage;
@@ -44,6 +46,8 @@ public class ChatController {
     ChatService myChatService_;
     @Autowired
     AdministracionService myUserService_;
+    @Autowired
+    IUsuarioEventoRepository eventoUsuarioRepo_;
     
     private Model myModel_;
     
@@ -69,6 +73,13 @@ public class ChatController {
     	for (Usuario usr: usuarios) {
     		if (!usr.getNombre().equals("null") && usr.getUsername().equals(authentication.getName())) { 
     			myModel_.addAttribute(Atributos.USUARIO, usr.getIdUsuario());
+    			
+    			// Generar registro en usuario_evento
+    			Usuario_Evento userEv = new Usuario_Evento();
+    			userEv.setUsuario(usr);
+    			userEv.setEvento(evento);
+    			
+    			eventoUsuarioRepo_.save(userEv);
     			break;
     		}
     	}
@@ -82,7 +93,10 @@ public class ChatController {
 
     	// Comprobar que el mensaje recibido es del evento
     	Timestamp timestamp = new Timestamp((new Date()).getTime());
-    	
+    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat( "dd-MM-yyyy HH:mm:ss" );
+    	displayDateFormatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+    	String strDate= displayDateFormatter.format(new Date());  
+    	 
     	myUserService_.cargarUsuarios(myModel_,UsuarioConstantes.USERNAME,chatMessage.getSender());
 
     	@SuppressWarnings("unchecked")
@@ -106,10 +120,10 @@ public class ChatController {
     	logChats();
 
     	// Poner el timestamp del servidor
-    	SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
-    	String dateString=sdf.format(new Date(timestamp.getTime()));
+    	//SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+    	//String dateString=sdf.format(new Date(timestamp.getTime()));
     	
-    	chatMessage.setTimestamp(dateString);
+    	chatMessage.setTimestamp(strDate);
     	return chatMessage;
     }
 

@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import es.uned.foederis.archivos.model.Archivo;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.eventos.model.Evento;
+import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 
@@ -226,5 +227,37 @@ public class Usuario implements UserDetails{
 	public boolean isAdminOrJP() {
 		return this.rol.getIdRol() == UsuarioConstantes.ROL_JEFE_PROY
 				|| this.rol.getIdRol() == UsuarioConstantes.ROL_ADMIN;
+	}
+	
+	public void addEvento(Usuario_Evento usuarioEvento) {
+		this.eventosDelUsuario.add(usuarioEvento);
+	}
+	
+	public void delEvento(Usuario_Evento usuarioEvento) {
+		this.eventosDelUsuario.remove(usuarioEvento);
+	}
+	
+	public void addMensaje(Chat chat) {
+		this.mensajesChat.add(chat);
+	}
+	
+	public void delMensaje(Chat chat) {
+		this.mensajesChat.remove(chat);
+	}
+	
+	public void addArchivo(Archivo archivo) {
+		this.archivos.add(archivo);
+	}
+	
+	public void delArchivo(Archivo archivo) {
+		this.archivos.remove(archivo);
+	}
+	
+	public void addEventoCreado(Evento evento) {
+		this.eventosCreados.add(evento);
+	}
+	
+	public void delEventoCreado(Evento evento) {
+		this.eventosCreados.remove(evento);
 	}
 }

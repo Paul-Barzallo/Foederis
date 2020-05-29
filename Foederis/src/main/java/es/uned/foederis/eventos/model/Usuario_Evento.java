@@ -19,7 +19,7 @@ public class Usuario_Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private int idUsuarioEvento;
 
-	@NotNull
+	@NotEmpty
 	@ManyToOne
     @JoinColumn(name="id_usuario_fk")
 	private Usuario usuario;
@@ -74,8 +74,8 @@ public class Usuario_Evento {
 	}
 
 	public boolean isAsistente() {
-		if(asistente == null)
-			asistente = false;
+//		if(asistente == null)
+//			asistente = false;
 		return asistente;
 	}
 
