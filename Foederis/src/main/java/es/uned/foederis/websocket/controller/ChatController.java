@@ -70,17 +70,24 @@ public class ChatController {
 		@SuppressWarnings("unchecked")
     	List<Usuario> usuarios = (List<Usuario>)model.getAttribute(Atributos.USUARIOS);
 
+		// Buscar el usuario que se conecta al chat
     	for (Usuario usr: usuarios) {
     		if (!usr.getNombre().equals("null") && usr.getUsername().equals(authentication.getName())) { 
     			myModel_.addAttribute(Atributos.USUARIO, usr.getIdUsuario());
     			
-    			// Generar registro en usuario_evento
-/*    			Usuario_Evento userEv = new Usuario_Evento();
-    			userEv.setUsuario(usr);
-    			userEv.setEvento(evento);
-    			
-    			eventoUsuarioRepo_.save(userEv);
-*/    			break;
+    			// Actualizar estado de usuario_evento como usuario conectado al chat
+    			List<Usuario_Evento> userEv = usr.getEventosDelUsuario();
+    		 	for(Usuario_Evento aux: userEv) {   
+    		 		if (aux.getEvento().getIdEvento() == evento.getIdEvento() && 
+    		 				aux.isAsistente() && !aux.isConectado()) {
+    		 			//idEvento = aux.getEvento().getIdEvento();
+    		 			aux.setConectado(true);
+    		 			eventoUsuarioRepo_.save(aux);
+    		 			
+    					break;
+    		 		}
+    			}   		 	
+    			break;
     		}
     	}
     	return "/chat";

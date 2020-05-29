@@ -45,11 +45,11 @@ public class WebSocketEventListener {
 	@EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
     	LOGGER.info("Received a new web socket connection");
-    	StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-    	
-    	Principal principal= (Principal)headerAccessor.getUser();
-    	
-    	setUserConnected ((String)principal.getName(), CONNECTED);
+//    	StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+//    	
+//    	Principal principal= (Principal)headerAccessor.getUser();
+//    	
+//    	setUserConnected ((String)principal.getName(), CONNECTED);
     }
 
 	@EventListener
