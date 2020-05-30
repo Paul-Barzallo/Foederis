@@ -445,10 +445,8 @@
 					<div class="row">
 						<div class="col">
 							<div class="form-group">
-								<label th:for="${'horarioApertura'+i}">Inicio del
-									Evento:</label>
-								<div class="input-group date dtp" th:id="${'datetimepicker'+i}"
-									data-target-input="nearest">
+								<label th:for="${'horarioApertura'+i}">Inicio del Evento:</label>
+								<div class="input-group date dtp" th:id="${'datetimepicker'+i}" data-target-input="nearest">
 									<input th:id="${'horarioApertura'+i}"
 										th:name="${'horarioApertura'+i}" type="text"
 										class="form-control datetimepicker-input"
@@ -460,8 +458,7 @@
 						<div class="col">
 							<div class="form-group">
 								<label th:for="${'horarioCierre'+i}">Final del Evento:</label>
-								<div class="input-group date dtp"
-									th:id="${'datetimepicker'+(i+1)}" data-target-input="nearest">
+								<div class="input-group date dtp" th:id="${'datetimepicker'+(i+1)}" data-target-input="nearest">
 									<input th:id="${'horarioCierre'+i}"
 										th:name="${'horarioCierre'+i}" type="text"
 										class="form-control datetimepicker-input"

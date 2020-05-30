@@ -16,5 +16,6 @@ public interface IUsuarioRepository extends CrudRepository<Usuario, Long> {
 	List<Usuario> findByNombreContainingOrApellidosContaining(String nombre, String apellidos);
 	List<Usuario> findByRolContaining(String rol);
 	List<Usuario> findByUsernameContaining(String rol);
-	List<Usuario> findByRolLessThanAndActivoTrue(Rol rol);
+	List<Usuario> findByActivoTrue();
+	List<Usuario> findByRolNotContaining(String rol);
 }
