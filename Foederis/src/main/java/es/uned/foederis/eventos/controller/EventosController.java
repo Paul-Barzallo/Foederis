@@ -1,6 +1,7 @@
 package es.uned.foederis.eventos.controller;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -332,10 +334,7 @@ public class EventosController {
 			else
 				mav.addObject("horarioVotado", horarioMasVotado.get());
 		}
-		
-		// PARA PRUEBAS
-		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
-		mav.addObject("tsActual", tsActual);
+				
 		mav.addObject("eventoSeleccionado", evento);
 		mav.addObject("usuarioEventoSeleccionado", usuarioEv);
 		mav.addObject("userLogin", user);
@@ -350,6 +349,24 @@ public class EventosController {
 		return mav;
 
 	}
+	
+	private Timestamp getHoraNY() {
+		
+		Date date = new Date();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		df.setTimeZone(TimeZone.getTimeZone("America/New_York"));		
+		
+		Date dt2;
+		long time = 0;
+		try {
+			dt2 = df.parse(df.format(date));
+			time = dt2.getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}	
+		
+		return new Timestamp(time);
+	}
 
 	/****
 	 * Nos muestra el listado de eventos del usuario, podemos filtrar segun la fecha
@@ -363,10 +380,9 @@ public class EventosController {
 
 		this.iniciarUsuario();
 
-		// Fecha de hoy formato timestamp
-		Date dt = new Date();
-		long time = dt.getTime();
-		Timestamp ts = new Timestamp(time);
+		// Fecha de hoy transformada a la time Zone de NY
+		Timestamp ts = getHoraNY();
+		
 
 		ModelAndView mav = new ModelAndView();
 		List<Evento> lstEventos = new ArrayList<Evento>();
@@ -400,7 +416,7 @@ public class EventosController {
 
 		} else if (filtroListado.equalsIgnoreCase("hoy")) {
 			lstEventos.clear();
-
+			
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI) {
 					if ((aux.getHorario() != null && aux.getHorario().getHorario_Fecha_Fin().getDate() == ts.getDate())
@@ -435,9 +451,6 @@ public class EventosController {
 		mav.addObject("filtroListado", filtroListado);
 		mav.addObject("userLogin", user);
 		
-		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
-		mav.addObject("tsActual", tsActual);
-
 		mav.setViewName("listarEventos");
 		return mav;
 	}

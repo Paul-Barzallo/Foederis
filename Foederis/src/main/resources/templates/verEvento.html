@@ -24,8 +24,32 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+	<script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
 	
 	<script th:inline="javascript">
+	
+	function cambiarHora(){
+		var horarios = document.getElementsByClassName("cambioHora");
+		var horariosInicio = document.getElementsByName("horaComienzo");
+		var horariosFin = document.getElementsByName("horaFin");
+		
+		var i;
+		for(i=0;i<horariosInicio.length;i++)
+			horariosInicio[i].innerHTML="Comienzo: ".concat(calcularNuevaHora(horariosInicio[i].innerHTML));
+		
+		for(i=0;i<horariosFin.length;i++)
+			horariosFin[i].innerHTML=" Fin: ".concat(calcularNuevaHora(horariosFin[i].innerHTML));
+		
+		for(i=0;i<horarios.length;i++){
+			if(horarios[i].innerHTML != "Sin Confirmacion")	
+				horarios[i].innerHTML= calcularNuevaHora(horarios[i].innerHTML);
+		}		
+	}
+	
+	function calcularNuevaHora(horario){
+		return moment.tz(horario, "America/New_York").local().format("DD-MM-YYYY HH:mm");
+	}
+	
 	function buscarSalas() {
 		var url = [[${@rutas.EVENTOS_BUSQ_SALAS}]];
 		var busqueda = $('#busqueda').val();
@@ -99,7 +123,7 @@
 	});
 	</script>
 </head>
-<body class="bg-info" style="height: 100vh">
+<body class="bg-info" style="height: 100vh" onload="cambiarHora()">
 	<div th:insert="fragmentos :: navbar"></div>
 	<div class="container">
 
@@ -118,7 +142,6 @@
 				<h1 class="text-success px-5 mx-5">
 					<strong>Evento seleccionado</strong>
 				</h1>
-				<label th:text="${tsActual}"></label>
 			</div>
 			</br>
 			<div class="card-body">
@@ -178,8 +201,11 @@
 
 												<input type="radio" th:name="seleccionHorario"
 												th:value="${horarioDisponible.idHorario}" checked="checked" />
-												<label for="${horarioDisponible.idHorario}"
-												th:text="${' Comienzo: ' + #dates.format(horarioDisponible.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') + ' Fin: ' + #dates.format(horarioDisponible.Horario_Fecha_Fin, 'dd-MM-yyyy HH:mm')}"></label>
+												
+												<label  name="horaComienzo" for="${horarioDisponible.idHorario}"
+												th:text="${horarioDisponible.Horario_Fecha_Inicio}"></label>
+												<label  name="horaFin" for="${horarioDisponible.idHorario}"
+												th:text="${horarioDisponible.Horario_Fecha_Fin}"></label>
 
 											</li>
 										</ul>
@@ -188,14 +214,14 @@
 								<div th:unless="${eventoSeleccionado.horarioElegido == null}">
 									<td><label style="color: #007bff;">Horario elegido
 											Inicio:</label></td>
-									<td
-										th:text="${#dates.format(eventoSeleccionado.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}"
+									<td class="cambioHora"
+										th:text="${eventoSeleccionado.horarioElegido.Horario_Fecha_Inicio}"
 										readonly></td>
 
 									<td><label style="color: #007bff;">Horario elegido
 											Fin:</label></td>
-									<td
-										th:text="${#dates.format(eventoSeleccionado.horarioElegido.Horario_Fecha_Fin, 'dd-MM-yyyy HH:mm')}"
+									<td class="cambioHora"
+										th:text="${eventoSeleccionado.horarioElegido.Horario_Fecha_Fin}"
 										readonly></td>
 								</div>
 							</tr>
@@ -243,10 +269,10 @@
 							<tr
 								th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 								<td><label style="color: #007bff;"> Horario mas	votado (actual):</label></td>
-								<td colspan="3"><label
-									th:text="${horarioVotado == null ? 'Sin confirmaciones' : #dates.format(horarioVotado.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}" /></td>
+								<td colspan="3"><label class= "cambioHora"
+									th:text="${horarioVotado == null ? 'Sin Confirmacion' : horarioVotado.Horario_Fecha_Inicio}" /></td>
 							</tr>
-							<tr>
+							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 								<td colspan="1">
 									<label for="nombre"  style="color: #007bff;">Cambiar de Sala:</label>
 								</td>
@@ -257,9 +283,7 @@
 					</table>
 				</form>
 				<div
-					th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
-
-					<!-- NO BORRAR ES LA LINEA BUENA				<div th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.horarioElegido.Horario_Fecha_Inicio > tsActual}">    				 -->
+					th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario and eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
 					<form style="width: 100%"
 						th:action="@{/Evento/confirmarAsistenciaEvento}" method="post"
 						th:object="${eventoSeleccionado}">
@@ -289,8 +313,8 @@
 										th:text="${usuariosInvitados.usuario.nombre}"></label></td>
 									<td><label
 										th:text="${usuariosInvitados.usuario.apellidos != null ? usuariosInvitados.usuario.apellidos:''}"></label></td>
-										<td><label
-										th:text="${usuariosInvitados.horario == null ? 'Sin confirmar' : #dates.format(usuariosInvitados.horario.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}"></label></td>
+										<td><label class = "cambioHora"
+										th:text="${usuariosInvitados.horario == null ? 'Sin Confirmacion' : usuariosInvitados.horario.Horario_Fecha_Inicio}"></label></td>
 									<td><input type="checkbox"
 										th:value="${usuariosInvitados.idUsuarioEvento}"
 										th:name="checkAsistenteElegido" class="form-check"
