@@ -35,6 +35,7 @@ import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
+import es.uned.foederis.eventos.constantes.usuarioEventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
@@ -97,19 +98,7 @@ public class EventosController {
 	public void iniciarUsuario() {
 		user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
-
-//	@GetMapping("/verSala")
-//	public ModelAndView verSala(Model model, @RequestParam(value = "id") Sala sala) {
-//
-//		ModelAndView mav = new ModelAndView();
-//	
-//		eventoService.mensajeInfoSala(model, String.valueOf(sala.getIdSala()));
-//
-//		mav.setViewName("listarEventos");
-//
-//		return mav;
-//	}
-
+	
 	/**
 	 * Devuelve el listado de eventos sin confirmar. Actualiza el evento, actualiza
 	 * la variable confirmado a 0.
@@ -122,7 +111,7 @@ public class EventosController {
 
 		ModelAndView mav = new ModelAndView();
 
-		ActualizarConfirmacionEvento(0, eventoSeleccionado, null, false);
+		ActualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_NO, eventoSeleccionado, null, false);
 
 		eventoService.mensajeConfirmacion(model);
 
@@ -142,19 +131,24 @@ public class EventosController {
 	@PostMapping("/confirmar")
 	public ModelAndView confirmar(Model model,
 			@RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
-			@RequestParam(value = "seleccionHorario") String horarioElegido, Evento eventoSeleccionado) {
+			@RequestParam(value = "seleccionHorario", required = false) String horarioElegido, Evento eventoSeleccionado) {
 
 		ModelAndView mav = new ModelAndView();
+		
+		Horarios elegido= new Horarios();
 
-		// Obtener el objeto Horario que se ha seleccionado por el usuario.
-		List<Horarios> h = (List<Horarios>) HorarioRepo.findAll();
-
-		int idHorarioElegido = Integer.parseInt(horarioElegido);
-		Horarios elegido = h.get(idHorarioElegido);
+		if(horarioElegido != null) {
+			// Obtener el objeto Horario que se ha seleccionado por el usuario.
+			List<Horarios> h = (List<Horarios>) HorarioRepo.findAll();
+	
+			int idHorarioElegido = Integer.parseInt(horarioElegido);
+			elegido = h.get(idHorarioElegido-1);
+		
+		}			
 
 		for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 			if (aux.getEvento().getIdEvento() == eventoSeleccionado.getIdEvento()) {
-				ActualizarConfirmacionEvento(1, aux.getEvento(), elegido, chkPresencial);
+				ActualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_SI, aux.getEvento(), elegido, chkPresencial);
 			}
 		}
 
@@ -177,30 +171,36 @@ public class EventosController {
 		this.iniciarUsuario();
 
 		Usuario_Evento usuarioEvento = eventoSeleccionado.getUsuariosEvento(user.getIdUsuario());
+//		Usuario_Evento usuEvento = usuarioEventoRepo.findByEventoAndUsuario(eventoSeleccionado.getIdEvento(), user.getIdUsuario());
 
 		// Obtengo el usuario evento de la variable user para poner modificarla en el y
 		// guardarla actualizada.
 		List<Usuario_Evento> lstUsuariosEvento = user.getEventosDelUsuario();
-		Usuario_Evento usuEvento = lstUsuariosEvento.get(usuarioEvento.getIdUsuarioEvento());
+		Usuario_Evento usuEvento = lstUsuariosEvento.stream().filter(c -> c.getIdUsuarioEvento()==usuarioEvento.getIdUsuarioEvento()).findFirst().get() ;
 
-		// Confirmación evento
-		usuEvento.setConfirmado(pValor);
-
-		// Si se da de baja comprobar que si estuviera como asistente
-		if (pValor == 0 && usuEvento.isAsistente())
-			usuEvento.setAsistente(false);
-
-		if (pHorarioElegido != null) {
-
-			// Guardamos horario
-			usuEvento.setHorario(pHorarioElegido);
+		
+		//Si es jefe de proyecto del evento solo se guarda si es presencial o no la reunion
+		if(user.getIdUsuario() == eventoSeleccionado.getUsuarioCreador().getIdUsuario()) {
 			usuEvento.setPresencial(pCheckPresencial);
+		}else {
+			// Confirmación evento
+			usuEvento.setConfirmado(pValor);
 
-			// Comprobamos si hay plazaas libres
-			if (usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
-				usuEvento.setAsistente(true);
+			// Si se da de baja comprobar si estuviera como asistente
+			if (pValor == usuarioEventoConstantes.CONFIRMADO_NO && usuEvento.isAsistente())
+				usuEvento.setAsistente(false);
 
-		}
+			if (pHorarioElegido != null) {
+
+				// Guardamos horario
+				usuEvento.setHorario(pHorarioElegido);
+				usuEvento.setPresencial(pCheckPresencial);
+
+				// Comprobamos si hay plazaas libres
+				if (usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
+					usuEvento.setAsistente(true);
+			}
+		}		
 
 		usuRepo.save(user);
 	}
@@ -214,19 +214,35 @@ public class EventosController {
 	public ModelAndView confirmarAsistenciaEvento(Model model,
 			@RequestParam(value = "checkAsistenteElegido", required = false) List<Integer> lstCheckedAsistentes,
 			@RequestParam(value = "horarioVotado") String horarioVotado,
-			@RequestParam(value = "eventoSeleccionado") Integer idEvento) {
+			@RequestParam(value = "checkPresencial") String chkPresencial,
+			@RequestParam(value = "eventoSeleccionado") Integer idEvento,
+			@RequestParam(value = "idSala") String idSala) {
 		ModelAndView mav = new ModelAndView();
+		
+		Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
+				.findFirst().get().getEvento();
+		
+		//Si ha existido cambio de sala lo guardamos
+		if(!idSala.isEmpty()) {
+			
+			Optional<Sala> salaCambiada = salaRepo.findById(Long.parseLong(idSala));
+			evento.setSalaEvento(salaCambiada.get());
+			
+			usuRepo.save(user);
+			
+			eventoService.mensajeConfirmacion(model);
+			
+			//Actualizar sala actual del model
+			eventoService.mensajeInfoSala(model, String.valueOf(Long.parseLong(idSala)));
+		}
 
 		// Guardo el horario que ha sido mas elegido
-		if (horarioVotado.isEmpty() || horarioVotado == null) {			
+		if (horarioVotado.isEmpty() || horarioVotado == null) {							
 		} else {
 
 			// Control de aforo
 			int aforo = user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento() == idEvento)
-					.findFirst().get().getEvento().getSalaEvento().getAforo();
-
-			Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
-					.findFirst().get().getEvento();
+					.findFirst().get().getEvento().getSalaEvento().getAforo();			
 
 			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
 			// que traigo de la vista los pongo a true;
@@ -234,23 +250,24 @@ public class EventosController {
 
 			for (Integer id : lstCheckedAsistentes) {
 				if (id < 0) {
-				} else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==1).count()>0)
-					evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==1).findFirst().get()
+				} else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).count()>0)
+					evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).findFirst().get()
 							.setAsistente(true);
 				else
 					break;
 				aforo--;
 			}
 
+			//Guardamos el horario
 			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
-			evento.setHorarioElegido(horarioMasVotado.get());
-
+			evento.setHorarioElegido(horarioMasVotado.get());			
+			
 			usuRepo.save(user);
 			
 			eventoService.mensajeConfirmacion(model);
-		}
-
-		mav.setViewName("listarEventos");
+		}			
+		
+		mav.setViewName("listarEventos");		
 
 		return mav;
 	}
@@ -280,7 +297,7 @@ public class EventosController {
 			}
 		}
 
-		// SOlo para el jefe de rproyecto creador muestro el horario mas elegido
+		// SOlo para el jefe de prroyecto creador muestro el horario mas elegido
 		if (user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
 
 			List<Integer> lstH = new ArrayList<Integer>();
@@ -314,7 +331,7 @@ public class EventosController {
 			else
 				mav.addObject("horarioVotado", horarioMasVotado.get());
 		}
-
+		
 		// PARA PRUEBAS
 		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
 		mav.addObject("tsActual", tsActual);
@@ -357,7 +374,7 @@ public class EventosController {
 			filtroListado = "todos";
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
-				if (aux.getConfirmado() == 1)
+				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI)
 					lstEventos.add(aux.getEvento());
 			}
 
@@ -366,7 +383,7 @@ public class EventosController {
 			// Buscar fechas a partir de la fecha y hora actual del sistema
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
-				if (aux.getConfirmado() == 1) {
+				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI) {
 
 					// Si hay horario elegido por el JP
 					if ((aux.getEvento().getHorarioElegido() != null
@@ -384,7 +401,7 @@ public class EventosController {
 			lstEventos.clear();
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
-				if (aux.getConfirmado() == 1) {
+				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI) {
 					if ((aux.getHorario() != null && aux.getHorario().getHorario_Fecha_Fin().getDate() == ts.getDate())
 							|| (aux.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().getDate() == ts
 									.getDate()))
@@ -397,7 +414,7 @@ public class EventosController {
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 
-				if (aux.getConfirmado() == 0) {
+				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_NO) {
 					lstEventos.add(aux.getEvento());
 				}
 			}
@@ -406,7 +423,7 @@ public class EventosController {
 
 			// Ver sin confirmar
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
-				if (aux.getConfirmado() == -1) {
+				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_PENDIENTE) {
 					lstEventos.add(aux.getEvento());
 				}
 			}

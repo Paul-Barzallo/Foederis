@@ -72,7 +72,7 @@ public class Usuario implements UserDetails{
 	@OneToMany(mappedBy="usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Archivo> archivos = new ArrayList<>();
 	
-	@OneToMany(mappedBy="UsuarioCreador", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="UsuarioCreador", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Evento> eventosCreados = new ArrayList<>();
 	
 	/**
@@ -92,7 +92,7 @@ public class Usuario implements UserDetails{
 		this.rol = rol;
 		this.activo = activo;
 		this.eventosDelUsuario=eventosDelUsuario;
-	}
+	}	
 	
 	public Long getIdUsuario() {
 		return idUsuario;
