@@ -350,11 +350,10 @@
 		</table>
 	</div>
 
-	<div th:if="${!__${@atributos.FILES}__.isEmpty()}"
-		th:fragment="resultDownload" class="border border-dark rounded">
-		<div class="bg-secondary d-flex justify-content-between p-3">
+	<div th:fragment="resultDownload" class="border border-dark rounded">
+		<div th:if="${!__${@atributos.CHATS}__.isEmpty()}" class="bg-secondary d-flex justify-content-between p-3">
 			<h2 id="eventName" class="text-white mb-0"
-				th:text="${__${@atributos.FILES}__[0].idEvento.nombre}"></h2>
+				th:text="${__${@atributos.CHATS}__[0].evento.nombre}"></h2>
 			<p id="userName" th:text="${user}" class="hidden"></p>
 			<p id="eventId" th:text="${eventid}" class="hidden"></p>
 		</div>
@@ -364,7 +363,7 @@
 			<ul class="list-group" style="height: 100%; overflow-y: auto">
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
 					<span class="d-flex justify-content-between bg-info mb-3">
-						<div th:text="${chat.idUsuario.username}"/>
+						<div th:text="${chat.usuario.username}"/>
 						<div th:text="${#dates.format(chat.timestamp, 'dd-MM-yyyy HH:mm:ss')}"/>
 					</span>
 						<p th:text="${chat.texto}">
@@ -372,7 +371,7 @@
 				</li>
 			</ul>
 		</div>
-		<table class="table table-striped mb-0 text-center">
+		<table th:if="${!__${@atributos.FILES}__.isEmpty()}" class="table table-striped mb-0 text-center">
 			<thead>
 				<tr>
 					<th>#</th>
@@ -388,7 +387,7 @@
 					<td class="align-middle"><a
 						th:href="@{/chat/download/file?filename=} + ${file.nombreArchivo}"
 						th:text="${file.nombreArchivo}"></a></td>
-					<td class="align-middle" th:text="${file.idUsuario.username}"></td>
+					<td class="align-middle" th:text="${file.usuario.username}"></td>
 					<td class="align-middle"
 						th:text="${#dates.format(file.timestamp, 'dd-MM-yyyy HH:mm:ss')}"></td>
 				</tr>
@@ -446,10 +445,8 @@
 					<div class="row">
 						<div class="col">
 							<div class="form-group">
-								<label th:for="${'horarioApertura'+i}">Inicio del
-									Evento:</label>
-								<div class="input-group date dtp" th:id="${'datetimepicker'+i}"
-									data-target-input="nearest">
+								<label th:for="${'horarioApertura'+i}">Inicio del Evento:</label>
+								<div class="input-group date dtp" th:id="${'datetimepicker'+i}" data-target-input="nearest">
 									<input th:id="${'horarioApertura'+i}"
 										th:name="${'horarioApertura'+i}" type="text"
 										class="form-control datetimepicker-input"
@@ -461,8 +458,7 @@
 						<div class="col">
 							<div class="form-group">
 								<label th:for="${'horarioCierre'+i}">Final del Evento:</label>
-								<div class="input-group date dtp"
-									th:id="${'datetimepicker'+(i+1)}" data-target-input="nearest">
+								<div class="input-group date dtp" th:id="${'datetimepicker'+(i+1)}" data-target-input="nearest">
 									<input th:id="${'horarioCierre'+i}"
 										th:name="${'horarioCierre'+i}" type="text"
 										class="form-control datetimepicker-input"

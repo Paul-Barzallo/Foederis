@@ -108,7 +108,7 @@ public class AdministracionService {
 	public void cargarUsuarios(Model model, String paramBusq, String valorBusq) {
 		List<Usuario> usuarios = null;
 		// ponemos el valor de la busqueda en minusculas porque así se guarda en base de datos
-		valorBusq = valorBusq.toLowerCase();
+		valorBusq = (valorBusq!=null)? valorBusq.toLowerCase() : null;
 		
 		switch (paramBusq) {
 		case UsuarioConstantes.NOMBRE:
@@ -121,9 +121,7 @@ public class AdministracionService {
 			usuarios = userRepo.findByUsernameContaining(valorBusq);
 			break;
 		case UsuarioConstantes.ESTADO:
-			Rol rol = new Rol();
-			rol.setIdRol(Long.parseLong(valorBusq));
-			usuarios = userRepo.findByRolLessThanAndActivoTrue(rol);
+			usuarios = userRepo.findByActivoTrue();
 			break;
 		default:
 			usuarios = new ArrayList<>();

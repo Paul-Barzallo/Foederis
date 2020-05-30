@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import es.uned.foederis.sesion.model.Usuario;
@@ -32,10 +31,11 @@ public class Usuario_Evento {
 	@JoinColumn(name="id_horario_fk")
 	private Horarios horario;
 	
-	//Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma(usuarioEventoConstantes)
-	private int confirmado;	
-	private Boolean asistente;	
-	private Boolean presencial; 
+	// Valores -1 aun sin confirmar, 0 no confirma, 1 si confirma(usuarioEventoConstantes)
+	private int confirmado;
+	private Boolean asistente;
+	private Boolean presencial;
+	private Boolean conectado; 
 	
 	public Usuario_Evento() {
 		this.confirmado = -1;
@@ -99,5 +99,13 @@ public class Usuario_Evento {
 
 	public void setHorario(Horarios horario) {
 		this.horario = horario;
+	}
+
+	public boolean isConectado() {
+		return conectado;
+	}
+	
+	public void setConectado(boolean conectado) {
+		this.conectado = conectado;
 	}
 }

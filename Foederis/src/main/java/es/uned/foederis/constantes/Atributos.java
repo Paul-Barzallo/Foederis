@@ -8,6 +8,7 @@ public class Atributos {
 	public static final String ROLES = 				"roles";
 	public static final String PARAMS_BUSQUEDA = 	"params_busqueda";
 	public static final String USUARIO = 			"usuario";
+	public static final String USER = 				"user";
 	public static final String USUARIOS = 			"usuarios";
 	public static final String SALA = 				"sala";
 	public static final String SALAS = 				"salas";

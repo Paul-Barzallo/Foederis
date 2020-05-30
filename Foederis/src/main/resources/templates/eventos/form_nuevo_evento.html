@@ -11,6 +11,7 @@
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+	<script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 
 	<script th:inline="javascript">
@@ -34,11 +35,16 @@
 	function setSala(sala) {
 		$('#inputSala').val($(sala).data("nombre"));
 		$('#idSala').val($(sala).data("idsala"));
+		$('#separador').text("/");
 		$('#maxUsuarios').text($(sala).data("aforo"));
 		$('#salasModal').modal('toggle');
 		$('#listaUsuarios').show();
 		$('#filtrarUsuarios').prop("disabled", false);
 		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
+	}
+	
+	function setIntervaloHoras() {
+		
 	}
 	
 	function validarMaxUsuarios() {
@@ -69,10 +75,131 @@
 		);
 	}
 	
+	function tratarFechas() {
+		var date = $('#datetimepicker1').datetimepicker('date');
+		var dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker1').datetimepicker('date', dateNY);
+		date = $('#datetimepicker2').datetimepicker('date');
+		dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker2').datetimepicker('date', dateNY);
+		date = $('#datetimepicker3').datetimepicker('date');
+		dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker3').datetimepicker('date', dateNY);
+		date = $('#datetimepicker4').datetimepicker('date');
+		dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker4').datetimepicker('date', dateNY);
+		date = $('#datetimepicker5').datetimepicker('date');
+		dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker5').datetimepicker('date', dateNY);
+		date = $('#datetimepicker6').datetimepicker('date');
+		dateNY = moment(date).tz("America/New_York");
+		$('#datetimepicker6').datetimepicker('date', dateNY);
+	}
+	
 	$(function () {
 		$('.dtp').datetimepicker({
-			format: 'DD/MM/YYYY HH:00'
+			format: 'DD/MM/YYYY HH:00',
+			useCurrent: false,
+			minDate: new Date(),
+			daysOfWeekDisabled: [0,6]
 		});
+		$("#datetimepicker1").on("change.datetimepicker", function (e) {
+			if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker2').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker2').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMin = moment(e.date).add(1, 'hour');
+				var fechaMax = moment(e.date).add(5, 'hour');
+	            $('#datetimepicker2').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker2').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker2').datetimepicker('date')==null) {
+	            	$('#datetimepicker2').datetimepicker('date', fechaMin);
+	            }
+			}
+        });
+        $("#datetimepicker2").on("change.datetimepicker", function (e) {
+        	if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker1').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker1').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMax = moment(e.date).add(-1, 'hour');
+				var fechaMin = moment(e.date).add(-5, 'hour');
+	            $('#datetimepicker1').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker1').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker1').datetimepicker('date')==null) {
+	            	$('#datetimepicker1').datetimepicker('date', fechaMax);
+	            }
+			}
+        });
+        $("#datetimepicker3").on("change.datetimepicker", function (e) {
+        	if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker4').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker4').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMin = moment(e.date).add(1, 'hour');
+				var fechaMax = moment(e.date).add(5, 'hour');
+	            $('#datetimepicker4').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker4').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker4').datetimepicker('date')==null) {
+	            	$('#datetimepicker4').datetimepicker('date', fechaMin);
+	            }
+			}
+        });
+        $("#datetimepicker4").on("change.datetimepicker", function (e) {
+        	if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker3').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker3').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMax = moment(e.date).add(-1, 'hour');
+				var fechaMin = moment(e.date).add(-5, 'hour');
+	            $('#datetimepicker3').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker3').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker3').datetimepicker('date')==null) {
+	            	$('#datetimepicker3').datetimepicker('date', fechaMax);
+	            }
+			}
+        });
+        $("#datetimepicker5").on("change.datetimepicker", function (e) {
+        	if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker6').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker6').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMin = moment(e.date).add(1, 'hour');
+				var fechaMax = moment(e.date).add(5, 'hour');
+	            $('#datetimepicker6').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker6').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker6').datetimepicker('date')==null) {
+	            	$('#datetimepicker6').datetimepicker('date', fechaMin);
+	            }
+			}
+        });
+        $("#datetimepicker6").on("change.datetimepicker", function (e) {
+        	if(e.date==undefined) {
+				var fechaMin = moment(new Date());
+				var fechaMax = moment(new Date()).add(100, 'year');
+				$('#datetimepicker5').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker5').datetimepicker('maxDate', fechaMax);
+			} else {
+				var fechaMax = moment(e.date).add(-1, 'hour');
+				var fechaMin = moment(e.date).add(-5, 'hour');
+	            $('#datetimepicker5').datetimepicker('minDate', fechaMin); 
+	            $('#datetimepicker5').datetimepicker('maxDate', fechaMax);
+	            if ($('#datetimepicker5').datetimepicker('date')==null) {
+	            	$('#datetimepicker5').datetimepicker('date', fechaMax);
+	            }
+			}
+        });
+		
 		$("#listaUsuarios input:checkbox").change(validarMaxUsuarios);
 		$('#listaUsuarios').hide();
 		$('#inputSala').click(buscarSalas);
@@ -90,7 +217,7 @@
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container mx-auto my-5 px-ms-5 h-100">
-   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.EVENTO}__}" th:action="@{__${@rutas.EVENTOS_GUARDAR}__}" method="post">
+   		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.EVENTO}__}" onsubmit="tratarFechas()" th:action="@{__${@rutas.EVENTOS_GUARDAR}__}" method="post">
            	<h1 class="mb-3 ml-n2">Evento</h1>
            	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
            		<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -113,11 +240,21 @@
 			</div>
 			
 			<div class="form-group">
-				<label>Usuarios: <span id="nUsuarios">0</span>/<span id="maxUsuarios">0</span></label>
+				<label>Usuarios: <span id="nUsuarios">1</span><span id="separador"></span><span id="maxUsuarios"></span></label>
 				<input class="form-control" id="filtrarUsuarios" type="text" placeholder="Primero seleccione una sala" disabled>
-				<ul class="list-group" id="listaUsuarios">
-					<li th:each="usuario : ${__${@atributos.USUARIOS}__}" class="list-group-item">
-						<div class="ml-3">
+				<ul class="list-group" id="listaUsuarios" th:with="user=${__${@atributos.USER}__}">
+					<li class="list-group-item">
+						<div class="custom-control custom-checkbox">
+							<input th:id="${'usuario'+user.idUsuario}" name="usuarios" th:value="${user.idUsuario}"
+							 class="custom-control-input" type="checkbox" checked disabled>
+							<label th:for="${'usuario'+user.idUsuario}" class="custom-control-label"
+							 th:text="${#strings.capitalizeWords(user.nombre)+' '+#strings.capitalizeWords(user.apellidos)}">
+							</label>
+						</div>
+						
+					</li>
+					<li th:each="usuario : ${__${@atributos.USUARIOS}__}" th:if="${usuario.idUsuario!=user.idUsuario}" class="list-group-item">
+						<div class="custom-control custom-checkbox">
 							<input th:id="${'usuario'+usuario.idUsuario}" name="usuarios" th:value="${usuario.idUsuario}"
 							 class="custom-control-input" type="checkbox">
 							<label th:for="${'usuario'+usuario.idUsuario}" class="custom-control-label"
