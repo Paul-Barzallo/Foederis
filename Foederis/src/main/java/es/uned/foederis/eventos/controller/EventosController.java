@@ -245,7 +245,7 @@ public class EventosController {
 					.findFirst().get().getEvento().getSalaEvento().getAforo();			
 
 			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
-			// que traigo de la vista los pongo a true;
+			// que traigo de la vista los pongo a true siempre que tengan el mismo horario;
 			evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
 
 			for (Integer id : lstCheckedAsistentes) {
@@ -303,6 +303,7 @@ public class EventosController {
 			List<Integer> lstH = new ArrayList<Integer>();
 
 			List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
+//			List<Usuario_Evento> lstusuEvento2 = (List<Usuario_Evento>) usuarioEventoRepo.findByevento(evento.getIdEvento());
 
 			lstusuEvento = lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento())
 					.collect(Collectors.toList());
