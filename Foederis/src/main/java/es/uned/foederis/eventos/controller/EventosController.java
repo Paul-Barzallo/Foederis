@@ -98,20 +98,7 @@ public class EventosController {
 	public void iniciarUsuario() {
 		user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
-
-	@GetMapping("/cambiarSala")
-	public ModelAndView cambiarSala(Model model, @RequestParam(value = "id") Sala sala) {
-
-		ModelAndView mav = new ModelAndView();
-		
 	
-		eventoService.mensajeInfoSala(model, String.valueOf(sala.getIdSala()));
-
-		mav.setViewName("listarEventos");
-
-		return mav;
-	}
-
 	/**
 	 * Devuelve el listado de eventos sin confirmar. Actualiza el evento, actualiza
 	 * la variable confirmado a 0.
@@ -215,7 +202,6 @@ public class EventosController {
 			}
 		}		
 
-//		usuarioEventoRepo.save(usuEvento);
 		usuRepo.save(user);
 	}
 
@@ -229,14 +215,29 @@ public class EventosController {
 			@RequestParam(value = "checkAsistenteElegido", required = false) List<Integer> lstCheckedAsistentes,
 			@RequestParam(value = "horarioVotado") String horarioVotado,
 			@RequestParam(value = "checkPresencial") String chkPresencial,
-			@RequestParam(value = "eventoSeleccionado") Integer idEvento) {
+			@RequestParam(value = "eventoSeleccionado") Integer idEvento,
+			@RequestParam(value = "idSala") String idSala) {
 		ModelAndView mav = new ModelAndView();
 		
 		Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
 				.findFirst().get().getEvento();
+		
+		//Si ha existido cambio de sala lo guardamos
+		if(!idSala.isEmpty()) {
+			
+			Optional<Sala> salaCambiada = salaRepo.findById(Long.parseLong(idSala));
+			evento.setSalaEvento(salaCambiada.get());
+			
+			usuRepo.save(user);
+			
+			eventoService.mensajeConfirmacion(model);
+			
+			//Actualizar sala actual del model
+			eventoService.mensajeInfoSala(model, String.valueOf(Long.parseLong(idSala)));
+		}
 
 		// Guardo el horario que ha sido mas elegido
-		if (horarioVotado.isEmpty() || horarioVotado == null) {			
+		if (horarioVotado.isEmpty() || horarioVotado == null) {							
 		} else {
 
 			// Control de aforo
@@ -257,15 +258,16 @@ public class EventosController {
 				aforo--;
 			}
 
+			//Guardamos el horario
 			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
-			evento.setHorarioElegido(horarioMasVotado.get());
-
+			evento.setHorarioElegido(horarioMasVotado.get());			
+			
 			usuRepo.save(user);
 			
 			eventoService.mensajeConfirmacion(model);
 		}			
 		
-		mav.setViewName("listarEventos");
+		mav.setViewName("listarEventos");		
 
 		return mav;
 	}
@@ -329,7 +331,7 @@ public class EventosController {
 			else
 				mav.addObject("horarioVotado", horarioMasVotado.get());
 		}
-
+		
 		// PARA PRUEBAS
 		Timestamp tsActual = new Timestamp(System.currentTimeMillis());
 		mav.addObject("tsActual", tsActual);

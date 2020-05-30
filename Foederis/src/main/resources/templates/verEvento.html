@@ -8,15 +8,96 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/adb5bd4540.js"
-	crossorigin="anonymous"></script>
-
+<!-- <script -->
+<!-- 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+<!-- <script -->
+<!-- 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
+<!-- <script -->
+<!-- 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script> -->
+<!-- <script src="https://kit.fontawesome.com/adb5bd4540.js" -->
+<!-- 	crossorigin="anonymous"></script> -->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+	
+	<script th:inline="javascript">
+	function buscarSalas() {
+		var url = [[${@rutas.EVENTOS_BUSQ_SALAS}]];
+		var busqueda = $('#busqueda').val();
+		var valor = $('#valor').val();
+		
+		url += "?paramBusq=";
+		if (busqueda) {
+			url += busqueda;
+		} 
+		url += "&valorBusq=";
+		if (valor) {
+			url += valor;
+		}
+		$('#lista_salas').empty();
+		$('#lista_salas').load(url, hoverSalas);
+	}
+	
+	function setSala(sala) {
+		$('#inputSala').val($(sala).data("nombre"));
+		$('#idSala').val($(sala).data("idsala"));
+		$('#maxUsuarios').text($(sala).data("aforo"));
+		$('#salasModal').modal('toggle');
+		$('#listaUsuarios').show();
+		$('#filtrarUsuarios').prop("disabled", false);
+		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
+	}
+	
+	function validarMaxUsuarios() {
+		var maxUsuarios = $("#maxUsuarios").text();
+		var nUsuarios = $("#nUsuarios").text();
+		if($(this).is(':checked')) {
+			nUsuarios++;
+			if (maxUsuarios == nUsuarios) {
+				$("#listaUsuarios input:checkbox:not(:checked)").prop('disabled', true);
+			}
+		} else {
+			nUsuarios--;
+			if ((maxUsuarios-1) == nUsuarios) {
+				$("#listaUsuarios input:checkbox:not(:checked)").prop('disabled', false);
+			}
+		}
+		$("#nUsuarios").text(nUsuarios);	
+	}
+	
+	function hoverSalas(){
+		$('#accordion > .card').hover(
+			function(){
+				$(this).children(".card-header").addClass("bg-primary");
+			},
+			function(){
+				$(this).children(".card-header").removeClass("bg-primary");
+			}
+		);
+	}
+	
+	$(function () {
+		$('.dtp').datetimepicker({
+			format: 'DD/MM/YYYY HH:00'
+		});
+		$("#listaUsuarios input:checkbox").change(validarMaxUsuarios);
+		$('#listaUsuarios').hide();
+		$('#inputSala').click(buscarSalas);
+		$('#btn_buscar').click(buscarSalas);
+		$('#horario1').addClass('show');
+		$("#filtrarUsuarios").on("keyup", function() {
+			var value = $(this).val().toLowerCase();
+			$("#listaUsuarios li").filter(function() {
+				$(this).toggle($(this).children("div").children("label").text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+	});
+	</script>
 </head>
 <body class="bg-info" style="height: 100vh">
 	<div th:insert="fragmentos :: navbar"></div>
@@ -66,7 +147,7 @@
 								<td>
 									<button type="button" id="idSalaTooltip"
 										class="btn btn-outline-secondary"
-										th:text="*{salaEvento.idSala}"
+										th:text="*{getSalaEvento().idSala}"
 										title="${eventoSeleccionado.idEvento}"
 										onclick="mostrarModal()"></button>
 								</td>
@@ -81,7 +162,7 @@
 										confirmada:</label></td>
 								<td><input type="checkbox" name="checkAsistente"
 									class="form-check" 
-									th:checked="${usuarioEventoSeleccionado.asistente}" disabled />
+									th:checked="${usuarioEventoSeleccionado.isAsistente()}" disabled />
 								</td>
 							</tr>
 							<tr>
@@ -165,7 +246,13 @@
 								<td colspan="3"><label
 									th:text="${horarioVotado == null ? 'Sin confirmaciones' : #dates.format(horarioVotado.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm')}" /></td>
 							</tr>
-
+							<tr>
+								<td colspan="1">
+									<label for="nombre"  style="color: #007bff;">Cambiar de Sala:</label>
+								</td>
+								<td><input id="inputSala" type="text" placeholder= "Pulse para cambiar la actual" class="form-control" data-toggle="modal" data-target="#salasModal" readonly/>								  								  	
+								</td>														
+							</tr>
 						</tfoot>
 					</table>
 				</form>
@@ -181,6 +268,7 @@
 							th:value="${horarioVotado == null? null :horarioVotado.idHorario}" />
 						<input type="hidden" th:name="checkAsistenteElegido" />	
 						<input type="hidden" th:name="checkPresencial"/>	
+						<input type="hidden" id="idSala" name="idSala"/>	
 							
 						<input type="hidden" th:name="eventoSeleccionado" th:value="${eventoSeleccionado.idEvento}" />								
 
@@ -210,14 +298,31 @@
 							<tfoot>
 								<tr th:if="${eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
 									<td colspan="2"><button class="btn btn-primary btn-lg btn-block"
-											type="submit">Confirmar asistentes y horario</button></td>
-									<td colspan="2"><a
-										th:href="@{cambiarSala?idEv=}+ ${eventoSeleccionado.idEvento}"
-										class="btn btn-primary btn-lg btn-block">Cambiar de sala</a></td>
+											type="submit">Confirmar cambios del evento</button></td>		
 								</tr>
 							</tfoot>
 						</table>						
 					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal con la busqueda y selección de sala -->
+	<div class="modal fade" id="salasModal">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Salas</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<div class="modal-body">
+					<div th:with="isSala=${'true'}, ruta=${'false'}" th:insert="fragmentos :: buscar"></div>
+					<div id="lista_salas" class="my-5"></div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 				</div>
 			</div>
 		</div>
