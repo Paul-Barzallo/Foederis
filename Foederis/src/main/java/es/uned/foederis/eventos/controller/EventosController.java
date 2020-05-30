@@ -213,13 +213,12 @@ public class EventosController {
 	 * Confirmamos el horario mas legido por los confirmados al evento.
 	 */
 	@PostMapping("/confirmarAsistenciaEvento")
-	public ModelAndView confirmarAsistenciaEvento(Model model,
+	public String confirmarAsistenciaEvento(Model model,
 			@RequestParam(value = "checkAsistenteElegido", required = false) List<Integer> lstCheckedAsistentes,
 			@RequestParam(value = "horarioVotado") String horarioVotado,
 			@RequestParam(value = "checkPresencial") String chkPresencial,
 			@RequestParam(value = "eventoSeleccionado") Integer idEvento,
 			@RequestParam(value = "idSala") String idSala) {
-		ModelAndView mav = new ModelAndView();
 		
 		Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
 				.findFirst().get().getEvento();
@@ -267,11 +266,10 @@ public class EventosController {
 			usuRepo.save(user);
 			
 			eventoService.mensajeConfirmacion(model);
-		}			
+		}		
 		
-		mav.setViewName("listarEventos");		
+		return "redirect:/Evento/listarFiltro";
 
-		return mav;
 	}
 
 	// **Listar evento.HTML ***//
