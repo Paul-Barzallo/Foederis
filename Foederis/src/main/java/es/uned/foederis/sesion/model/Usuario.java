@@ -82,6 +82,7 @@ public class Usuario implements UserDetails{
 	 */
 	public Usuario() {
 		this.activo = true;
+		this.apellidos = "";
 	}
 	
 	public Usuario(String nombre, String apellidos, String username, String password, Rol rol, boolean activo, List<Usuario_Evento> eventosDelUsuario) {

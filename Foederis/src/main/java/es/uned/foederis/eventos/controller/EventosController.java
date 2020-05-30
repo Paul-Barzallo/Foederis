@@ -439,9 +439,9 @@ public class EventosController {
 		if (user.isAdminOrJP()) {
 			Evento evento = new Evento();
 			model.addAttribute(Atributos.EVENTO, evento);
+			model.addAttribute(Atributos.USER, user);
 			administracionService.cargarParamsBusqSalas(model);
-			administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO,
-					Long.toString(UsuarioConstantes.ROL_ADMIN));
+			administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO, null);
 			return eventoService.irANuevoEvento(model);
 		}
 		eventoService.mensajeNoAccesoEventos(model);
@@ -501,17 +501,6 @@ public class EventosController {
 			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 			List<Horarios> horarios = new ArrayList<>();
 			List<Usuario> usuarios = new ArrayList<>();
-			
-			// EL primer usuario del evento es el creador es el creador
-			usuarios.add(user);
-			Usuario_Evento usuarioCreadorEvento = new Usuario_Evento();
-			usuarioCreadorEvento.setUsuario(user);
-			usuarioCreadorEvento.setEvento(evento);
-			usuarioCreadorEvento.setAsistente(true);
-			usuarioCreadorEvento.setConfirmado(1);
-			usuariosEvento.add(usuarioCreadorEvento);
-			user.addEvento(usuarioCreadorEvento);
-			evento.addUsuarioEvento(usuarioCreadorEvento);
 
 			for (String idUsuario : idUsuarios) {
 				Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
@@ -519,6 +508,10 @@ public class EventosController {
 				Usuario_Evento usuarioEvento = new Usuario_Evento();
 				usuarioEvento.setUsuario(usuario);
 				usuarioEvento.setEvento(evento);
+				if (usuario.getIdUsuario() == user.getIdUsuario()) {
+					usuarioEvento.setAsistente(true);
+					usuarioEvento.setConfirmado(1);
+				}
 				usuariosEvento.add(usuarioEvento);
 				usuario.addEvento(usuarioEvento);
 				evento.addUsuarioEvento(usuarioEvento);
