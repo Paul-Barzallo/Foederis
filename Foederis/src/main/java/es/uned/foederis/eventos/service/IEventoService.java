@@ -56,6 +56,8 @@ public interface IEventoService {
 	
 	public void mensajeConfirmacion(Model model);
 	
+	public void mensajeInfoAforo(Model model);
+	
 	public void cargarSalas(Model model, String paramBusq, String valorBusq);
 
 

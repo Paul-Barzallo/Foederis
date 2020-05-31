@@ -189,6 +189,20 @@ public class Evento {
 		}
 		return null;
 	}
+	
+	/**
+	 * Se obtiene a partir del idUsuario el usuario_evento actual;
+	 * @param idUsuario
+	 * @return
+	 */
+	public Usuario_Evento getUsuariosEventoById(long idUsuario) {
+		
+		for(Usuario_Evento aux: usuariosEvento) {
+			if(aux.getIdUsuarioEvento() == idUsuario)
+				return aux;
+		}
+		return null;
+	}
 
 	public void setUsuariosEvento(List<Usuario_Evento> eventosDelUsuario) {
 		this.usuariosEvento = eventosDelUsuario;
