@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.hsqldb.lib.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,11 @@ import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.eventos.EventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
+import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.model.ChatMessage;
@@ -48,6 +51,8 @@ public class ChatController {
     AdministracionService myUserService_;
     @Autowired
     IUsuarioEventoRepository eventoUsuarioRepo_;
+    @Autowired
+    IEventoService myEventService_;
     
     private Model myModel_;
     
@@ -61,7 +66,7 @@ public class ChatController {
 			myEventList_.put(evento.getIdEvento(),evento);
 		}
 		
-		myModel_.addAttribute("user", authentication.getName());
+		myModel_.addAttribute(Atributos.USER, authentication.getName());
 		myModel_.addAttribute("message", myModel_.getAttribute("message"));
 		myModel_.addAttribute("eventname", evento.getNombre());
 		myModel_.addAttribute("eventid", evento.getIdEvento());
@@ -74,6 +79,7 @@ public class ChatController {
     	for (Usuario usr: usuarios) {
     		if (!usr.getNombre().equals("null") && usr.getUsername().equals(authentication.getName())) { 
     			myModel_.addAttribute(Atributos.USUARIO, usr.getIdUsuario());
+    			myModel_.addAttribute(Atributos.ROLES, usr.getRol().getIdRol());
     			
     			// Actualizar estado de usuario_evento como usuario conectado al chat
     			List<Usuario_Evento> userEv = usr.getEventosDelUsuario();
@@ -98,11 +104,20 @@ public class ChatController {
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
 
     	// Comprobar que el mensaje recibido es del evento
-    	Timestamp timestamp = new Timestamp((new Date()).getTime());
-    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat( "dd-MM-yyyy HH:mm:ss" );
-    	displayDateFormatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-    	String strDate= displayDateFormatter.format(new Date());  
+//    	Timestamp timestamp = new Timestamp((new Date()).getTime());
+//    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat( "dd-MM-yyyy HH:mm:ss" );
+//    	displayDateFormatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+//    	String strDate= displayDateFormatter.format(new Date());  
     	 
+    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    	Timestamp timestamp = new Timestamp((new Date()).getTime());
+    	long time = timestamp.getTime();
+    	Date currentDate = new Date(time);
+    	TimeZone zoneNewYork = TimeZone.getTimeZone("America/New_York");
+    	displayDateFormatter.setTimeZone(zoneNewYork);
+    	String strDate = displayDateFormatter.format(currentDate);
+    	Timestamp ts = Timestamp.valueOf(strDate);
+    	
     	myUserService_.cargarUsuarios(myModel_,UsuarioConstantes.USERNAME,chatMessage.getSender());
 
     	@SuppressWarnings("unchecked")
@@ -112,13 +127,14 @@ public class ChatController {
     		if (!usr.getNombre().equals("null") && usr.getUsername().equals(chatMessage.getSender())) { 
     			// Construir entidad Chat 
     			Chat c = new Chat();
-    			c.setTimestamp(timestamp); 
+    			c.setTimestamp(ts); 
     			c.setTexto(chatMessage.getContent());
     			c.setEvento(myEventList_.get(Integer.parseInt(eventId)));
     			c.setUsuario(usr);
 
     			myChatService_.createChat(c);
     			
+    			trataFinEvento(c.getTexto(),c.getEvento());
     			break;
     		}
     	}
@@ -133,7 +149,7 @@ public class ChatController {
     	return chatMessage;
     }
 
-    @MessageMapping("/chat.addUser/{eventId}")
+	@MessageMapping("/chat.addUser/{eventId}")
     @SendTo("/topic/public/{eventId}")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, @DestinationVariable String eventId,
                                SimpMessageHeaderAccessor headerAccessor) {
@@ -142,7 +158,27 @@ public class ChatController {
         return chatMessage;
     }
     
-    private void logChats() {
+    private void trataFinEvento(String texto, Evento evento) {
+		if (texto == "END") {
+			evento.setEstado(EventoConstantes.ESTADO_FINALIZADO);
+
+			// Actualizar estado del evento en la lista de eventos
+			myEventList_.put(evento.getIdEvento(),evento);
+			myEventService_.setFinEvento(evento);
+			
+			logEvents();
+		}
+	}
+
+    private void logEvents() {
+		// Debug Eventos
+    	for (Evento ev: myEventList_.values()) {
+			ev.toString();
+		}
+			
+	}
+
+	private void logChats() {
     	// Debug alta de chat
 		  List<Chat> result = (List<Chat>) myChatService_.findAll();
 		  for (Chat c: result) {

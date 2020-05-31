@@ -127,4 +127,9 @@ public class EventoServiceImpl implements IEventoService {
 		}
 	}
 	
+	public 	void setFinEvento(Evento evento) {
+		EventoRepository.save(evento);
+	}
+
+	
 }

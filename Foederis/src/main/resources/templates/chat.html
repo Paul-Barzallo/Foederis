@@ -21,6 +21,10 @@
 <script src="https://kit.fontawesome.com/adb5bd4540.js"
 	crossorigin="anonymous"></script>
 <!-- <link rel="stylesheet" href="/css/main.css" /> -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 <script th:inline="javascript">
 
 			$(document).ready( () => {
@@ -90,16 +94,17 @@
 		</ul>
 	</div>
 	<div class="bg-warning d-flex justify-content-between p-3 h-20">
-		<table class="table-chat">
+		<table class="table-chat w-100">
 			<tr>
 				<td>
 					<form id="messageForm" name="messageForm">
 						<div class="form-group">
-							<div class="input-group clearfix">
+							<div class="input-group d-flex justify-content-between">
 								<input type="text" id="message"
 									placeholder="Introduce un mensaje..." autocomplete="off"
 									class="form-control" />
 								<button type="submit" class="btn btn-success">Enviar</button>
+								<button class="btn btn-info" th:if="${__${@atributos.ROLES}__} == 2" onclick="endEvent()">Fin evento</button>
 							</div>
 						</div>
 					</form>

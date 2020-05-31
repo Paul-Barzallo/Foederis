@@ -61,4 +61,7 @@ public interface IEventoService {
 
 	void mensajeInfoSala(Model model, String paramBusq);
 
+
+	void setFinEvento(Evento evento);
+
 }

@@ -35,6 +35,19 @@ function tryConnection(){
 		connect();
 }
 
+function disconnect(){
+	stompClient.disconnect();
+}
+
+function endEvent(){
+    // Notificar fin de evento
+    stompClient.send("/app/chat.addUser/" + eventId,
+        {},
+        JSON.stringify({sender: username, type: 'END'})
+    )
+
+}
+
 function onConnected() {
 	connected = true;
     eventId = $("#eventId").text();
@@ -89,11 +102,15 @@ function onMessageReceived(payload) {
         messageElement.classList.add('list-group-item','list-group-item-success');
         messageElement.style.textAlign='center';
         message.content = message.sender + ' abandonó el evento!';
+    } else if (message.type == 'END') {
+    	messageElement.classList.add('list-group-item','list-group-item-success','text-danger');
+        messageElement.style.textAlign='center';
+        message.content = message.sender + ' finalizó el evento!';
+        disconnect();
     } else {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
         var usernameElement = document.createElement('span');
-        //usernameElement.style.color='blue';
         usernameElement.classList.add('d-flex','justify-content-between','bg-info','mb-3');
         
         var userName = document.createElement('div');
@@ -102,7 +119,7 @@ function onMessageReceived(payload) {
         
         var usernameText = document.createTextNode(message.sender);
         userName.appendChild(usernameText);
-        var userTimestampText = document.createTextNode(message.timestamp);
+        var userTimestampText = document.createTextNode(moment.tz(message.timestamp,"America/New_York").local().format("DD-MM-YYYY HH:mm:ss"));
         userTimestamp.appendChild(userTimestampText);
         
         
@@ -120,28 +137,9 @@ function onMessageReceived(payload) {
     messageElement.appendChild(textElement);
 
     messageArea.appendChild(messageElement);
-    // messageArea.scrollTop = messageArea.scrollHeight;
+    messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-/*
-function getAvatarColor(messageSender) {
-    var hash = 0;
-    for (var i = 0; i < messageSender.length; i++) {
-        hash = 31 * hash + messageSender.charCodeAt(i);
-    }
+messageForm.addEventListener('submit', sendMessage, true);
 
-    var index = Math.abs(hash % colors.length);
-    return colors[index];
-}
-*/
-//function initChat() {
-//	if (username == null)
-//		username = document.querySelector('#userName').innerHTML.trim();
-//	
-//	if (usernameForm != null)
-//		usernameForm.addEventListener('submit', connect, true);
-	
-//	if (messageForm != null)
-		messageForm.addEventListener('submit', sendMessage, true);
-//}
 
