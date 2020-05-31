@@ -2,9 +2,10 @@ package es.uned.foederis.websocket.model;
 
 public class ChatMessage {
     private MessageType type;
-    private String content;
-    private String sender;
-    private String timestamp;
+    private String 		content;
+    private String 		sender;
+    private String 		timestamp;
+    private int 		idChat;
 
     public String getTimestamp() {
 		return timestamp;
@@ -44,4 +45,14 @@ public class ChatMessage {
     public void setSender(String sender) {
         this.sender = sender;
     }
+
+	public int getIdChat() {
+		return idChat;
+	}
+
+	public void setIdChat(int idChat) {
+		this.idChat = idChat;
+	}
+    
+    
 }

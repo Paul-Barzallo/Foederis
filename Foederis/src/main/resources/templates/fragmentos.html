@@ -364,7 +364,7 @@
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
 					<span class="d-flex justify-content-between bg-info mb-3">
 						<div th:text="${chat.usuario.username}"/>
-						<div id="timeChat" /><!--th:text="${# moment.tz(chat.timestamp,'America/New_York').local().format('DD-MM-YYYY HH:mm:ss')}"/>--> <!-- th:text="${#dates.format(chat.timestamp, 'dd-MM-yyyy HH:mm:ss')}"/>--> 
+						<div id="timeChat" th:text="${chat.timestamp}"/> 
 					</span>
 						<p th:text="${chat.texto}">
 					</p>

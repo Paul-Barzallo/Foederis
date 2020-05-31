@@ -22,13 +22,14 @@
 <script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 <script th:inline="javascript">
-$(function () {
-	$('#timeChat').text()
-};
+function cambiarHora(){
+	var timeChat = document.getElementById("timeChat");
+	timeChat.innerHTML = moment.tz(timeChat.innerHTML, "America/New_York").local().format("DD-MM-YYYY HH:mm");
+}
 </script>
 </head>
 
-<body class="bg-light" style="height: 100vh"/>
+<body class="bg-light" style="height: 100vh"  onload="cambiarHora()"/>
 <div th:insert="fragmentos :: navbar"></div>
 <div id="chat-page" th:insert="fragmentos :: resultDownload" class="container mx-auto my-5 px-ms-5 h-100">
  	<div class="bg-secondary d-flex justify-content-between p-3">

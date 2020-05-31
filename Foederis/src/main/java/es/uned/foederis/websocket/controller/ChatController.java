@@ -102,14 +102,10 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage/{eventId}")
     @SendTo("/topic/public/{eventId}")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
-
-    	// Comprobar que el mensaje recibido es del evento
-//    	Timestamp timestamp = new Timestamp((new Date()).getTime());
-//    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat( "dd-MM-yyyy HH:mm:ss" );
-//    	displayDateFormatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-//    	String strDate= displayDateFormatter.format(new Date());  
-    	 
-    	SimpleDateFormat displayDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Chat c = new Chat();
+			 
+		// Cambiar hora evento a horario de Nueva York 
+		SimpleDateFormat displayDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     	Timestamp timestamp = new Timestamp((new Date()).getTime());
     	long time = timestamp.getTime();
     	Date currentDate = new Date(time);
@@ -118,6 +114,7 @@ public class ChatController {
     	String strDate = displayDateFormatter.format(currentDate);
     	Timestamp ts = Timestamp.valueOf(strDate);
     	
+    	// Comprobar que el mensaje recibido es del evento    	 
     	myUserService_.cargarUsuarios(myModel_,UsuarioConstantes.USERNAME,chatMessage.getSender());
 
     	@SuppressWarnings("unchecked")
@@ -126,13 +123,12 @@ public class ChatController {
     	for (Usuario usr: usuarios) {
     		if (!usr.getNombre().equals("null") && usr.getUsername().equals(chatMessage.getSender())) { 
     			// Construir entidad Chat 
-    			Chat c = new Chat();
     			c.setTimestamp(ts); 
     			c.setTexto(chatMessage.getContent());
     			c.setEvento(myEventList_.get(Integer.parseInt(eventId)));
     			c.setUsuario(usr);
 
-    			myChatService_.createChat(c);
+    			c = myChatService_.createChat(c);
     			
     			trataFinEvento(c.getTexto(),c.getEvento());
     			break;
@@ -145,6 +141,7 @@ public class ChatController {
     	//SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
     	//String dateString=sdf.format(new Date(timestamp.getTime()));
     	
+    	chatMessage.setIdChat(c.getIdChat());
     	chatMessage.setTimestamp(strDate);
     	return chatMessage;
     }

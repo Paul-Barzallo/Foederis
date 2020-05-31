@@ -88,9 +88,15 @@ function sendMessage(event) {
     event.preventDefault();
 }
 
+function deleteMessage(ev){
+	alert(ev.target.id);
+}
 
 function onMessageReceived(payload) {
-    var message = JSON.parse(payload.body);
+    var butDeleteMessage = null;
+    var textMessageElement = null;
+
+	var message = JSON.parse(payload.body);
 
     var messageElement = document.createElement('li');
 
@@ -111,17 +117,17 @@ function onMessageReceived(payload) {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
         var usernameElement = document.createElement('span');
+        textMessageElement = document.createElement('span');
         usernameElement.classList.add('d-flex','justify-content-between','bg-info','mb-3');
+        textMessageElement.classList.add('d-flex','justify-content-between','mb-3');
         
         var userName = document.createElement('div');
         var userTimestamp = document.createElement('div');
-        
         
         var usernameText = document.createTextNode(message.sender);
         userName.appendChild(usernameText);
         var userTimestampText = document.createTextNode(moment.tz(message.timestamp,"America/New_York").local().format("DD-MM-YYYY HH:mm:ss"));
         userTimestamp.appendChild(userTimestampText);
-        
         
         usernameElement.appendChild(userName);
         usernameElement.appendChild(userTimestamp);
@@ -133,10 +139,30 @@ function onMessageReceived(payload) {
     var textElement = document.createElement('p');
     var messageText = document.createTextNode(message.content);
     textElement.appendChild(messageText);
+	textElement.classList.add('justify-content-between');
 
-    messageElement.appendChild(textElement);
+    if (textMessageElement != null){
+    	var messageZone = document.createElement('div');
+    	messageZone.appendChild(textElement);
+    	
+        var butDeleteMessage = document.createElement('button')
+    	var textDeleteMessage=document.createTextNode('Eliminar');
+        butDeleteMessage.classList.add('btn','btn-outline-danger');
+        butDeleteMessage.setAttribute("id", message.idChat);
+        butDeleteMessage.addEventListener("click", deleteMessage);
+    	butDeleteMessage.appendChild(textDeleteMessage);
+ 
+        textMessageElement.appendChild(messageZone);
+        textMessageElement.appendChild(butDeleteMessage);
+        
 
-    messageArea.appendChild(messageElement);
+    	messageElement.appendChild(textMessageElement);
+    	messageArea.appendChild(messageElement);
+    }
+    else {
+    	messageElement.appendChild(textElement);
+    	messageArea.appendChild(messageElement);
+    }
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
