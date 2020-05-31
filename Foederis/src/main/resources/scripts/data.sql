@@ -30,11 +30,13 @@ VALUES
 	(2,         'Tanaris',      5,      TRUE,           TRUE,       TRUE,       TRUE,       TRUE,   '08:00:00',     '18:00:00', TRUE),
 	(3,         'Dea Dama',     5,      TRUE,           FALSE,      TRUE,       FALSE,      TRUE,   '07:00:00',     '14:00:00', FALSE),
 	(4,         'Dagda',        8,      TRUE,           TRUE,       FALSE,      FALSE,      TRUE,   '13:00:00',     '20:00:00', TRUE),
-	(5,         'Lugh',         8,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '19:00:00',     '06:00:00', TRUE),
-	(6,         'Morrigan',     8,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+	(5,         'Lugh',         8,      FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '19:00:00',     '06:00:00', TRUE),
+	(6,         'Morrigan',     8,      FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
     (7,         'Epona',        10,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
-    (8,         'Belenus',      15,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
-    (9,         'Cernunnos',    15,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE)
+    (8,         'Belenus',      10,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+    (9,         'Cernunnos',    12,     FALSE,          FALSE,      TRUE,       TRUE,       FALSE,  '15:00:00',     '15:00:00', TRUE),
+    (10,        'Mesa redonda', 15,     TRUE,           FALSE,      TRUE,       FALSE,      FALSE,  '11:00:00',     '20:00:00', TRUE),
+    (11,        'Excalibur',    15,     TRUE,           TRUE,       FALSE,      FALSE,      FALSE,  '10:00:00',     '21:00:00', TRUE)
 ;
 
 insert into evento

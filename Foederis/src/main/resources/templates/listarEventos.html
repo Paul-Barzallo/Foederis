@@ -9,8 +9,23 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+	<script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
+	
+	<script th:inline="javascript">
+		function cambiarHora(){
+			var horarios = document.getElementsByClassName("cambioHora");
+			var i ;
+			for(i=0; i<horarios.length;i++)
+				if(horarios[i].innerHTML=="")
+					horarios[i].innerHTML = "";
+				else
+					horarios[i].innerHTML = moment.tz(horarios[i].innerHTML, "America/New_York").local().format("DD-MM-YYYY HH:mm");
+		}
+	</script>
 </head>
-<body class="bg-info" style="height: 100vh">
+<body class="bg-info" style="height: 100vh"  onload="cambiarHora()">
     <div th:insert="fragmentos :: navbar"></div>
     <div class="container">
     	<div class="card bg-light">
@@ -58,8 +73,8 @@
 					<tr th:each="reunion: ${lstEventos}">
 						<td th:text="${reunion.idEvento}"></td>
 						<td th:text="${reunion.nombre}"></td>
-						<td th:text="${reunion.horarioElegido != null ? #dates.format(reunion.horarioElegido.Horario_Fecha_Inicio, 'dd-MM-yyyy HH:mm') : ''}" ></td>
-						<td th:text="${reunion.salaEvento.idSala}"></td>
+						<td class="cambioHora" th:text="${reunion.horarioElegido != null ?reunion.horarioElegido.Horario_Fecha_Inicio: ''}"></td>
+						<td th:text="${reunion.salaEvento.idSala}"></td>						
    						<td th:text="${reunion.getEstado()}"></td>
 						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
 						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
@@ -68,7 +83,7 @@
    							   							
 						<td>
 							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados' 
-							and (reunion.horarioElegido != null and reunion.horarioElegido.Horario_Fecha_Inicio > tsActual)}">	   							
+							and (reunion.horarioElegido != null and reunion.estado != @eventoConstantes.ESTADO_FINALIZADO)}">	   							
 								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
 							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!='rechazados'}">
