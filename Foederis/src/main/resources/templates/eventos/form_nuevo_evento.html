@@ -41,10 +41,40 @@
 		$('#listaUsuarios').show();
 		$('#filtrarUsuarios').prop("disabled", false);
 		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
+		setIntervaloHoras(sala);
 	}
 	
-	function setIntervaloHoras() {
-		
+	function setIntervaloHoras(sala) {
+		var hInicio = parseInt($(sala).data("hinicio"),10);
+		var hFin = parseInt( $(sala).data("hfin"),10);
+		if (hInicio != hFin) {
+			var h;
+			horasDesactivadasIni = [];
+			horasDesactivadasFin = [];
+			if (hInicio < hFin) {
+				for (h = 0; h < hInicio; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+				for (h = hFin+1; h < 24; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+			} else {
+				for (h = hFin+1; h < hInicio; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+			}
+			horasDesactivadasIni.push(hFin);
+			horasDesactivadasFin.push(hInicio);
+			for (var i=1; i<=6; i+=2) {
+				$('#datetimepicker'+i).datetimepicker('disabledHours', horasDesactivadasIni);
+			}
+			for (var i=2; i<=6; i+=2) {
+				$('#datetimepicker'+i).datetimepicker('disabledHours', horasDesactivadasFin);
+			}
+		} 
 	}
 	
 	function validarMaxUsuarios() {
@@ -96,6 +126,45 @@
 		$('#datetimepicker6').datetimepicker('date', dateNY);
 	}
 	
+	function cambiarhorarioCierre() {
+		var input = $(this);
+		var dtpOrig = $(input.data("target"));
+		var fecha = dtpOrig.datetimepicker('date');
+		var fechaMin = moment(fecha).add(1, 'hour');
+		var fechaMax = moment(fecha).add(5, 'hour');
+		tratarHorario(input, fechaMin, fechaMax);
+	}
+	
+	function cambiarhorarioApertura() {
+		var input = $(this);
+		var dtpOrig = $(input.data("target"));
+		var fecha = dtpOrig.datetimepicker('date');
+		var fechaMax = moment(fecha).add(-1, 'hour');
+		var fechaMin = moment(fecha).add(-5, 'hour');
+		tratarHorario(input, fechaMin, fechaMax);
+	}
+	
+	function tratarHorario(input, fechaMin, fechaMax) {
+		var dtpOrig = $(input.data("target"));
+		var dtp = $(input.data("next"));
+		var fecha = dtpOrig.datetimepicker('date');
+		if (fecha!=undefined) {
+			var horasDesactivadas = dtpOrig.datetimepicker('disabledHours');
+			var hora = moment(fecha).hour();
+			if (Object.keys(horasDesactivadas).includes(''+hora)) {
+				input.val('');
+				return false;
+			}
+			dtp.datetimepicker('maxDate', fechaMax);
+			dtp.datetimepicker('minDate', fechaMin);
+		} else {
+			var fechaMin = moment(new Date());
+			var fechaMax = moment(new Date()).add(100, 'year');
+			dtp.datetimepicker('maxDate', fechaMax);
+			dtp.datetimepicker('minDate', fechaMin); 
+		} 
+	}
+	
 	$(function () {
 		$('.dtp').datetimepicker({
 			format: 'DD/MM/YYYY HH:00',
@@ -103,102 +172,12 @@
 			minDate: new Date(),
 			daysOfWeekDisabled: [0,6]
 		});
-		$("#datetimepicker1").on("change.datetimepicker", function (e) {
-			if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker2').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker2').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMin = moment(e.date).add(1, 'hour');
-				var fechaMax = moment(e.date).add(5, 'hour');
-	            $('#datetimepicker2').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker2').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker2').datetimepicker('date')==null) {
-	            	$('#datetimepicker2').datetimepicker('date', fechaMin);
-	            }
-			}
-        });
-        $("#datetimepicker2").on("change.datetimepicker", function (e) {
-        	if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker1').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker1').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMax = moment(e.date).add(-1, 'hour');
-				var fechaMin = moment(e.date).add(-5, 'hour');
-	            $('#datetimepicker1').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker1').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker1').datetimepicker('date')==null) {
-	            	$('#datetimepicker1').datetimepicker('date', fechaMax);
-	            }
-			}
-        });
-        $("#datetimepicker3").on("change.datetimepicker", function (e) {
-        	if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker4').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker4').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMin = moment(e.date).add(1, 'hour');
-				var fechaMax = moment(e.date).add(5, 'hour');
-	            $('#datetimepicker4').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker4').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker4').datetimepicker('date')==null) {
-	            	$('#datetimepicker4').datetimepicker('date', fechaMin);
-	            }
-			}
-        });
-        $("#datetimepicker4").on("change.datetimepicker", function (e) {
-        	if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker3').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker3').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMax = moment(e.date).add(-1, 'hour');
-				var fechaMin = moment(e.date).add(-5, 'hour');
-	            $('#datetimepicker3').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker3').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker3').datetimepicker('date')==null) {
-	            	$('#datetimepicker3').datetimepicker('date', fechaMax);
-	            }
-			}
-        });
-        $("#datetimepicker5").on("change.datetimepicker", function (e) {
-        	if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker6').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker6').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMin = moment(e.date).add(1, 'hour');
-				var fechaMax = moment(e.date).add(5, 'hour');
-	            $('#datetimepicker6').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker6').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker6').datetimepicker('date')==null) {
-	            	$('#datetimepicker6').datetimepicker('date', fechaMin);
-	            }
-			}
-        });
-        $("#datetimepicker6").on("change.datetimepicker", function (e) {
-        	if(e.date==undefined) {
-				var fechaMin = moment(new Date());
-				var fechaMax = moment(new Date()).add(100, 'year');
-				$('#datetimepicker5').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker5').datetimepicker('maxDate', fechaMax);
-			} else {
-				var fechaMax = moment(e.date).add(-1, 'hour');
-				var fechaMin = moment(e.date).add(-5, 'hour');
-	            $('#datetimepicker5').datetimepicker('minDate', fechaMin); 
-	            $('#datetimepicker5').datetimepicker('maxDate', fechaMax);
-	            if ($('#datetimepicker5').datetimepicker('date')==null) {
-	            	$('#datetimepicker5').datetimepicker('date', fechaMax);
-	            }
-			}
-        });
+		$("#horarioApertura1").blur(cambiarhorarioCierre);
+        $("#horarioCierre1").blur(cambiarhorarioApertura);
+        $("#horarioApertura2").blur(cambiarhorarioCierre);
+        $("#horarioCierre2").blur(cambiarhorarioApertura);
+        $("#horarioApertura3").blur(cambiarhorarioCierre);
+        $("#horarioCierre3").blur(cambiarhorarioApertura);
 		
 		$("#listaUsuarios input:checkbox").change(validarMaxUsuarios);
 		$('#listaUsuarios').hide();
