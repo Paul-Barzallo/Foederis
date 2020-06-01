@@ -133,7 +133,7 @@ public class Sala {
 
 	@Override
 	public String toString() {
-		return "Sala [nombre=" + nombre + ", aforo=" + aforo + "]";
+		return "Sala [id=" + idSala + ", nombre=" + nombre + ", aforo=" + aforo + "]";
 	}
 	
 }
