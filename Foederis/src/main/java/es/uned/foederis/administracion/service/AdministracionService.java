@@ -461,4 +461,5 @@ public class AdministracionService {
 		model.addAttribute(Atributos.PANTALLA, Pantallas.ADM_SALAS);
 		return Vistas.ADM_SALAS;
 	}
+	
 }

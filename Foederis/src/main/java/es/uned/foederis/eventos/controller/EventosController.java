@@ -5,13 +5,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -33,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.administracion.service.AdministracionService;
-import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
@@ -243,32 +238,82 @@ public class EventosController {
 
 			// Control de aforo
 			int aforo = user.getEventosDelUsuario().stream().filter(obj -> obj.getEvento().getIdEvento() == idEvento)
-					.findFirst().get().getEvento().getSalaEvento().getAforo();			
+					.findFirst().get().getEvento().getSalaEvento().getAforo();	
+			
+			//Guardamos el horario
+			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
+			evento.setHorarioElegido(horarioMasVotado.get());
 
 			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
 			// que traigo de la vista los pongo a true siempre que tengan el mismo horario;
-			evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
+//			evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
+//			evento.getEventosDelUsuario().forEach(c -> c.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO));
+			
+			//El creador del evento siempre tendra estos valores por defecto y siempre asistira
+			//Si es el usuario logado creador del evento no puede darse de baja 
+			Usuario_Evento userlogado =  user.getEventosDelUsuario().stream().
+					filter(c->c.getEvento().getIdEvento() == idEvento).findFirst().get();
+			userlogado.setConfirmado(usuarioEventoConstantes.CONFIRMADO_SI);
+			userlogado.setAsistente(true);
+			userlogado.setHorario(horarioMasVotado.get());
+			aforo--;
 
-			for (Integer id : lstCheckedAsistentes) {
-				if (id < 0) {
-				} else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).count()>0)
-					evento.getEventosDelUsuario().stream().filter(c -> c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).findFirst().get()
-							.setAsistente(true);
-				else
-					break;
-				aforo--;
+			for(Usuario_Evento aux : evento.getEventosDelUsuario()) {
+				
+				
+				if(aux.getUsuario().getIdUsuario() == user.getIdUsuario()) {
+									
+				//Si es usuario clickado
+				}else if(lstCheckedAsistentes.contains(aux.getIdUsuarioEvento()) && aforo > 0 &&
+						(aux.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI 
+						&& aux.getHorario().getIdHorario() == horarioMasVotado.get().getIdHorario())) {
+					
+					aux.setAsistente(true);
+					aux.setConfirmado(usuarioEventoConstantes.CONFIRMADO_SI);
+					
+					aforo--;
+				}//resto, hay que darles de baja
+				else {
+					aux.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO);
+					aux.setAsistente(false);
+				}
+				
+				
+				
+				usuarioEventoRepo.save(aux);
 			}
-
-			//Guardamos el horario
-			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
-			evento.setHorarioElegido(horarioMasVotado.get());			
+				
+//			for (Integer id : lstCheckedAsistentes) {			
+//				
+//				if(id == null )
+//					continue;
+//				
+//				Usuario_Evento auxUsuEv =  evento.getUsuariosEventoById(id);
+//				
+//				if (id < 0 || auxUsuEv.getHorario()==null) {
+//				} else if(aforo > 0 && (auxUsuEv.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI 
+//						&& auxUsuEv.getHorario().getIdHorario() == horarioMasVotado.get().getIdHorario())) {
+//					auxUsuEv.setAsistente(true);
+//					auxUsuEv.setConfirmado(usuarioEventoConstantes.CONFIRMADO_SI);
+//					
+//					aforo--;
+//				}
+//				
+////				else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getHorario().getIdHorario()== horarioMasVotado.get().getIdHorario() && c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).count()>0)
+////					evento.getEventosDelUsuario().stream().filter(c ->c.getHorario().getIdHorario()== horarioMasVotado.get().getIdHorario() && c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).findFirst().get()
+////							.setAsistente(true);
+//				else
+//					auxUsuEv.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO);
+//				
+//				usuarioEventoRepo.save(auxUsuEv);
+//			}					
 			
 			usuRepo.save(user);
 			
 			eventoService.mensajeConfirmacion(model);
 		}		
 		
-		return "redirect:/Evento/listarFiltro";
+		return "redirect:/Evento/listarFiltro?filtroListado=sin";
 
 	}
 
@@ -299,38 +344,47 @@ public class EventosController {
 
 		// SOlo para el jefe de prroyecto creador muestro el horario mas elegido
 		if (user.getIdUsuario() == evento.getUsuarioCreador().getIdUsuario()) {
+			
+			//Si ya existe horario no se vuelve a calcular
+//			if(evento.getHorarioElegido()== null) 
+			{		
 
-			List<Integer> lstH = new ArrayList<Integer>();
+				List<Integer> lstH = new ArrayList<Integer>();
+	
+				List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
+	//			List<Usuario_Evento> lstusuEvento2 = (List<Usuario_Evento>) usuarioEventoRepo.findByevento(evento.getIdEvento());
+	
+				lstusuEvento = lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento())
+						.collect(Collectors.toList());
+	
+				lstusuEvento.forEach(c -> {
+					if (c.getHorario() != null && c.getHorario().getIdHorario() > -1) {
+						lstH.add(c.getHorario().getIdHorario());
+					} 
 
-			List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
-//			List<Usuario_Evento> lstusuEvento2 = (List<Usuario_Evento>) usuarioEventoRepo.findByevento(evento.getIdEvento());
-
-			lstusuEvento = lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento())
-					.collect(Collectors.toList());
-
-			lstusuEvento.forEach(c -> {
-				if (c.getHorario() != null && c.getHorario().getIdHorario() > -1) {
-					lstH.add(c.getHorario().getIdHorario());
-				} else {
-					lstH.add(0);
+				});
+				if(lstH.size()!= 0) {				
+					
+					Map<Integer, Long> repeticiones = lstH.stream()
+							.collect(Collectors.groupingBy(w -> w, Collectors.counting()));
+		
+					Stream<Map.Entry<Integer, Long>> ordenados = repeticiones.entrySet().stream()
+							.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+		
+					Integer masFrecuente = ordenados.findFirst().get().getKey();
+		
+					// mostraremos el mas elegido a modo información
+					Optional<Horarios> horarioMasVotado = HorarioRepo.findById(masFrecuente);
+		
+					if (horarioMasVotado.isEmpty() || horarioMasVotado == null)
+						mav.addObject("horarioVotado", null);
+					else
+						mav.addObject("horarioVotado", horarioMasVotado.get());
 				}
-			});
-
-			Map<Integer, Long> repeticiones = lstH.stream()
-					.collect(Collectors.groupingBy(w -> w, Collectors.counting()));
-
-			Stream<Map.Entry<Integer, Long>> ordenados = repeticiones.entrySet().stream()
-					.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
-
-			Integer masFrecuente = ordenados.findFirst().get().getKey();
-
-			// mostraremos el mas elegido a modo información
-			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(masFrecuente);
-
-			if (horarioMasVotado.isEmpty() || horarioMasVotado == null)
-				mav.addObject("horarioVotado", null);
-			else
-				mav.addObject("horarioVotado", horarioMasVotado.get());
+			}
+			//Si tenemos mas usuarios confirmados que aforo en la sala mostramos modal para sugerir un cambio de sala
+			if(evento.getSalaEvento().getAforo() < evento.getTotalConfirmadosEvento())
+				eventoService.mensajeInfoAforo(model);
 		}
 				
 		mav.addObject("eventoSeleccionado", evento);
@@ -339,7 +393,7 @@ public class EventosController {
 
 		// cargar modal con el atributo sala, aparecera cuando pulse el numero de la
 		// sala.
-		eventoService.mensajeInfoSala(model, String.valueOf(evento.getSalaEvento().getIdSala()));
+		eventoService.mensajeInfoSala(model, String.valueOf(evento.getSalaEvento().getIdSala()));		
 
 		// Vista a la que vamos
 		mav.setViewName("verEvento");
@@ -385,15 +439,15 @@ public class EventosController {
 		ModelAndView mav = new ModelAndView();
 		List<Evento> lstEventos = new ArrayList<Evento>();
 
-		if (filtroListado == null || filtroListado.equalsIgnoreCase("todos")) {
-			filtroListado = "todos";
+		if (filtroListado == null || filtroListado.equalsIgnoreCase(usuarioEventoConstantes.FILTRO_TODOS)) {
+			filtroListado = usuarioEventoConstantes.FILTRO_TODOS;
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI)
 					lstEventos.add(aux.getEvento());
 			}
 
-		} else if (filtroListado.equalsIgnoreCase("futuro")) {
+		} else if (filtroListado.equalsIgnoreCase(usuarioEventoConstantes.FILTRO_FUTURO)) {
 			lstEventos.clear();
 			// Buscar fechas a partir de la fecha y hora actual del sistema
 
@@ -412,7 +466,7 @@ public class EventosController {
 				}
 			}
 
-		} else if (filtroListado.equalsIgnoreCase("hoy")) {
+		} else if (filtroListado.equalsIgnoreCase(usuarioEventoConstantes.FILTRO_HOY)) {
 			lstEventos.clear();
 			
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
@@ -424,7 +478,7 @@ public class EventosController {
 
 				}
 			}
-		} else if (filtroListado.equalsIgnoreCase("rechazados")) {
+		} else if (filtroListado.equalsIgnoreCase(usuarioEventoConstantes.FILTRO_RECHAZADOS)) {
 			lstEventos.clear();
 
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
