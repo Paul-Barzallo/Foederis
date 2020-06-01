@@ -54,8 +54,6 @@ function onConnected() {
     
     // Suscribirse a topic/public/eventId para recibir los mensajes del chat
     stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
-    // Suscribirse a topic/publi para mensaje de desconexión
-    // stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Notificar al servidor la conexión
     stompClient.send("/app/chat.addUser/" + eventId,
@@ -71,14 +69,13 @@ function onError(error) {
     connectingElement.textContent = 'No se pudo conectar al websocket. Por favor, espere o refresque la página para reintentarlo!';
 }
 
-
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();
 
     if(messageContent && stompClient) {
         var chatMessage = {
             sender: username,
-            content: messageInput.value,
+            content: messageContent,
             type: 'CHAT'
         };
 
@@ -89,7 +86,14 @@ function sendMessage(event) {
 }
 
 function deleteMessage(ev){
-	alert(ev.target.id);
+    // Notificar borrado de mensaje chat
+    var chatMessage = {
+            sender: username,
+            idChat: ev.srcElement.id,
+            type: 'REMOVE'
+        };
+
+    stompClient.send("/app/chat.remove/" + eventId, {}, JSON.stringify(chatMessage));
 }
 
 function onMessageReceived(payload) {
@@ -113,6 +117,12 @@ function onMessageReceived(payload) {
         messageElement.style.textAlign='center';
         message.content = message.sender + ' finalizó el evento!';
         disconnect();
+    }else if (message.type == 'REMOVE'){
+    	var chatMessage = document.querySelector('#Message_' + message.idChat);
+    	if (chatMessage != null){
+    		chatMessage.classList.add ('d-none');
+    		return;
+    	}
     } else {
         messageElement.classList.add('list-group-item','list-group-item-info');
     
@@ -156,6 +166,8 @@ function onMessageReceived(payload) {
         textMessageElement.appendChild(butDeleteMessage);
         
 
+        // Necesario para eliminar el mensaje
+        messageElement.setAttribute("id","Message_" + message.idChat);
     	messageElement.appendChild(textMessageElement);
     	messageArea.appendChild(messageElement);
     }

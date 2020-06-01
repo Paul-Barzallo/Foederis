@@ -19,6 +19,7 @@ public class ChatMessage {
         CHAT,
         JOIN,
         LEAVE,
+        REMOVE,
         END
     }
 

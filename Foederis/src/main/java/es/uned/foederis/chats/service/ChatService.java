@@ -15,9 +15,6 @@ public class ChatService {
 	@Autowired
 	private IChatRepository ChatRepository;
 	
-	/*
-	 * public List<Chat>getChats(String userName, long eventId){ List<Chat> }
-	 */	
 	
 	public Chat createChat(Chat chat){
         chat = ChatRepository.save(chat);
@@ -33,6 +30,10 @@ public class ChatService {
 	public List<Chat> findByIdEvento(Evento event) {
 		List<Chat> result = (List<Chat>)ChatRepository.findByEvento(event);
 		return result;
+	}
+
+	public void remove(Chat c) {
+		ChatRepository.delete(c);
 	} 
 
 }

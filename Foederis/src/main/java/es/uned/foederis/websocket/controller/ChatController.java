@@ -37,8 +37,6 @@ import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.model.ChatMessage;
 
 
-//import es.uned.foederis.sesion.service.UserService;
-
 @Controller
 public class ChatController {
 	
@@ -152,6 +150,16 @@ public class ChatController {
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        return chatMessage;
+    }
+    
+	@MessageMapping("/chat.remove/{eventId}")
+    @SendTo("/topic/public/{eventId}")
+    public ChatMessage removeMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
+		Chat c = new Chat(chatMessage.getIdChat());
+		
+		myChatService_.remove(c);
+		
         return chatMessage;
     }
     
