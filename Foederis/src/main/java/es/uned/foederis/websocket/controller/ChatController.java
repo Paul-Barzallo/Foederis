@@ -41,8 +41,6 @@ import es.uned.foederis.sesion.token.JWTInvitado;
 import es.uned.foederis.websocket.model.ChatMessage;
 
 
-//import es.uned.foederis.sesion.service.UserService;
-
 @Controller
 public class ChatController {
 	
@@ -126,7 +124,7 @@ public class ChatController {
 		myModel_.addAttribute("eventname", evento.getNombre());
 		myModel_.addAttribute("eventid", evento.getIdEvento());
 
-    	return "/chat/chat_invitado";
+    	return "/foederis/chat/chat_invitado";
 	}
 
     @MessageMapping("/chat.sendMessage/{eventId}")
@@ -173,6 +171,7 @@ public class ChatController {
     	
     	chatMessage.setIdChat(c.getIdChat());
     	chatMessage.setTimestamp(strDate);
+    	chatMessage.setRol(c.getUsuario().getRol().getIdRol());
     	return chatMessage;
     }
 
@@ -182,6 +181,16 @@ public class ChatController {
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        return chatMessage;
+    }
+    
+	@MessageMapping("/chat.remove/{eventId}")
+    @SendTo("/topic/public/{eventId}")
+    public ChatMessage removeMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
+		Chat c = new Chat(chatMessage.getIdChat());
+		
+		myChatService_.remove(c);
+		
         return chatMessage;
     }
     

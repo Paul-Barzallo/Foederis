@@ -23,8 +23,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 <script th:inline="javascript">
 function cambiarHora(){
-	var timeChat = document.getElementById("timeChat");
-	timeChat.innerHTML = moment.tz(timeChat.innerHTML, "America/New_York").local().format("DD-MM-YYYY HH:mm");
+	var timeChat = document.getElementsByClassName("timeChat");
+	
+	for(var i=0; i<timeChat.length;i++)
+		timeChat[i].innerHTML = moment.tz(timeChat[i].innerHTML, "America/New_York").local().format("DD-MM-YYYY HH:mm");
 }
 </script>
 </head>

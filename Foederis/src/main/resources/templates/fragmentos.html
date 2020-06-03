@@ -219,7 +219,39 @@
 
 
 	<div th:fragment="resultUpload" th:if="${message}">
-		<p class="text-danger" th:text="${message}"></p>
+		<p class="text-center text-danger" th:text="${message}"></p>
+		<table th:if="${!__${@atributos.FILES}__.isEmpty()}" class="table table-striped mb-0 text-center">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th th:text="${@archivos.NOMBRE}"></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Propietario</span></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Fecha
+							- Hora</span></th>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="file : ${__${@atributos.FILES}__}">
+					<td class="align-middle" th:text="${file.idArchivo}"></td>
+					<td class="align-middle"><a
+						th:href="@{/foederis/chat/download/file?filename=} + ${file.nombreArchivo}"
+						th:text="${file.nombreArchivo}"></a></td>
+					<td class="align-middle" th:text="${file.usuario.username}"></td>
+					<td class="align-middle"
+						th:text="${#dates.format(file.timestamp, 'dd-MM-yyyy HH:mm:ss')}"></td>
+					<td>
+						<form th:if="${__${@atributos.ROLES}__} == 2" id="removeForm" name="removeForm" method="POST">
+						<!-- Solo los jefes de proyecto disponen del botoón de eliminar un fichero -->
+							<input id="btnBorrar" type="submit" value="Borrar" class="btn btn-success" />
+							<p id="fileId" th:text="${file.idArchivo}" class="d-none"></p>
+<!-- 							<p id="eventId" th:text="${__${@file.evento.idEvento}__}" class="d-none"></p> -->
+<!-- 						<a th:if="${__${@atributos.ROLES}__} == 2" th:href="@{chat/removeFile?fileid=} + ${file.idArchivo}" th:text="'Eliminar fichero'" class="btn btn-outline-danger"></a> -->
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 
 
@@ -371,7 +403,7 @@
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
 					<span class="d-flex justify-content-between bg-info mb-3">
 						<div th:text="${chat.usuario.username}"/>
-						<div id="timeChat" th:text="${chat.timestamp}"/> 
+						<div class="timeChat" th:text="${chat.timestamp}"/> 
 					</span>
 						<p th:text="${chat.texto}">
 					</p>

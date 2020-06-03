@@ -35,6 +35,14 @@ public class Chat {
     @JoinColumn(name="id_usuario", nullable=false)
     private Usuario usuario;
     
+    // Constructor    
+	public Chat() {
+		
+	}
+	public Chat(int id) { 
+		this.idChat = id; 
+	}
+	     
 	// getters, setters
 	public int getIdChat() {
 		return idChat;

@@ -32,11 +32,15 @@
 			        event.preventDefault();
 			        doUpload();
 			    });
+			    $("#btnBorrar").click((event) => {
+			        event.preventDefault();
+			        doErase();
+			    });
 			 
 			});
 			 
 			function doUpload() {
-			 
+				 
 			    // Get form
 			    var form = $('#uploadForm')[0];
 			    var data = new FormData(form);
@@ -50,9 +54,41 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: "/foederis/chat/upload",
+			        url: 'foederis/chat/upload',
+
 			        data: data,
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
+			        contentType: false,
+			        cache: false,
+			        beforeSend: (xhr) => {
+                        xhr.setRequestHeader(header, token);
+                    },
+			        success: (data) => {
+			        	$("#resultUpload").empty();
+			            $("#resultUpload").append(data);
+			        },
+			        error: (e) => {
+			        	$("#resultUpload").empty();
+			            $("#resultUpload").append(data);
+			        }
+			    });
+			}		
+			
+			function doErase() {
+			    // Get form
+			    var form = $('#removeForm')[0];
+			    var data = new FormData(form);
+			    data.append('eventid',$("#eventId").text())
+			    data.append('fileid',$('#userId').text())
+			    
+			    var token = $('#_csrf').attr('content');
+			    var header = $('#_csrf_header').attr('content');
+			 
+			    $.ajax({
+			        type: "POST",
+			        data: data,
+				    url: [[@{/foederis/chat/removeFile}]],
+				    processData: false, //prevent jQuery from automatically transforming the data into a query string
 			        contentType: false,
 			        cache: false,
 			        beforeSend: (xhr) => {
@@ -119,13 +155,13 @@
 				</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
+				<td colspan="2">
 					<div id="resultUpload"></div>
+<!-- 					<div th:insert="fragmentos :: resultUpload"></div> -->
 				</td>
 			</tr>
-		</table>
-	</div>
+		</table>	
+ 	</div>
 </div>
 
 <script
