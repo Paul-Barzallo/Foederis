@@ -21,7 +21,7 @@ function connect(){
     //    usernamePage.classList.add('hidden');
     //    chatPage.classList.remove('close');	// Hacer visible 
 
-        var socket = new SockJS('/ws');
+        var socket = new SockJS('/foederis/ws');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
@@ -41,7 +41,7 @@ function disconnect(){
 
 function endEvent(){
     // Notificar fin de evento
-    stompClient.send("/app/chat.addUser/" + eventId,
+    stompClient.send("/foederis/app/chat.addUser/" + eventId,
         {},
         JSON.stringify({sender: username, type: 'END'})
     )
@@ -53,10 +53,10 @@ function onConnected() {
     eventId = $("#eventId").text();
     
     // Suscribirse a topic/public/eventId para recibir los mensajes del chat
-    stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
+    stompClient.subscribe('/foederis/topic/public/' + eventId, onMessageReceived);
 
     // Notificar al servidor la conexión
-    stompClient.send("/app/chat.addUser/" + eventId,
+    stompClient.send("/foederis/app/chat.addUser/" + eventId,
         {},
         JSON.stringify({sender: username, type: 'JOIN'})
     )
@@ -79,7 +79,7 @@ function sendMessage(event) {
             type: 'CHAT'
         };
 
-        stompClient.send("/app/chat.sendMessage/" + eventId, {}, JSON.stringify(chatMessage));
+        stompClient.send("/foederis/app/chat.sendMessage/" + eventId, {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
     event.preventDefault();
@@ -93,7 +93,7 @@ function deleteMessage(ev){
             type: 'REMOVE'
         };
 
-    stompClient.send("/app/chat.remove/" + eventId, {}, JSON.stringify(chatMessage));
+    stompClient.send("/foederis/app/chat.remove/" + eventId, {}, JSON.stringify(chatMessage));
 }
 
 function onMessageReceived(payload) {

@@ -67,7 +67,7 @@ public class ChatController {
     // Lista del eventos
     private HashMap <Integer,Evento> myEventList_ = new HashMap<Integer,Evento>();
 
-	@GetMapping("/chat")
+	@GetMapping("/foederis/chat")
     public String getChat(@RequestParam(value="id") Evento evento, Model model, Authentication authentication) {
 		myModel_ = model;
 		if (!myEventList_.containsKey(evento.getIdEvento())) {
@@ -104,10 +104,10 @@ public class ChatController {
     			break;
     		}
     	}
-    	return "/chat";
+    	return "/foederis/chat";
 	}
 	
-	@GetMapping("/chat_invitado")
+	@GetMapping("/foederis/chat_invitado")
     public String getChatInvitado(Model model, HttpServletRequest req) {
 		myModel_ = model;
 		
@@ -124,11 +124,11 @@ public class ChatController {
 		myModel_.addAttribute("eventname", evento.getNombre());
 		myModel_.addAttribute("eventid", evento.getIdEvento());
 
-    	return "/chat/chat_invitado";
+    	return "/foederis/chat/chat_invitado";
 	}
 
-    @MessageMapping("/chat.sendMessage/{eventId}")
-    @SendTo("/topic/public/{eventId}")
+    @MessageMapping("/foederis/app/chat.sendMessage/{eventId}")
+    @SendTo("/foederis/topic/public/{eventId}")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
 		Chat c = new Chat();
 			 
@@ -175,8 +175,8 @@ public class ChatController {
     	return chatMessage;
     }
 
-	@MessageMapping("/chat.addUser/{eventId}")
-    @SendTo("/topic/public/{eventId}")
+	@MessageMapping("/foederis/app/chat.addUser/{eventId}")
+    @SendTo("/foederis/topic/public/{eventId}")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, @DestinationVariable String eventId,
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
@@ -184,8 +184,8 @@ public class ChatController {
         return chatMessage;
     }
     
-	@MessageMapping("/chat.remove/{eventId}")
-    @SendTo("/topic/public/{eventId}")
+	@MessageMapping("/foederis/chat.remove/{eventId}")
+    @SendTo("/foederis/topic/public/{eventId}")
     public ChatMessage removeMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
 		Chat c = new Chat(chatMessage.getIdChat());
 		

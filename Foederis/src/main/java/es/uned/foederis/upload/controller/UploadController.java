@@ -47,7 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/foederis/chat")
 public class UploadController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FoederisApplication.class);

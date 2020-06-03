@@ -71,7 +71,7 @@ public class WebSocketEventListener {
             idEvento = setUserConnected(userName, NOT_CONNECTED);
 
             if (idEvento != -1)
-		 		messagingTemplate.convertAndSend("/topic/public/" + idEvento, chatMessage);
+		 		messagingTemplate.convertAndSend("/foederis/topic/public/" + idEvento, chatMessage);
         }
     }
 
