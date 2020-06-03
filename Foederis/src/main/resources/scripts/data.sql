@@ -1,4 +1,4 @@
-﻿INSERT INTO rol
+INSERT INTO rol
 	(id_rol,    nombre)
 VALUES
 	(1,         'Usuario'),
