@@ -21,7 +21,7 @@ function connect(){
     //    usernamePage.classList.add('hidden');
     //    chatPage.classList.remove('close');	// Hacer visible 
 
-        var socket = new SockJS('/ws');
+        var socket = new SockJS('/foederis/ws');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);

@@ -23,7 +23,7 @@
 <!-- <link rel="stylesheet" href="/css/main.css" /> -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
-<script type="text/javascript" src="/js/moment-timezone-with-data.min.js"></script>
+<script type="text/javascript" th:src="@{/js/moment-timezone-with-data.min.js}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 <script th:inline="javascript">
 
@@ -50,7 +50,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: "/chat/upload",
+			        url: "/foederis/chat/upload",
 			        data: data,
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
 			        contentType: false,
@@ -132,6 +132,6 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/chat.js"></script>
+<script th:src="@{/js/chat.js}"></script>
 </body>
 </html>
