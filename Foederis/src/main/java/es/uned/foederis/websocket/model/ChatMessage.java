@@ -1,11 +1,14 @@
 package es.uned.foederis.websocket.model;
 
+import es.uned.foederis.sesion.model.Rol;
+
 public class ChatMessage {
     private MessageType type;
     private String 		content;
     private String 		sender;
     private String 		timestamp;
     private int 		idChat;
+    private long		rol;
 
     public String getTimestamp() {
 		return timestamp;
@@ -53,6 +56,14 @@ public class ChatMessage {
 
 	public void setIdChat(int idChat) {
 		this.idChat = idChat;
+	}
+
+	public long getRol() {
+		return rol;
+	}
+
+	public void setRol(long rol) {
+		this.rol = rol;
 	}
     
     

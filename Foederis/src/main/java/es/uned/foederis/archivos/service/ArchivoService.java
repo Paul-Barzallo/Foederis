@@ -1,6 +1,7 @@
 package es.uned.foederis.archivos.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,10 @@ public class ArchivoService {
 	public List<Archivo> findByIdEvento(Evento event) {
 		List<Archivo> result = (List<Archivo>)FileRepository.findByEvento(event);
 		return result;
+	}
+
+	public void removeByIdFile(int fileId) {
+		FileRepository.deleteById(fileId);
 	} 
 
 }

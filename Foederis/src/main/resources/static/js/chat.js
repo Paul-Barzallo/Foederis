@@ -154,17 +154,18 @@ function onMessageReceived(payload) {
     if (textMessageElement != null){
     	var messageZone = document.createElement('div');
     	messageZone.appendChild(textElement);
+    	textMessageElement.appendChild(messageZone);
     	
-        var butDeleteMessage = document.createElement('button')
-    	var textDeleteMessage=document.createTextNode('Eliminar');
-        butDeleteMessage.classList.add('btn','btn-outline-danger');
-        butDeleteMessage.setAttribute("id", message.idChat);
-        butDeleteMessage.addEventListener("click", deleteMessage);
-    	butDeleteMessage.appendChild(textDeleteMessage);
- 
-        textMessageElement.appendChild(messageZone);
-        textMessageElement.appendChild(butDeleteMessage);
-        
+    	// Solo el jefe de proyecto tendrá visible el boton de eliminar un mensaje
+    	if (message.rol == 2){
+	        var butDeleteMessage = document.createElement('button')
+	    	var textDeleteMessage=document.createTextNode('Eliminar');
+	        butDeleteMessage.classList.add('btn','btn-outline-danger');
+	        butDeleteMessage.setAttribute("id", message.idChat);
+	        butDeleteMessage.addEventListener("click", deleteMessage);
+	    	butDeleteMessage.appendChild(textDeleteMessage);
+	        textMessageElement.appendChild(butDeleteMessage);
+    	}
 
         // Necesario para eliminar el mensaje
         messageElement.setAttribute("id","Message_" + message.idChat);
@@ -177,6 +178,7 @@ function onMessageReceived(payload) {
     }
     messageArea.scrollTop = messageArea.scrollHeight;
 }
+
 
 messageForm.addEventListener('submit', sendMessage, true);
 

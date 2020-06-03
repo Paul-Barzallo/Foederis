@@ -141,6 +141,7 @@ public class ChatController {
     	
     	chatMessage.setIdChat(c.getIdChat());
     	chatMessage.setTimestamp(strDate);
+    	chatMessage.setRol(c.getUsuario().getRol().getIdRol());
     	return chatMessage;
     }
 
