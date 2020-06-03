@@ -1,0 +1,7 @@
+{"properties": [
+  {
+    "name": "jwt.secretkey",
+    "type": "java.lang.String",
+    "description": "key para generar token"
+  }
+]}

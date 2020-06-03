@@ -14,7 +14,7 @@
 	
 	<script th:inline="javascript">
 	function buscarSalas() {
-		var url = [[${@rutas.ADM_SALA_SALAS_BUSQ}]];
+		var url = [[@{${@rutas.ADM_SALA_SALAS_BUSQ}}]];
 		var busqueda = $('#busqueda').val();
 		var valor = $('#valor').val();
 		
