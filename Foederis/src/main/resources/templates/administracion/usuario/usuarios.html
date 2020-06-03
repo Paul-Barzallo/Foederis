@@ -14,7 +14,7 @@
 	
 	<script th:inline="javascript">
 		function buscarUsuarios() {
-			var url = [[${@rutas.ADM_USER_USERS_BUSQ}]];
+			var url = [[@{${@rutas.ADM_USER_USERS_BUSQ}}]];
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
