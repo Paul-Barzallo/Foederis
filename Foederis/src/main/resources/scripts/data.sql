@@ -17,8 +17,8 @@ VALUES
 	(6,             'albeas',		'alex', 			'bernat asensi', 	'user', 	2,          TRUE),	
 	(7,             'daoval',		'david', 			'oviedo almeida', 	'user', 	2,          TRUE),
 	(8,             'ambain',		'amparo', 			'bas infante', 		'user', 	2,          TRUE),	
-	(9,             'sasetr',		'sandra', 			'seco triviño', 	'user', 	1,          TRUE),
-	(10,            'miduca',		'milagros', 		'dueñas casellas', 	'user', 	1,          TRUE),	
+	(9,             'sasetr',		'sandra', 			'seco trivinio', 	'user', 	1,          TRUE),
+	(10,            'miduca',		'milagros', 		'dueras casellas',  'user', 	1,          TRUE),	
 	(11,            'virovi',		'vicente', 			'roura villalba', 	'user', 	1,          TRUE),
 	(12,            'gabaco',		'gabriel', 			'baron corominas', 	'user', 	1,          TRUE)
 ;
@@ -42,11 +42,11 @@ VALUES
 insert into evento
 	(id_evento, id_usuario_creador_fk,  id_sala_evento_fk,  estado,         nombre)
 values
-	(1,         3,                      4,                  'FINALIZADO',   'Planificación Fase 3'),
-    (2,         4,                      5,                  'FINALIZADO',   'Campaña de Verano'),
+	(1,         3,                      4,                  'FINALIZADO',   'Planificacion Fase 3'),
+    (2,         4,                      5,                  'FINALIZADO',   'Ofertas de Verano'),
     (3,         5,                      6,                  'INACTIVO',     'Contabilidad Primer trimestre 2020'),
     (4,         6,                      2,                  'INACTIVO',     'Planificar inversiones'),
-    (5,         7,                      3,                  'INACTIVO',     'Negociaciones: Ampliación de contrato')
+    (5,         7,                      3,                  'INACTIVO',     'Negociaciones: Ampliacion de contrato')
 ;
 
 insert into horarios
