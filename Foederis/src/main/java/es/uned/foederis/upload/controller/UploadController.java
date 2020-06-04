@@ -47,7 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/foederis/chat")
+@RequestMapping("/chat")
 public class UploadController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FoederisApplication.class);
@@ -106,7 +106,8 @@ public class UploadController {
 	@PostMapping("/removeFile") 
 	public ModelAndView removeFile(@RequestParam("eventid") int eventId, @RequestParam("fileid") int fileId, Model model, Authentication authentication){
 
-		// Eliminar fichero fileId myFileService_.removeByIdFile(fileId);
+		// Eliminar fichero fileId 
+		myFileService_.removeByIdFile(fileId);
 
 		Evento ev = eventService_.getEventById(eventId);
 

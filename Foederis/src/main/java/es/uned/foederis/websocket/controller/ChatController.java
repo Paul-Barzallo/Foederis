@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uned.foederis.FoederisApplication;
 import es.uned.foederis.administracion.service.AdministracionService;
+import es.uned.foederis.archivos.service.ArchivoService;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
@@ -61,6 +62,8 @@ public class ChatController {
 	private JWTInvitado jwtInvitado;
     @Autowired
     private IUsuarioRepository userRepo;
+	@Autowired
+	ArchivoService myFileService_;
     
     private Model myModel_;
     
@@ -104,6 +107,8 @@ public class ChatController {
     			break;
     		}
     	}
+    	
+    	model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(evento));
     	return "/chat";
 	}
 	

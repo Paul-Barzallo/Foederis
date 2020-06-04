@@ -218,7 +218,7 @@
 	</div>
 
 
-	<div th:fragment="resultUpload" th:if="${message}">
+	<div th:fragment="resultUpload">
 		<p class="text-center text-danger" th:text="${message}"></p>
 		<table th:if="${!__${@atributos.FILES}__.isEmpty()}" class="table table-striped mb-0 text-center">
 			<thead>
@@ -245,7 +245,7 @@
 						<!-- Solo los jefes de proyecto disponen del botoón de eliminar un fichero -->
 							<input id="btnBorrar" type="submit" value="Borrar" class="btn btn-success" />
 							<p id="fileId" th:text="${file.idArchivo}" class="d-none"></p>
-<!-- 							<p id="eventId" th:text="${__${@file.evento.idEvento}__}" class="d-none"></p> -->
+							<p id="eventId" th:text="${file.evento.idEvento}" class="d-none"></p>
 <!-- 						<a th:if="${__${@atributos.ROLES}__} == 2" th:href="@{chat/removeFile?fileid=} + ${file.idArchivo}" th:text="'Eliminar fichero'" class="btn btn-outline-danger"></a> -->
 						</form>
 					</td>
