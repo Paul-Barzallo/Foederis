@@ -10,4 +10,5 @@ public class Vistas {
 	public static final String ADM_SALAS = 		"/administracion/sala/salas";
 	public static final String ADM_SALA = 		"/administracion/sala/form_sala";
 	public static final String NUEVO_EVENTO = 	"/eventos/form_nuevo_evento";
+	public static final String TOKEN_ERROR = 	"/token/token_error";
 }

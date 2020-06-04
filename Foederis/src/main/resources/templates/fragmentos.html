@@ -8,7 +8,7 @@
 	<div th:fragment="guardar-salir">
 		<div class="d-flex justify-content-center row my-5 mx-lg-5 px-md-5">
 			<div class="col">
-				<a href="/" class="btn btn-warning btn-block" role="button">Salir</a>
+				<a th:href="@{/}" class="btn btn-warning btn-block" role="button">Salir</a>
 			</div>
 			<div class="col">
 				<button type="submit" class="btn btn-success btn-block">Guardar</button>
@@ -29,16 +29,16 @@
 		</div>
 		<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
 			<!-- Logo -->
-			<a class="navbar-brand mb-1" href="/">Foederis</a>
+			<a class="navbar-brand mb-1" th:href="@{/}">Foederis</a>
 
 			<!-- Links -->
 			<ul class="navbar-nav">
-				<li class="nav-item"><a class="nav-link" href="/Evento/listarFiltro">Eventos</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Eventos Creados</a></li>
+				<li class="nav-item"><a class="nav-link" th:href="@{/Evento/listarFiltro}">Eventos</a></li>
+				<li class="nav-item"><a class="nav-link" th:href="@{#}">Eventos Creados</a></li>
 				
 				<!-- Dropdown -->
 				<li sec:authorize="getPrincipal().isAdmin()"  class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"> Administración </a>
+					<a class="nav-link dropdown-toggle" th:href="@{#}" id="navbardrop" data-toggle="dropdown"> Administración </a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" th:href="@{__${@rutas.ADM_USER_USERS}__}">Usuarios</a>
 						<a class="dropdown-item" th:href="@{__${@rutas.ADM_SALA_SALAS}__}">Salas</a>
@@ -219,7 +219,39 @@
 
 
 	<div th:fragment="resultUpload" th:if="${message}">
-		<p class="text-danger" th:text="${message}"></p>
+		<p class="text-center text-danger" th:text="${message}"></p>
+		<table th:if="${!__${@atributos.FILES}__.isEmpty()}" class="table table-striped mb-0 text-center">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th th:text="${@archivos.NOMBRE}"></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Propietario</span></th>
+					<th class="pr-2"><span class="d-flex justify-content-center">Fecha
+							- Hora</span></th>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="file : ${__${@atributos.FILES}__}">
+					<td class="align-middle" th:text="${file.idArchivo}"></td>
+					<td class="align-middle"><a
+						th:href="@{/foederis/chat/download/file?filename=} + ${file.nombreArchivo}"
+						th:text="${file.nombreArchivo}"></a></td>
+					<td class="align-middle" th:text="${file.usuario.username}"></td>
+					<td class="align-middle"
+						th:text="${#dates.format(file.timestamp, 'dd-MM-yyyy HH:mm:ss')}"></td>
+					<td>
+						<form th:if="${__${@atributos.ROLES}__} == 2" id="removeForm" name="removeForm" method="POST">
+						<!-- Solo los jefes de proyecto disponen del botoón de eliminar un fichero -->
+							<input id="btnBorrar" type="submit" value="Borrar" class="btn btn-success" />
+							<p id="fileId" th:text="${file.idArchivo}" class="d-none"></p>
+<!-- 							<p id="eventId" th:text="${__${@file.evento.idEvento}__}" class="d-none"></p> -->
+<!-- 						<a th:if="${__${@atributos.ROLES}__} == 2" th:href="@{chat/removeFile?fileid=} + ${file.idArchivo}" th:text="'Eliminar fichero'" class="btn btn-outline-danger"></a> -->
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 
 
@@ -228,7 +260,7 @@
 	El boton lleva a la ruta especificado, se está usando para el boton nuevo 'objeto'
 	
 	Ejemplo:
-		<div th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
+		<div th:with="ruta=@{${'__${@rutas.ADM_USER_NUEVO}__'}}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
 	
 	Si no trae alguno de estos 2 variables no se mostrará el boton
 	Debe venir cargado desde el controlador el atributo @atributos.PARAMS_BUSQUEDA
@@ -243,7 +275,7 @@
 			</a>
 		</div>
 		<div class="py-lg-4 py-3 px-lg-5 px-3">
-
+			<!--  
 			<div th:if="${isSala}" class="row">
 				<div class="col">
 					<div class="form-group">
@@ -286,7 +318,8 @@
 					</div>
 				</div>
 			</div>
-
+			-->
+			
 			<div class="row">
 				<div class="col-5 col-lg-4 pr-0">
 					<select id="busqueda" class="form-control"
@@ -371,7 +404,7 @@
 				<li th:each="chat : ${__${@atributos.CHATS}__}" class="list-group-item list-group-item-info">
 					<span class="d-flex justify-content-between bg-info mb-3">
 						<div th:text="${chat.usuario.username}"/>
-						<div id="timeChat" th:text="${chat.timestamp}"/> 
+						<div class="timeChat" th:text="${chat.timestamp}"/> 
 					</span>
 						<p th:text="${chat.texto}">
 					</p>

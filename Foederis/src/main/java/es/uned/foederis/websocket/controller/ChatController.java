@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.hsqldb.lib.Iterator;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,15 @@ import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.eventos.EventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
+import es.uned.foederis.eventos.repository.IEventoRepository;
 import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
 import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
+import es.uned.foederis.sesion.repository.IUsuarioRepository;
+import es.uned.foederis.sesion.token.JWTInvitado;
 import es.uned.foederis.websocket.model.ChatMessage;
 
-
-//import es.uned.foederis.sesion.service.UserService;
 
 @Controller
 public class ChatController {
@@ -53,6 +55,12 @@ public class ChatController {
     IUsuarioEventoRepository eventoUsuarioRepo_;
     @Autowired
     IEventoService myEventService_;
+    @Autowired
+	private IEventoRepository eventoRepo;
+    @Autowired
+	private JWTInvitado jwtInvitado;
+    @Autowired
+    private IUsuarioRepository userRepo;
     
     private Model myModel_;
     
@@ -97,6 +105,26 @@ public class ChatController {
     		}
     	}
     	return "/chat";
+	}
+	
+	@GetMapping("/chat_invitado")
+    public String getChatInvitado(Model model, HttpServletRequest req) {
+		myModel_ = model;
+		
+		String token = (String)req.getAttribute("token2");
+		String idEvento = jwtInvitado.decodeJWT(token).getId();
+		Evento evento = eventoRepo.findById(Integer.parseInt(idEvento)).get();
+		
+		if (!myEventList_.containsKey(evento.getIdEvento())) {
+			myEventList_.put(evento.getIdEvento(),evento);
+		}
+		
+		myModel_.addAttribute(Atributos.USER, "anonimo");
+		myModel_.addAttribute("message", myModel_.getAttribute("message"));
+		myModel_.addAttribute("eventname", evento.getNombre());
+		myModel_.addAttribute("eventid", evento.getIdEvento());
+
+    	return "/foederis/chat/chat_invitado";
 	}
 
     @MessageMapping("/chat.sendMessage/{eventId}")
@@ -143,6 +171,7 @@ public class ChatController {
     	
     	chatMessage.setIdChat(c.getIdChat());
     	chatMessage.setTimestamp(strDate);
+    	chatMessage.setRol(c.getUsuario().getRol().getIdRol());
     	return chatMessage;
     }
 
@@ -152,6 +181,16 @@ public class ChatController {
                                SimpMessageHeaderAccessor headerAccessor) {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+        return chatMessage;
+    }
+    
+	@MessageMapping("/chat.remove/{eventId}")
+    @SendTo("/topic/public/{eventId}")
+    public ChatMessage removeMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
+		Chat c = new Chat(chatMessage.getIdChat());
+		
+		myChatService_.remove(c);
+		
         return chatMessage;
     }
     

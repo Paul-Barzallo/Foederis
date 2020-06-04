@@ -9,6 +9,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.service.EventoServiceImpl;
 import es.uned.foederis.eventos.service.IEventoService;
+import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.websocket.controller.ChatController;
 import es.uned.foederis.constantes.Archivos;
@@ -45,36 +47,44 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/foederis/chat")
 public class UploadController {
-	
-	private static final Logger LOGGER=LoggerFactory.getLogger(FoederisApplication.class);
-	
 
-    String Message_;
-    
-	@Autowired
-	IEventoService 			eventService_;
+	private static final Logger LOGGER = LoggerFactory.getLogger(FoederisApplication.class);
+
+	String Message_;
 
 	@Autowired
-    ArchivoService 			myFileService_;
-	@Autowired
-    ChatService 			myChatService_;
-	@Autowired
-	AdministracionService 	myUserService_;
+	IEventoService eventService_;
 
-    
+	@Autowired
+	ArchivoService myFileService_;
+	@Autowired
+	ChatService myChatService_;
+	@Autowired
+	AdministracionService myUserService_;
+
 	@GetMapping("/download")
-	public ModelAndView listEventFiles(@RequestParam("eventId") int eventId, Model model) throws IOException {
+	public ModelAndView listEventFiles(@RequestParam("eventId") int eventId, Model model, Authentication authentication)
+			throws IOException {
 		Evento ev = eventService_.getEventById(eventId);
-		
+
 		model.addAttribute(Atributos.CHATS, myChatService_.findByIdEvento(ev));
 		model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(ev));
+		myUserService_.cargarUsuarios(model, UsuarioConstantes.USERNAME, authentication.getName());
+		@SuppressWarnings("unchecked")
+		List<Usuario> usuarios = (List<Usuario>) model.getAttribute(Atributos.USUARIOS);
+
+		// Buscar el usuario que se conecta al chat
+		for (Usuario usr : usuarios) {
+			if (!usr.getNombre().equals("null") && usr.getUsername().equals(authentication.getName())) {
+				model.addAttribute(Atributos.ROLES, usr.getRol().getIdRol());
+			}
+		}
 
 		return new ModelAndView("chat/resultDownload");
 	}
 
-	
 	@GetMapping("/download/file")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@RequestParam("filename") String filename) {
@@ -92,62 +102,73 @@ public class UploadController {
 				.body(resource);
 	}
 
-    @PostMapping("/upload")
-    public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file, 
-    										@RequestParam("eventid") int eventId, 
-    										@RequestParam("userid") String userId , Model model){
-        if (file.isEmpty()) {
-        	Message_ = "Please select a file to upload";
-            model.addAttribute("message", Message_);
+	
+	@PostMapping("/removeFile") 
+	public ModelAndView removeFile(@RequestParam("eventid") int eventId, @RequestParam("fileid") int fileId, Model model, Authentication authentication){
 
-            return new ModelAndView("fragmentos :: resultUpload");
-        }
+		// Eliminar fichero fileId myFileService_.removeByIdFile(fileId);
 
-        try {
+		Evento ev = eventService_.getEventById(eventId);
 
-            // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
-            File directory = new File(Archivos.UPLOADED_FOLDER);
-            if (! directory.exists()){
-                directory.mkdir();
-            }
-            directory = new File(Archivos.UPLOADED_FOLDER + eventId);
-            if (! directory.exists()){
-                directory.mkdir();
-            }
+		Message_ = "Fichero eliminado correctamente."; 
+		model.addAttribute("message",Message_); 
+		model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(ev)); 
+		return new ModelAndView("fragmentos :: resultUpload"); 
+	}
+	  
+	 
+	@PostMapping("/upload")
+	public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("eventid") int eventId, @RequestParam("userid") String userId, Model model) {
+		if (file.isEmpty()) {
+			Message_ = "Please select a file to upload";
+		} else {
+			try {
 
-            Path path = Paths.get(Archivos.UPLOADED_FOLDER + eventId + "//" + file.getOriginalFilename());
-            Files.write(path, bytes);
+				// Get the file and save it somewhere
+				byte[] bytes = file.getBytes();
+				File directory = new File(Archivos.UPLOADED_FOLDER);
+				if (!directory.exists()) {
+					directory.mkdir();
+				}
+				directory = new File(Archivos.UPLOADED_FOLDER + eventId);
+				if (!directory.exists()) {
+					directory.mkdir();
+				}
 
-            Message_ = "Fichero '" + file.getOriginalFilename() + "' subido correctamente.";
-            
-            CreateFileEntity(path, eventId, userId, model);
-            
-        } catch (IOException e) {
-        	Message_= "Error -> message = " + e.getMessage();
-        }
+				Path path = Paths.get(Archivos.UPLOADED_FOLDER + eventId + "//" + file.getOriginalFilename());
+				Files.write(path, bytes);
 
-        model.addAttribute("message", Message_);
+				Message_ = "Fichero '" + file.getOriginalFilename() + "' subido correctamente.";
 
-        return new ModelAndView("fragmentos :: resultUpload");
-    }
+				CreateFileEntity(file.getOriginalFilename(), eventId, userId, model);
+			} catch (IOException e) {
+				Message_ = "Error -> message = " + e.getMessage();
+			}
+		}
 
+		Evento ev = eventService_.getEventById(eventId);
+		model.addAttribute("message", Message_);
+		model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(ev));
+
+		return new ModelAndView("fragmentos :: resultUpload");
+	}
 
 	@GetMapping("/uploadStatus")
-    @ResponseBody
-    public ModelAndView uploadStatus(Model model) {
-    	model.addAttribute("message", Message_);
+	@ResponseBody
+	public ModelAndView uploadStatus(Model model) {
+		model.addAttribute("message", Message_);
 
-        return new ModelAndView("fragmentos :: resultUpload");
-    }
+		return new ModelAndView("fragmentos :: resultUpload");
+	}
 
-    private void CreateFileEntity(Path pathFile, int eventId, String userId, Model model) {
-    	
-    	// Generar timestap del momento de la subida
-    	Timestamp timestamp = new Timestamp((new Date()).getTime());
-    	
-    	// Localizar el evento en la BD
-    	Evento ev = eventService_.getEventById(eventId);
+	private void CreateFileEntity(String fileName, int eventId, String userId, Model model) {
+
+		// Generar timestap del momento de la subida
+		Timestamp timestamp = new Timestamp((new Date()).getTime());
+
+		// Localizar el evento en la BD
+		Evento ev = eventService_.getEventById(eventId);
 
 		if (myUserService_.cargarUsuario(model, Long.parseLong(userId))) {
 			Usuario usr = (Usuario) model.getAttribute(Atributos.USUARIO);
@@ -155,21 +176,22 @@ public class UploadController {
 			// Genera entidad Archivo y la inserta en bd
 			Archivo file = new Archivo();
 			file.setEvento(ev);
-			file.setNombreArchivo(pathFile.toString());
+			file.setNombreArchivo(fileName);
 			file.setUsuario(usr);
 			file.setTimestamp(timestamp);
 
 			myFileService_.createFile(file);
+			model.addAttribute(Atributos.ROLES, usr.getRol().getIdRol());
 
 			logFiles();
 		}
 	}
 
 	private void logFiles() {
-    	// Debug alta de chat
-		  List<Archivo> result = (List<Archivo>) myFileService_.findAll();
-		  for (Archivo f: result) {
-			  LOGGER.info("File uploades: {}", f.toString());
-		  }
-    }
+		// Debug alta de chat
+		List<Archivo> result = (List<Archivo>) myFileService_.findAll();
+		for (Archivo f : result) {
+			LOGGER.info("Uploaded files: {}", f.toString());
+		}
+	}
 }

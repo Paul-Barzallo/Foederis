@@ -14,7 +14,7 @@
 	
 	<script th:inline="javascript">
 		function buscarUsuarios() {
-			var url = [[${@rutas.ADM_USER_USERS_BUSQ}]];
+			var url = [[@{${@rutas.ADM_USER_USERS_BUSQ}}]];
 			var busqueda = $('#busqueda').val();
 			var valor = $('#valor').val();
 			
@@ -38,7 +38,7 @@
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container px-md-5">
-   		<div class="mt-5" th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
+   		<div class="mt-5" th:with="ruta=@{${'__${@rutas.ADM_USER_NUEVO}__'}}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
    		<div id="tabla_usuarios" class="my-5"></div>
 	</div>
 </body>

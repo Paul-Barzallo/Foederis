@@ -16,13 +16,24 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.config.authentication.AuthenticationProviderBeanDefinitionParser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +58,9 @@ import es.uned.foederis.salas.repository.ISalaRepository;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IRolRepository;
-import es.uned.foederis.sesion.repository.IUsuarioRepository;;
+import es.uned.foederis.sesion.repository.IUsuarioRepository;
+import es.uned.foederis.sesion.token.JWTInvitado;
+import io.jsonwebtoken.Claims;;
 
 @Controller
 @RequestMapping("Evento") // Empieces url navegador y asi evitamos este en todos los metodos
@@ -55,9 +68,6 @@ public class EventosController {
 
 	@Autowired
 	private IEventoService eventoService;
-
-	@Autowired
-	private IRolRepository rolRepo;
 
 	@Autowired
 	private ISalaRepository salaRepo;
@@ -83,6 +93,9 @@ public class EventosController {
 
 	@Autowired
 	private AdministracionService administracionService;
+	
+	@Autowired
+	private JWTInvitado jwtInvitado;
 
 	@Autowired
 	@Qualifier("dateTimeFormat")
@@ -614,7 +627,6 @@ public class EventosController {
 	 * @throws ParseException
 	 */
 	@PostMapping(Rutas.GUARDAR)
-
 	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
@@ -691,6 +703,42 @@ public class EventosController {
 			eventoService.mensajeNoAccesoEventos(model);
 		}
 		return Vistas.HOME;
+	}
+	
+	@GetMapping("/invitado/{token}")
+	public String getEventoInvitado(HttpServletRequest req, @PathVariable(value="token") String token) {
+		//String token = jwtIncitado.createJWT(1, "pedro", "juan", 1*60*60*1000);
+		
+		// Se extrae los datos del token
+		String tokenPrueba = jwtInvitado.createJWT(1, "admin", "juan", 2*60*60*1000);
+		token = tokenPrueba;
+		Claims claims = jwtInvitado.decodeJWT(token);
+		String idEvento = claims.getId();
+		
+		if (idEvento!= null && !idEvento.isEmpty()) {
+			Optional<Evento> opEvento = eventoRepo.findById(Integer.parseInt(idEvento));
+			if (opEvento.isPresent()) {
+				Evento evento = opEvento.get();
+				long timeIni = evento.getHorarioElegido().getHorario_Fecha_Inicio().getTime();
+				long timeFin = evento.getHorarioElegido().getHorario_Fecha_Fin().getTime();
+				long ahora = new Date().getTime();
+				
+				// Se disminuye 5 min a la hora de inicio para poder entrar antes
+				timeIni -= (5*60*1000);
+				
+				if (true/*ahora < timeFin && ahora > timeIni*/) { 
+				    req.setAttribute("token2", tokenPrueba);
+				    
+				    // envia a chat correspondiente
+					return "forward:/chat_invitado";
+				} else {
+					// Si la fecha no es correcta se muestra error de fecha
+					return Vistas.TOKEN_ERROR;
+				}
+			}
+		}
+		// Si el token no contiene id o no encuentra el evento devuelve una pagina de error
+		return Vistas.TOKEN_ERROR;
 	}
 
 }
