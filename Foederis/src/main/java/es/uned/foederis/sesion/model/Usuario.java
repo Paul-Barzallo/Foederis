@@ -95,6 +95,10 @@ public class Usuario implements UserDetails{
 		this.eventosDelUsuario=eventosDelUsuario;
 	}	
 	
+	public List<Evento> getEventosCreados() {
+		return eventosCreados;
+	}
+	
 	public Long getIdUsuario() {
 		return idUsuario;
 	}

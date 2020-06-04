@@ -315,10 +315,17 @@
 										th:text="${usuariosInvitados.usuario.apellidos != null ? usuariosInvitados.usuario.apellidos:''}"></label></td>
 										<td><label class = "cambioHora"
 										th:text="${usuariosInvitados.horario == null ? 'Sin Confirmacion' : usuariosInvitados.horario.Horario_Fecha_Inicio}"></label></td>
-									<td><input type="checkbox"
-										th:value="${usuariosInvitados.idUsuarioEvento}"
-										th:name="checkAsistenteElegido" class="form-check"
-										th:checked="${usuariosInvitados.asistente}" /></td>
+									<td>
+										<div th:if="${usuariosInvitados.confirmado == 1}">
+											<input type="checkbox"
+											th:value="${usuariosInvitados.idUsuarioEvento}"
+											th:name="checkAsistenteElegido" class="form-check"
+											th:checked="${usuariosInvitados.asistente}" />
+										</div>
+										<div th:unless="${usuariosInvitados.confirmado != 0}">Baja
+										</div>
+										
+									</td>
 								</tr>
 							</tbody>
 							<tfoot>

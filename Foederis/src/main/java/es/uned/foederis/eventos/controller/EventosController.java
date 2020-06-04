@@ -1,16 +1,17 @@
 package es.uned.foederis.eventos.controller;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +33,7 @@ import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Rutas;
 import es.uned.foederis.constantes.Vistas;
+import es.uned.foederis.eventos.EventoConstantes;
 import es.uned.foederis.eventos.constantes.usuarioEventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
@@ -404,20 +406,62 @@ public class EventosController {
 	
 	private Timestamp getHoraNY() {
 		
-		Date date = new Date();
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		df.setTimeZone(TimeZone.getTimeZone("America/New_York"));		
+		ZonedDateTime fecha = ZonedDateTime.now();
 		
-		Date dt2;
-		long time = 0;
-		try {
-			dt2 = df.parse(df.format(date));
-			time = dt2.getTime();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}	
+		ZonedDateTime prueba=  fecha.withZoneSameInstant(ZoneId.of("America/New_York"));
+		 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String formattedString = prueba.format(formatter);
 		
-		return new Timestamp(time);
+		 Timestamp timestamp2 = Timestamp.valueOf(formattedString);
+		 
+		 
+		return timestamp2;
+	}
+	
+	/**
+	 * Seteamos el estado de los eventos del usuario para comprobar si el evento esta online
+	 */
+	private void actualizarEstadoEventos() {
+		
+		Timestamp ts = getHoraNY();
+		
+		//Descontamos 5 minutos a la hora actual
+		ts.setTime(ts.getTime() - TimeUnit.MINUTES.toMillis(30));
+		
+		//Si el estado es inactivo y la fecha actual menos 5 minutos no es antes de la fecha del evento seteamos estado
+		user.getEventosDelUsuario().stream().
+		forEach(c -> { 
+			if(c.getEvento().getEstado() == EventoConstantes.ESTADO_INACTIVO &&					 
+					!c.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().before(ts)) {
+				c.getEvento().setEstado(EventoConstantes.ESTADO_ONLINE);
+			}			
+		});
+		
+		usuRepo.save(user);
+	}
+	
+	/**
+	 * Muestra el listado de eventos creados por el usuario logado
+	 * @return
+	 */
+	@RequestMapping(value = "/listarFiltroCreador")
+	public ModelAndView listarFiltroCreador() {
+		this.iniciarUsuario();
+		
+		actualizarEstadoEventos();
+
+		//Actualizar estados a finalizado dependiendo de la hora
+
+		ModelAndView mav = new ModelAndView();
+		List<Evento> lstEventos = new ArrayList<Evento>();
+		
+		lstEventos = user.getEventosCreados();
+		
+		mav.addObject("lstEventos", lstEventos);
+
+		mav.setViewName("listarEventosCreador");
+		return mav;
 	}
 
 	/****
@@ -431,6 +475,8 @@ public class EventosController {
 	public ModelAndView listarFiltro(@RequestParam(required = false, name = "filtroListado") String filtroListado) {
 
 		this.iniciarUsuario();
+		
+		actualizarEstadoEventos();
 
 		// Fecha de hoy transformada a la time Zone de NY
 		Timestamp ts = getHoraNY();
@@ -471,9 +517,9 @@ public class EventosController {
 			
 			for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 				if (aux.getConfirmado() == usuarioEventoConstantes.CONFIRMADO_SI) {
-					if ((aux.getHorario() != null && aux.getHorario().getHorario_Fecha_Fin().getDate() == ts.getDate())
-							|| (aux.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().getDate() == ts
-									.getDate()))
+					if ((aux.getHorario() != null && aux.getHorario().getHorario_Fecha_Inicio().getDate() == ts.getDate())
+							|| (aux.getEvento().getHorarioElegido() != null && aux.getEvento().getHorarioElegido().getHorario_Fecha_Inicio().getDate() == ts.getDate()
+									))
 						lstEventos.add(aux.getEvento());
 
 				}

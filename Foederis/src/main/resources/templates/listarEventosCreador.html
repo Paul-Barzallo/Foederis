@@ -32,28 +32,14 @@
     	
     		<div class="card-header bg-secondary">   
 	    		<div class="d-flex justify-content-between p-3" >
-					<div class="text-white" th:switch="${filtroListado}"> 
-						<h3 th:case="'todos'">Lista de Eventos - Todos</h3>
-						<h3 th:case="'futuro'">Lista de Eventos - Proximos Eventos</h3>
-						<h3 th:case="hoy">Lista de Eventos - Hoy</h3>
-						<h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
-						<h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
-					</div>
+					<h3>Lista de Eventos Creados</h3>
+					
 					<a th:href="${@rutas.EVENTOS_NUEVO}" class="btn btn-light btn-sm" role="button">
 						<span class="align-middle">Nuevo Evento</span>
 					</a>
 				</div> 		
-    		</div>
-    		    		
-    		<div class="card-body">	    			
-		    	<div class="btn-group btn-group-toggle" data-toggle="buttons">		
-					<a th:href="@{listarFiltro?filtroListado=todos}" class="btn btn-secondary btn-sm  " role="button">Ver todos los eventos</a>
-					<a th:href="@{listarFiltro?filtroListado=hoy}" class="btn btn-secondary btn-sm " role="button">Ver los de hoy</a>
-					<a th:href="@{listarFiltro?filtroListado=futuro}" class="btn btn-secondary btn-sm" role="button">Ver los proximos</a>
-					<a th:href="@{listarFiltro?filtroListado=rechazados}" class="btn btn-secondary btn-sm  " role="button">Ver Rechazados</a>			    		   
-					<a th:href="@{listarFiltro?filtroListado=sin}" class="btn btn-secondary btn-sm" role="button">Ver sin Confirmar</a>
-		    	</div>		
-	    	</div>
+    		</div>   		
+
    			
    			<table class="table table-striped" width="100%">
    				<thead>
@@ -64,10 +50,9 @@
    						<th>Sala</th>
     					<th>Estado</th>
    						<th>Creador</th>    						
-   						<th>Detalles</th>
-   						<th>Baja</th>
-   						<th>Entrar</th>
-   						<th>Recuperar</th>    						
+   						<th></th>
+   						<th></th>
+   						<th></th>    						
 					</tr>
 				</thead>
 				<tbody>
@@ -77,24 +62,20 @@
 						<td class="cambioHora" th:text="${reunion.horarioElegido != null ?reunion.horarioElegido.Horario_Fecha_Inicio: ''}"></td>
 						<td th:text="${reunion.salaEvento.idSala}"></td>						
    						<td th:text="${reunion.getEstado()}"></td>
-						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
+						<td th:style="'color:green;'" th:text="${reunion.UsuarioCreador.username}"></td>
 						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
 							<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
 						</td>
    							   							
 						<td>
-							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados' 
-							and (reunion.horarioElegido != null and reunion.estado != @eventoConstantes.ESTADO_FINALIZADO)}">	   							
+							<div th:if="${(reunion.horarioElegido != null and reunion.estado != @eventoConstantes.ESTADO_FINALIZADO)}">	   							
 								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
-							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!= 'rechazados'}">
-								<label>No disponible</label>
-							</div>	
+
 						</td>
-						<td><div th:if="${reunion.estado == @eventoConstantes.ESTADO_ONLINE}">
-							<a th:href="@{/chat?id=} + ${reunion.idEvento}" th:text="'Entrar'" class="btn btn-outline-success"></a></div></td>
-						<td><div th:if="${reunion.estado == @eventoConstantes.ESTADO_FINALIZADO}">
-							<a th:href="@{/chat/download?eventId=} + ${reunion.idEvento}"><span th:text="'Recuperar evento'"></span></a></div>
+						<td><a th:href="@{/chat?id=} + ${reunion.idEvento}" th:text="'Ir al Evento'" class="btn btn-outline-success"></a></td>
+						<td>
+							<a th:href="@{/chat/download?eventId=} + ${reunion.idEvento}"><span th:text="'Recuperar evento'"></span></a>
 						</td>
 					</tr>   							
    				</tbody>
