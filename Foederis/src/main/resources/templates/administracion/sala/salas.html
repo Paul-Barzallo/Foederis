@@ -38,7 +38,7 @@
 <body class="bg-light" style="height: 100vh">
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container px-md-5">
-   		<div class="mt-5" th:with="ruta=${'__${@rutas.ADM_SALA_NUEVO}__'}, txt_boton=${'Nueva sala'}, isSala='true'" th:insert="fragmentos :: buscar"></div>
+   		<div class="mt-5" th:with="ruta=@{${'__${@rutas.ADM_SALA_NUEVO}__'}}, txt_boton=${'Nueva sala'}, isSala='true'" th:insert="fragmentos :: buscar"></div>
    		<div id="tabla_salas" class="my-5"></div>
 	</div>
 </body>

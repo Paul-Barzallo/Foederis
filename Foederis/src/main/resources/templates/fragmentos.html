@@ -260,7 +260,7 @@
 	El boton lleva a la ruta especificado, se está usando para el boton nuevo 'objeto'
 	
 	Ejemplo:
-		<div th:with="ruta=${'__${@rutas.ADM_USER_NUEVO}__'}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
+		<div th:with="ruta=@{${'__${@rutas.ADM_USER_NUEVO}__'}}, txt_boton=${'Nuevo usuario'}" th:insert="fragmentos :: buscar"></div>
 	
 	Si no trae alguno de estos 2 variables no se mostrará el boton
 	Debe venir cargado desde el controlador el atributo @atributos.PARAMS_BUSQUEDA
@@ -275,7 +275,7 @@
 			</a>
 		</div>
 		<div class="py-lg-4 py-3 px-lg-5 px-3">
-
+			<!--  
 			<div th:if="${isSala}" class="row">
 				<div class="col">
 					<div class="form-group">
@@ -318,7 +318,8 @@
 					</div>
 				</div>
 			</div>
-
+			-->
+			
 			<div class="row">
 				<div class="col-5 col-lg-4 pr-0">
 					<select id="busqueda" class="form-control"
