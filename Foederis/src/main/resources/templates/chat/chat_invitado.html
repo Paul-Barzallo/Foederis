@@ -20,22 +20,30 @@
 
 </head>
 <body class="bg-light" style="height: 100vh" onload="connect()" />
-
-
 	<div id="chat-page" class="container mx-auto my-5 px-ms-5 h-100">
 		<div class="bg-secondary d-flex justify-content-between p-3">
 			<h2 id="eventName" class="text-white mb-0" th:text="${eventname}"></h2>
+			<p id="userName" th:text="${'invitado:'+user}" class="d-none"></p>
+			<p id="eventId" th:text="${eventid}" class="d-none"></p>
+			<p id="userId" th:text="${__${@atributos.USUARIO}__}" class="d-none"></p>
 		</div>
 		<div id="connecting" class="text-danger">Conectando...</div>
-		<div
-			class="border border-dark rounded d-flex flex-column overflow-auto"
-			style="height: 600px">
-			<ul id="messageArea" class="list-group"
-				style="height: 100%; overflow-y: auto">
-	
-			</ul>
+		<div class="border border-dark rounded d-flex flex-column overflow-auto" style="height: 600px">
+			<ul id="messageArea" class="list-group" style="height: 100%; overflow-y: auto"></ul>
 		</div>
 	</div>
+	
+	<form id="messageForm" name="messageForm" hidden="true">
+		<div class="form-group">
+			<div class="input-group d-flex justify-content-between">
+				<input type="text" id="message"
+					placeholder="Introduce un mensaje..." autocomplete="off"
+					class="form-control" />
+				<button type="submit" class="btn btn-success">Enviar</button>
+				<button class="btn btn-info" th:if="${__${@atributos.ROLES}__} == 2" onclick="endEvent()">Fin evento</button>
+			</div>
+		</div>
+	</form>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>

@@ -40,6 +40,7 @@ import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IUsuarioRepository;
 import es.uned.foederis.sesion.token.JWTInvitado;
 import es.uned.foederis.websocket.model.ChatMessage;
+import io.jsonwebtoken.Claims;
 
 
 @Controller
@@ -117,19 +118,21 @@ public class ChatController {
 		myModel_ = model;
 		
 		String token = (String)req.getAttribute("token2");
-		String idEvento = jwtInvitado.decodeJWT(token).getId();
+		Claims claims = jwtInvitado.decodeJWT(token);
+		String idEvento = claims.getId();
+		String nombre = claims.getSubject();
 		Evento evento = eventoRepo.findById(Integer.parseInt(idEvento)).get();
 		
 		if (!myEventList_.containsKey(evento.getIdEvento())) {
 			myEventList_.put(evento.getIdEvento(),evento);
 		}
 		
-		myModel_.addAttribute(Atributos.USER, "anonimo");
+		myModel_.addAttribute(Atributos.USER, nombre);
 		myModel_.addAttribute("message", myModel_.getAttribute("message"));
 		myModel_.addAttribute("eventname", evento.getNombre());
 		myModel_.addAttribute("eventid", evento.getIdEvento());
 
-    	return "/foederis/chat/chat_invitado";
+    	return "/chat/chat_invitado";
 	}
 
     @MessageMapping("/chat.sendMessage/{eventId}")
