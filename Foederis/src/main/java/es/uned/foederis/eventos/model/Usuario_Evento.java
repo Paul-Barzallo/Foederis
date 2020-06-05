@@ -39,6 +39,7 @@ public class Usuario_Evento {
 	
 	public Usuario_Evento() {
 		this.confirmado = -1;
+		this.conectado = false;
 	}
 	
 	public int getIdUsuarioEvento() {

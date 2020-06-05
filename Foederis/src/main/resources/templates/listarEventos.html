@@ -81,7 +81,7 @@
    						<td th:text="${reunion.getEstado()}"></td>
 						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
 						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
-							<a th:href="@{Evento/entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
+							<a th:href="@{/Evento/entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
 						</td>
    							   							
 						<td>
