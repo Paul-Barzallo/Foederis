@@ -70,11 +70,46 @@
 	function setSala(sala) {
 		$('#inputSala').val($(sala).data("nombre"));
 		$('#idSala').val($(sala).data("idsala"));
+		$('#separador').text("/");
 		$('#maxUsuarios').text($(sala).data("aforo"));
 		$('#salasModal').modal('toggle');
 		$('#listaUsuarios').show();
 		$('#filtrarUsuarios').prop("disabled", false);
 		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
+		setIntervaloHoras(sala);
+	}
+	
+	function setIntervaloHoras(sala) {
+		var hInicio = parseInt($(sala).data("hinicio"),10);
+		var hFin = parseInt( $(sala).data("hfin"),10);
+		if (hInicio != hFin) {
+			var h;
+			horasDesactivadasIni = [];
+			horasDesactivadasFin = [];
+			if (hInicio < hFin) {
+				for (h = 0; h < hInicio; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+				for (h = hFin+1; h < 24; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+			} else {
+				for (h = hFin+1; h < hInicio; h++) {
+					horasDesactivadasIni.push(h);
+					horasDesactivadasFin.push(h);
+				}
+			}
+			horasDesactivadasIni.push(hFin);
+			horasDesactivadasFin.push(hInicio);
+			for (var i=1; i<=6; i+=2) {
+				$('#datetimepicker'+i).datetimepicker('disabledHours', horasDesactivadasIni);
+			}
+			for (var i=2; i<=6; i+=2) {
+				$('#datetimepicker'+i).datetimepicker('disabledHours', horasDesactivadasFin);
+			}
+		} 
 	}
 	
 	function validarMaxUsuarios() {
@@ -104,11 +139,59 @@
 			}
 		);
 	}
+	function cambiarhorarioCierre() {
+		var input = $(this);
+		var dtpOrig = $(input.data("target"));
+		var fecha = dtpOrig.datetimepicker('date');
+		var fechaMin = moment(fecha).add(1, 'hour');
+		var fechaMax = moment(fecha).add(5, 'hour');
+		tratarHorario(input, fechaMin, fechaMax);
+	}
+	
+	function cambiarhorarioApertura() {
+		var input = $(this);
+		var dtpOrig = $(input.data("target"));
+		var fecha = dtpOrig.datetimepicker('date');
+		var fechaMax = moment(fecha).add(-1, 'hour');
+		var fechaMin = moment(fecha).add(-5, 'hour');
+		tratarHorario(input, fechaMin, fechaMax);
+	}
+	
+	function tratarHorario(input, fechaMin, fechaMax) {
+		var dtpOrig = $(input.data("target"));
+		var dtp = $(input.data("next"));
+		var fecha = dtpOrig.datetimepicker('date');
+		if (fecha!=undefined) {
+			var horasDesactivadas = dtpOrig.datetimepicker('disabledHours');
+			var hora = moment(fecha).hour();
+			if (Object.keys(horasDesactivadas).includes(''+hora)) {
+				input.val('');
+				return false;
+			}
+			dtp.datetimepicker('maxDate', fechaMax);
+			dtp.datetimepicker('minDate', fechaMin);
+		} else {
+			var fechaMin = moment(new Date());
+			var fechaMax = moment(new Date()).add(100, 'year');
+			dtp.datetimepicker('maxDate', fechaMax);
+			dtp.datetimepicker('minDate', fechaMin); 
+		} 
+	}
 	
 	$(function () {
 		$('.dtp').datetimepicker({
-			format: 'DD/MM/YYYY HH:00'
+			format: 'DD/MM/YYYY HH:00',
+			useCurrent: false,
+			minDate: new Date(),
+			daysOfWeekDisabled: [0,6]
 		});
+		$("#horarioApertura1").blur(cambiarhorarioCierre);
+        $("#horarioCierre1").blur(cambiarhorarioApertura);
+        $("#horarioApertura2").blur(cambiarhorarioCierre);
+        $("#horarioCierre2").blur(cambiarhorarioApertura);
+        $("#horarioApertura3").blur(cambiarhorarioCierre);
+        $("#horarioCierre3").blur(cambiarhorarioApertura);
+		
 		$("#listaUsuarios input:checkbox").change(validarMaxUsuarios);
 		$('#listaUsuarios').hide();
 		$('#inputSala').click(buscarSalas);
@@ -123,9 +206,9 @@
 	});
 	</script>
 </head>
-<body class="bg-info" style="height: 100vh" onload="cambiarHora()">
+<body class="bg-light" style="height: 100vh" onload="cambiarHora()">
 	<div th:insert="fragmentos :: navbar"></div>
-	<div class="container">
+	<div class="container my-5">
 
 		<div th:if="${__${@atributos.SALAS}__}">
 			<script th:inline="javascript">
@@ -139,7 +222,7 @@
 
 		<div class="card bg-light">
 			<div class="card-header">
-				<h1 class="text-success px-5 mx-5">
+				<h1 class="text-success px-5 mx-5 ">
 					<strong>Evento seleccionado</strong>
 				</h1>
 			</div>
@@ -272,18 +355,23 @@
 								<td colspan="3"><label class= "cambioHora"
 									th:text="${horarioVotado == null ? 'Sin Confirmacion' : horarioVotado.Horario_Fecha_Inicio}" /></td>
 							</tr>
-							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
+							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado == @eventoConstantes.ESTADO_INACTIVO}">
 								<td colspan="1">
 									<label for="nombre"  style="color: #007bff;">Cambiar de Sala:</label>
 								</td>
 								<td><input id="inputSala" type="text" placeholder= "Pulse para cambiar la actual" class="form-control" data-toggle="modal" data-target="#salasModal" readonly/>								  								  	
-								</td>														
+								</td>
+								
+								<td><label for="nombre"  style="color: #007bff;">Enviar invitación:</label></td>	
+								<td>
+									<a class="btn btn-primary btn-md btn-block" role="button">Invitar</a>
+								</td>													
 							</tr>
 						</tfoot>
 					</table>
 				</form>
 				<div
-					th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario and eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
+					th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 					<form style="width: 100%"
 						th:action="@{/Evento/confirmarAsistenciaEvento}" method="post"
 						th:object="${eventoSeleccionado}">

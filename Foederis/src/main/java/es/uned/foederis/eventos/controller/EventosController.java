@@ -1,5 +1,6 @@
 package es.uned.foederis.eventos.controller;
 
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -398,7 +400,7 @@ public class EventosController {
 				}
 			}
 			//Si tenemos mas usuarios confirmados que aforo en la sala mostramos modal para sugerir un cambio de sala
-			if(evento.getSalaEvento().getAforo() < evento.getTotalConfirmadosEvento())
+			if(evento.getSalaEvento().getAforo() < evento.getTotalConfirmadosEvento() && evento.getEstado()== EventoConstantes.ESTADO_INACTIVO)
 				eventoService.mensajeInfoAforo(model);
 		}
 				

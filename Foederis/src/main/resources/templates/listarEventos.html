@@ -39,9 +39,11 @@
 						<h3 th:case="rechazados">Lista de Eventos - Rechazados</h3>
 						<h3 th:case="*">Lista de Eventos - Sin Confirmar</h3>  
 					</div>
-					<a th:href="@{${@rutas.EVENTOS_NUEVO}}" class="btn btn-light btn-sm" role="button">
-						<span class="align-middle">Nuevo Evento</span>
-					</a>
+					<div sec:authorize="getPrincipal().isJefeProyecto() or getPrincipal().isAdmin()">
+						<a th:href="@{${@rutas.EVENTOS_NUEVO}}" class="btn btn-light btn-sm" role="button">
+							<span class="align-middle">Nuevo Evento</span>
+						</a>
+					</div>
 				</div> 		
     		</div>
     		    		
@@ -79,13 +81,13 @@
    						<td th:text="${reunion.getEstado()}"></td>
 						<td th:style="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario ? 'color:green;' : 'color:black;'}" th:text="${reunion.UsuarioCreador.username}"></td>
 						<td th:style="${filtroListado=='rechazados' ? 'display:none;':'display:block;'}">
-							<a th:href="@{entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
+							<a th:href="@{Evento/entrar?id=} + ${reunion.idEvento}" th:text="'Detalles'" class="btn btn-warning"></a>
 						</td>
    							   							
 						<td>
 							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados' 
 							and (reunion.horarioElegido != null and reunion.estado != @eventoConstantes.ESTADO_FINALIZADO)}">	   							
-								<a th:href="@{baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
+								<a th:href="@{Evento/baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
 							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!= 'rechazados'}">
 								<label>No disponible</label>
