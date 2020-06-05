@@ -32,11 +32,10 @@
 			        event.preventDefault();
 			        doUpload();
 			    });
-			    $("#btnBorrar").click((event) => {
+ 			    $("#btnBorrar").click((event) => {
 			        event.preventDefault();
 			        doErase();
-			    });
-			 
+			    });		 
 			});
 			 
 			function doUpload() {
@@ -54,7 +53,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: 'foederis/chat/upload',
+			        url: 'chat/upload',
 
 			        data: data,
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
@@ -74,12 +73,14 @@
 			    });
 			}		
 			
-			function doErase() {
+ 			function doErase() {
 			    // Get form
 			    var form = $('#removeForm')[0];
 			    var data = new FormData(form);
-			    data.append('eventid',$("#eventId").text())
-			    data.append('fileid',$('#userId').text())
+			    var eventId = $("#eventId").text();
+			    var fileId = $('#fileId').text()
+			    data.append('eventid',eventId);
+			    data.append('fileid',fileId);
 			    
 			    var token = $('#_csrf').attr('content');
 			    var header = $('#_csrf_header').attr('content');
@@ -87,7 +88,7 @@
 			    $.ajax({
 			        type: "POST",
 			        data: data,
-				    url: [[@{/foederis/chat/removeFile}]],
+				    url: 'chat/removeFile',
 				    processData: false, //prevent jQuery from automatically transforming the data into a query string
 			        contentType: false,
 			        cache: false,
@@ -104,7 +105,7 @@
 			        }
 			    });
 			}		
-				
+ 				
 		</script>
 </head>
 <body class="bg-light" style="height: 100vh" onload="connect()" />
@@ -156,8 +157,8 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<div id="resultUpload"></div>
-<!-- 					<div th:insert="fragmentos :: resultUpload"></div> -->
+					<!-- <div id="resultUpload"></div> -->
+					<div id="resultUpload" th:insert="fragmentos :: resultUpload"></div>
 				</td>
 			</tr>
 		</table>	

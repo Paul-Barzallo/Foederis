@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.uned.foederis.FoederisApplication;
 import es.uned.foederis.administracion.service.AdministracionService;
+import es.uned.foederis.archivos.service.ArchivoService;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
@@ -39,6 +40,7 @@ import es.uned.foederis.sesion.model.Usuario;
 import es.uned.foederis.sesion.repository.IUsuarioRepository;
 import es.uned.foederis.sesion.token.JWTInvitado;
 import es.uned.foederis.websocket.model.ChatMessage;
+import io.jsonwebtoken.Claims;
 
 
 @Controller
@@ -61,6 +63,8 @@ public class ChatController {
 	private JWTInvitado jwtInvitado;
     @Autowired
     private IUsuarioRepository userRepo;
+	@Autowired
+	ArchivoService myFileService_;
     
     private Model myModel_;
     
@@ -104,6 +108,8 @@ public class ChatController {
     			break;
     		}
     	}
+    	
+    	model.addAttribute(Atributos.FILES, myFileService_.findByIdEvento(evento));
     	return "/chat";
 	}
 	
@@ -112,19 +118,21 @@ public class ChatController {
 		myModel_ = model;
 		
 		String token = (String)req.getAttribute("token2");
-		String idEvento = jwtInvitado.decodeJWT(token).getId();
+		Claims claims = jwtInvitado.decodeJWT(token);
+		String idEvento = claims.getId();
+		String nombre = claims.getSubject();
 		Evento evento = eventoRepo.findById(Integer.parseInt(idEvento)).get();
 		
 		if (!myEventList_.containsKey(evento.getIdEvento())) {
 			myEventList_.put(evento.getIdEvento(),evento);
 		}
 		
-		myModel_.addAttribute(Atributos.USER, "anonimo");
+		myModel_.addAttribute(Atributos.USER, nombre);
 		myModel_.addAttribute("message", myModel_.getAttribute("message"));
 		myModel_.addAttribute("eventname", evento.getNombre());
 		myModel_.addAttribute("eventid", evento.getIdEvento());
 
-    	return "/foederis/chat/chat_invitado";
+    	return "/chat/chat_invitado";
 	}
 
     @MessageMapping("/chat.sendMessage/{eventId}")
