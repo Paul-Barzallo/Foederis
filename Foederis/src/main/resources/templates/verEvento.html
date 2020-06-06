@@ -405,10 +405,17 @@
 
 						<table style="table-layout: fixed; width: 100%"
 							class="table table-striped justify-content-center">
-							<thead bgcolor="#79df91">
+							<thead>
 								<tr>
-									<td colspan="5"><label style="color: #007bff;">
-											Listado de Asistentes al evento:</label></td>
+									<td colspan="5"><h4>
+											Listado de Asistentes al evento:</h4></td>
+<!-- 								</tr> -->
+								<tr style="color: #007bff;" bgcolor="#79df91">
+								<td>Username</td>
+								<td>Nombre</td>
+								<td>Apellidos</td>
+								<td>Horario confirmado</td>
+								<td>Asistencia</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -422,13 +429,22 @@
 										th:text="${usuariosInvitados.usuario.apellidos != null ? usuariosInvitados.usuario.apellidos:''}"></label></td>
 										<td><label class = "cambioHora"
 										th:text="${usuariosInvitados.horario == null ? 'Sin Confirmacion' : usuariosInvitados.horario.Horario_Fecha_Inicio}"></label></td>
-									<td>
+									
+									<td>									
 										<div th:if="${usuariosInvitados.confirmado == 1}">
-											<input type="checkbox"
-											th:value="${usuariosInvitados.idUsuarioEvento}"
-											th:name="checkAsistenteElegido" class="form-check"
-											th:checked="${usuariosInvitados.asistente}" />
-										</div>
+											<div th:if="${userLogin.idUsuario == usuariosInvitados.usuario.idUsuario}">
+												<input type="checkbox"
+												th:value="${usuariosInvitados.idUsuarioEvento}"
+												th:name="checkAsistenteElegido" class="form-check"
+												th:checked="${usuariosInvitados.asistente}" disabled/>
+											</div>
+											<div th:unless="${userLogin.idUsuario == usuariosInvitados.usuario.idUsuario}">
+												<input type="checkbox"
+												th:value="${usuariosInvitados.idUsuarioEvento}"
+												th:name="checkAsistenteElegido" class="form-check"
+												th:checked="${usuariosInvitados.asistente}" />
+											</div>
+										</div>										
 										<div th:unless="${usuariosInvitados.confirmado != 0}">Baja
 										</div>
 										
