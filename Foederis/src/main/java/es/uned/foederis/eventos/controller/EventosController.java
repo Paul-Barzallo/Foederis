@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -590,7 +592,7 @@ public class EventosController {
 	 * @throws ParseException
 	 */
 	@PostMapping(Rutas.GUARDAR)
-	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento) throws ParseException {
+	public String postGuardarSala(Model model, HttpServletRequest request, @Validated Evento evento, BindingResult result) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
 			String idSala = request.getParameter("idSala");

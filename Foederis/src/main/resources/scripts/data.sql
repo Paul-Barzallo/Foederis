@@ -43,18 +43,17 @@ insert into evento
 	(id_evento, id_usuario_creador_fk,  id_sala_evento_fk,  estado,         nombre)
 values
 	(1,         3,                      4,                  'FINALIZADO',   'Planificacion Fase 3'),
-    (2,         4,                      5,                  'FINALIZADO',   'Ofertas de Verano'),
+    (2,         4,                      5,                  'INACTIVO',     'Ofertas de Verano'),
     (3,         5,                      6,                  'INACTIVO',     'Contabilidad Primer trimestre 2020'),
-    (4,         6,                      2,                  'INACTIVO',     'Planificar inversiones'),
-    (5,         7,                      3,                  'INACTIVO',     'Negociaciones: Ampliacion de contrato')
+    (4,         6,                      2,                  'INACTIVO',     'Planificar inversiones')
 ;
 
 insert into horarios
 	(id_horario,    id_evento_fk,   fecha_Inicio,           fecha_fin)
 values
-	(1,             1,              '2020-05-25 09:00:00',  '2020-05-25 12:00:00'),
-	(2,             1,              '2020-05-25 15:00:00',  '2020-05-25 18:00:00'),
-	(3,             1,              '2020-05-26 11:00:00',  '2020-05-26 14:00:00'),
+	(1,             1,              '2020-06-04 09:00:00',  '2020-06-04 10:00:00'),
+	(2,             1,              '2020-06-04 15:00:00',  '2020-06-04 16:00:00'),
+	(3,             1,              '2020-06-05 11:00:00',  '2020-06-05 12:00:00'),
     
 	(4,             2,              '2020-06-15 10:00:00',  '2020-06-15 13:00:00'),
 	(5,             2,              '2020-06-15 12:00:00',  '2020-06-15 14:00:00'),
@@ -64,10 +63,7 @@ values
     (8,             3,              '2020-06-24 08:00:00',  '2020-06-24 10:00:00'),
     
     (9,             4,              '2020-06-17 10:00:00',  '2020-06-17 11:00:00'),
-    (10,            4,              '2020-06-17 15:00:00',  '2020-06-17 16:00:00'),
-    
-    (11,            5,              '2020-06-02 17:00:00',  '2020-06-02 18:00:00'),
-    (12,            5,              '2020-06-05 08:00:00',  '2020-06-05 09:00:00')
+    (10,            4,              '2020-06-17 15:00:00',  '2020-06-17 16:00:00')
 ;
 
 insert into usuario_evento
@@ -95,40 +91,50 @@ values
     (19,                2,              11,             5,              1,          TRUE,       FALSE,       FALSE),
     (20,                2,              12,             5,              1,          TRUE,       FALSE,       FALSE),
     
-    (21,                3,              3,              6,              1,          TRUE,       FALSE,       FALSE),
-    (22,                3,              4,              6,              1,          TRUE,       TRUE ,       FALSE),
-    (23,                3,              5,              7,              1,          TRUE,       FALSE,       FALSE),
-    (24,                3,              6,              6,              1,          TRUE,       FALSE,       FALSE),
-    (25,                3,              7,              7,              1,          TRUE,       FALSE,       FALSE),
-    (26,                3,              8,              8,              1,          TRUE,       TRUE ,       FALSE),
-    (27,                3,              9,              8,              1,          TRUE,       FALSE,       FALSE),
-    (28,                3,              10,             7,             -1,          FALSE,      FALSE,       FALSE),
-    (29,                3,              11,             7,              1,          TRUE,       FALSE,       FALSE),
+    (21,                3,              3,              null,          -1,          null,       null,        FALSE),
+    (22,                3,              4,              null,          -1,          null,       null ,       FALSE),
+    (23,                3,              5,              null,           1,          TRUE,       null,        FALSE),
+    (24,                3,              6,              null,          -1,          null,       null,        FALSE),
+    (25,                3,              7,              null,          -1,          null,       null,        FALSE),
+    (26,                3,              8,              null,          -1,          null,       null ,       FALSE),
+    (27,                3,              9,              null,          -1,          null,       null,        FALSE),
+    (28,                3,              10,             null,          -1,          null,       null,        FALSE),
+    (29,                3,              11,             null,          -1,          null,       null,        FALSE),
     
     (30,                4,              3,              null,          -1,          null,       null,        FALSE),
     (31,                4,              6,              null,           1,          TRUE,       null,        FALSE),
     (32,                4,              9,              null,          -1,          null,       null,        FALSE),
     (33,                4,              11,             null,          -1,          null,       null,        FALSE),
-    (34,                4,              12,             null,          -1,          null,       null,        FALSE),
-    
-    (35,                5,              4,              null,          -1,          null,       null,        FALSE),
-    (36,                5,              7,              null,          -1,          null,       null,        FALSE),
-    (37,                5,              8,              null,          -1,          null,       null,        FALSE),
-    (38,                5,              9,              null,          -1,          null,       null,        FALSE),
-    (39,                5,              10,             null,          -1,          null,       null,        FALSE) 
+    (34,                4,              12,             null,          -1,          null,       null,        FALSE)
 ;
 	
 update  Evento
     set id_horario_fk = 1
-    where id_evento = 1
+    where id_evento = 1   
 ;
-
 update  Evento
-    set id_horario_fk = 5
+    set id_horario_fk = 4
     where id_evento = 2
 ;
 
-update  Evento
-    set id_horario_fk = 7
-    where id_evento = 3
+insert into chat
+    (id_chat,   fecha,                  id_evento_fk,   id_usuario_fk,  texto)
+values
+    (1,         '2020-06-04 09:02:00',  1,              3,              'Buenos dias'),
+    (2,         '2020-06-04 09:02:22',  1,              3,              'Vamos a empezar'),
+    (3,         '2020-06-04 09:02:25',  1,              3,              'A continuacion presentaremos las fechas para esta fase'),
+    (4,         '2020-06-04 09:10:10',  1,              6,              'Cuantas personas tinene el equipo?'),
+    (5,         '2020-06-04 09:11:42',  1,              4,              'Hay 20 personas en el equipo'),
+    (6,         '2020-06-04 09:16:30',  1,              3,              'Durante lo que queda de 2020 podremos completar el 70%'),
+    (7,         '2020-06-04 09:30:00',  1,              8,              'Teniendo en cuanta posibles inconveniente, cuanto tendremos que aplazar las fechas? '),
+    (8,         '2020-06-04 09:32:40',  1,              3,              'En un mal escenario tendriamos 3 semanas de atraso'),
+    (9,         '2020-06-04 09:42:00',  1,              3,              'Alguna otra duda?'),
+    (10,        '2020-06-04 09:43:10',  1,              6,              'No'),
+    (11,        '2020-06-04 09:43:18',  1,              7,              'Todo claro'),
+    (12,        '2020-06-04 09:43:44',  1,              9,              'No'),
+    (13,        '2020-06-04 09:44:11',  1,              11,             'Ninguna'),
+    (14,        '2020-06-04 09:46:20',  1,              3,              'Perfecto, con esto terminamos la reunion'),
+    (15,        '2020-06-04 09:46:33',  1,              3,              'Adios')
 ;
+    
+

@@ -33,7 +33,6 @@ public class Evento {
 	@JoinColumn(name="id_usuario_creador_fk")
 	private Usuario	UsuarioCreador;
 	
-	@NotNull
 	@OneToOne
 	@JoinColumn(name="id_sala_evento_fk")
 	private Sala salaEvento;
@@ -246,6 +245,23 @@ public class Evento {
 	
 	public void delHorario(Horarios horario) {
 		this.lstHorarios.remove(horario);
+	}
+	
+	@Override
+	public String toString() {
+		String evento = "Evento: {\n"+
+			"	id="+this.idEvento+",\n"+
+			"	nombre="+this.nombre+",\n"+
+			"	estado="+this.estado+",\n"+
+			"	creador="+this.UsuarioCreador+",\n"+
+			"	sala="+this.salaEvento.toString()+",\n"+
+			"	usuarios: {\n";
+		for (Usuario_Evento usuario: this.usuariosEvento) {
+			evento += "		"+usuario.getUsuario().toString()+",\n";
+		}
+		evento += "	}\n}";
+		return evento;
+				
 	}
 	
 }

@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import es.uned.foederis.eventos.service.EventoServiceImpl;
 import es.uned.foederis.eventos.service.IEventoService;
