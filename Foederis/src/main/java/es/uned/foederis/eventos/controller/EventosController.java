@@ -107,7 +107,7 @@ public class EventosController {
 	 * @param model, Id que recupera el evento
 	 * @return html
 	 */
-	@GetMapping("/baja")
+	@GetMapping(Rutas.EVENTOS_BAJA)
 	public ModelAndView baja(Model model, @RequestParam(value = "id") Evento eventoSeleccionado) {
 
 		ModelAndView mav = new ModelAndView();
@@ -129,7 +129,7 @@ public class EventosController {
 	 *               el evento seleccionado
 	 * @return html
 	 */
-	@PostMapping("/confirmar")
+	@PostMapping(Rutas.EVENTOS_CONFIRMAR_INVITADO)
 	public ModelAndView confirmar(Model model,
 			@RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
 			@RequestParam(value = "seleccionHorario", required = false) String horarioElegido, Evento eventoSeleccionado) {
@@ -210,7 +210,7 @@ public class EventosController {
 	 * Confirmamos los asistentes al evento que elija el jefe de proyecto
 	 * Confirmamos el horario mas legido por los confirmados al evento.
 	 */
-	@PostMapping("/confirmarAsistenciaEvento")
+	@PostMapping(Rutas.EVENTOS_CONFIRMAR_CREADOR_EVENTO)
 	public String confirmarAsistenciaEvento(Model model,
 			@RequestParam(value = "checkAsistenteElegido", required = false) List<Integer> lstCheckedAsistentes,
 			@RequestParam(value = "horarioVotado") String horarioVotado,
@@ -300,7 +300,7 @@ public class EventosController {
 	 * @param evento
 	 * @return verEvento
 	 */
-	@GetMapping("/entrar")
+	@GetMapping(Rutas.EVENTOS_VER_DETALLE)
 	public ModelAndView entrar(Model model, @RequestParam(value = "id") Evento evento) {
 		this.iniciarUsuario();
 
@@ -419,7 +419,7 @@ public class EventosController {
 	 * Muestra el listado de eventos creados por el usuario creador de eventos logado
 	 * @return
 	 */
-	@RequestMapping(value = "/listarFiltroCreador")
+	@RequestMapping(Rutas.EVENTOS_LISTAR_FILTRO_CREADOR)
 	public ModelAndView listarFiltroCreador() {
 		
 		this.iniciarUsuario();		
@@ -445,7 +445,7 @@ public class EventosController {
 	 * @param filtroListado
 	 * @return listarEventos
 	 */
-	@RequestMapping(value = "/listarFiltro")
+	@RequestMapping(Rutas.EVENTOS_LISTAR_FILTRO)
 	public ModelAndView listarFiltro(@RequestParam(required = false, name = "filtroListado") String filtroListado) {
 
 		this.iniciarUsuario();
