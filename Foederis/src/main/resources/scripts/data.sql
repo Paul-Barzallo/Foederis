@@ -12,7 +12,7 @@ VALUES
 	(1,             'admin',		'administrador', 	'', 				'admin', 	3,          TRUE),
 	(2,             'admin2',		'adminsitrador', 	'segundo',			'admin', 	3,          FALSE),
 	(3,             'pbarza',		'paul', 			'barzallo', 		'foederis', 3,          TRUE),	
-	(4,             'lidia',		'lidia', 			'', 				'1234', 	2,          TRUE),	
+	(4,             'lidia',		'lidia', 			'izquierdo',		'1234', 	2,          TRUE),	
 	(5,             'juancarlos',	'juan carlos', 		'', 				'1234', 	3,          TRUE),
 	(6,             'albeas',		'alex', 			'bernat asensi', 	'user', 	2,          TRUE),	
 	(7,             'daoval',		'david', 			'oviedo almeida', 	'user', 	2,          TRUE),

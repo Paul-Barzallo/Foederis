@@ -65,7 +65,7 @@ import es.uned.foederis.sesion.token.JWTInvitado;
 import io.jsonwebtoken.Claims;;
 
 @Controller
-@RequestMapping("Evento") // Empieces url navegador y asi evitamos este en todos los metodos
+@RequestMapping("Evento")
 public class EventosController {
 
 	@Autowired
@@ -185,7 +185,6 @@ public class EventosController {
 		this.iniciarUsuario();
 
 		Usuario_Evento usuarioEvento = eventoSeleccionado.getUsuariosEvento(user.getIdUsuario());
-//		Usuario_Evento usuEvento = usuarioEventoRepo.findByEventoAndUsuario(eventoSeleccionado.getIdEvento(), user.getIdUsuario());
 
 		// Obtengo el usuario evento de la variable user para poner modificarla en el y
 		// guardarla actualizada.
@@ -260,12 +259,9 @@ public class EventosController {
 			//Guardamos el horario
 			Optional<Horarios> horarioMasVotado = HorarioRepo.findById(Integer.parseInt(horarioVotado));
 			evento.setHorarioElegido(horarioMasVotado.get());
-
-			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
-			// que traigo de la vista los pongo a true siempre que tengan el mismo horario;
-//			evento.getEventosDelUsuario().forEach(c -> c.setAsistente(false));
-//			evento.getEventosDelUsuario().forEach(c -> c.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO));
 			
+			//Se actualiza el aforo
+					
 			//El creador del evento siempre tendra estos valores por defecto y siempre asistira
 			//Si es el usuario logado creador del evento no puede darse de baja 
 			Usuario_Evento userlogado =  user.getEventosDelUsuario().stream().
@@ -275,8 +271,9 @@ public class EventosController {
 			userlogado.setHorario(horarioMasVotado.get());
 			aforo--;
 
-			for(Usuario_Evento aux : evento.getEventosDelUsuario()) {
-				
+			// marco todos los usuarios-evento del evento con asistencia a 0 y solo en los
+			// que traigo de la vista los pongo a true siempre que tengan el mismo horario;
+			for(Usuario_Evento aux : evento.getEventosDelUsuario()) {				
 				
 				if(aux.getUsuario().getIdUsuario() == user.getIdUsuario()) {
 									
@@ -293,37 +290,10 @@ public class EventosController {
 				else {
 					aux.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO);
 					aux.setAsistente(false);
-				}
-				
-				
-				
+				}	
+								
 				usuarioEventoRepo.save(aux);
-			}
-				
-//			for (Integer id : lstCheckedAsistentes) {			
-//				
-//				if(id == null )
-//					continue;
-//				
-//				Usuario_Evento auxUsuEv =  evento.getUsuariosEventoById(id);
-//				
-//				if (id < 0 || auxUsuEv.getHorario()==null) {
-//				} else if(aforo > 0 && (auxUsuEv.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI 
-//						&& auxUsuEv.getHorario().getIdHorario() == horarioMasVotado.get().getIdHorario())) {
-//					auxUsuEv.setAsistente(true);
-//					auxUsuEv.setConfirmado(usuarioEventoConstantes.CONFIRMADO_SI);
-//					
-//					aforo--;
-//				}
-//				
-////				else if (aforo > 0 && evento.getEventosDelUsuario().stream().filter(c -> c.getHorario().getIdHorario()== horarioMasVotado.get().getIdHorario() && c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).count()>0)
-////					evento.getEventosDelUsuario().stream().filter(c ->c.getHorario().getIdHorario()== horarioMasVotado.get().getIdHorario() && c.getIdUsuarioEvento() == id && c.getConfirmado()==usuarioEventoConstantes.CONFIRMADO_SI).findFirst().get()
-////							.setAsistente(true);
-//				else
-//					auxUsuEv.setConfirmado(usuarioEventoConstantes.CONFIRMADO_NO);
-//				
-//				usuarioEventoRepo.save(auxUsuEv);
-//			}					
+			}				
 			
 			usuRepo.save(user);
 			
@@ -369,7 +339,6 @@ public class EventosController {
 				List<Integer> lstH = new ArrayList<Integer>();
 	
 				List<Usuario_Evento> lstusuEvento = (List<Usuario_Evento>) usuarioEventoRepo.findAll();
-	//			List<Usuario_Evento> lstusuEvento2 = (List<Usuario_Evento>) usuarioEventoRepo.findByevento(evento.getIdEvento());
 	
 				lstusuEvento = lstusuEvento.stream().filter(c -> c.getEvento().getIdEvento() == evento.getIdEvento())
 						.collect(Collectors.toList());
@@ -378,7 +347,6 @@ public class EventosController {
 					if (c.getHorario() != null && c.getHorario().getIdHorario() > -1) {
 						lstH.add(c.getHorario().getIdHorario());
 					} 
-
 				});
 				if(lstH.size()!= 0) {				
 					
@@ -400,7 +368,7 @@ public class EventosController {
 				}
 			}
 			//Si tenemos mas usuarios confirmados que aforo en la sala mostramos modal para sugerir un cambio de sala
-			if(evento.getSalaEvento().getAforo() < evento.getTotalConfirmadosEvento() && evento.getEstado()== EventoConstantes.ESTADO_INACTIVO)
+			if(evento.getSalaEvento().getAforo() < evento.getTotalConfirmadosEvento() && evento.getEstado().equals(EventoConstantes.ESTADO_INACTIVO))
 				eventoService.mensajeInfoAforo(model);
 		}
 				
@@ -419,6 +387,10 @@ public class EventosController {
 
 	}
 	
+	/**
+	 * Calculamos el cambio horario local con la hora de Nueva York
+	 * @return timestamp
+	 */
 	private Timestamp getHoraNY() {
 		
 		ZonedDateTime fecha = ZonedDateTime.now();
@@ -442,7 +414,7 @@ public class EventosController {
 		Timestamp ts = getHoraNY();
 		
 		//Descontamos 5 minutos a la hora actual
-		ts.setTime(ts.getTime() - TimeUnit.MINUTES.toMillis(30));
+		ts.setTime(ts.getTime() - TimeUnit.MINUTES.toMillis(5));
 		
 		//Si el estado es inactivo y la fecha actual menos 5 minutos no es antes de la fecha del evento seteamos estado
 		user.getEventosDelUsuario().stream().
@@ -457,16 +429,16 @@ public class EventosController {
 	}
 	
 	/**
-	 * Muestra el listado de eventos creados por el usuario logado
+	 * Muestra el listado de eventos creados por el usuario creador de eventos logado
 	 * @return
 	 */
 	@RequestMapping(value = "/listarFiltroCreador")
 	public ModelAndView listarFiltroCreador() {
-		this.iniciarUsuario();
 		
-		actualizarEstadoEventos();
-
+		this.iniciarUsuario();		
+		
 		//Actualizar estados a finalizado dependiendo de la hora
+		actualizarEstadoEventos();		
 
 		ModelAndView mav = new ModelAndView();
 		List<Evento> lstEventos = new ArrayList<Evento>();
@@ -480,8 +452,8 @@ public class EventosController {
 	}
 
 	/****
-	 * Nos muestra el listado de eventos del usuario, podemos filtrar segun la fecha
-	 * y segun si hemos confirmado o rechazado
+	 * Nos muestra el listado de eventos del usuario, podemos filtrar por:
+	 * Todos los evento, los de hoy, los rechazados, los pendientes de confirmar y los futuros
 	 * 
 	 * @param filtroListado
 	 * @return listarEventos
@@ -499,6 +471,8 @@ public class EventosController {
 
 		ModelAndView mav = new ModelAndView();
 		List<Evento> lstEventos = new ArrayList<Evento>();
+		
+		//Filtros de seleccion
 
 		if (filtroListado == null || filtroListado.equalsIgnoreCase(usuarioEventoConstantes.FILTRO_TODOS)) {
 			filtroListado = usuarioEventoConstantes.FILTRO_TODOS;
