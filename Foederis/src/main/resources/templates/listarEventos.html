@@ -87,7 +87,7 @@
 						<td>
 							<div th:if="${reunion.UsuarioCreador.idUsuario != userLogin.idUsuario and filtroListado!='rechazados' 
 							and (reunion.horarioElegido != null and reunion.estado != @eventoConstantes.ESTADO_FINALIZADO)}">	   							
-								<a th:href="@{Evento/baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
+								<a th:href="@{/Evento/baja?id=} + ${reunion.idEvento}" th:text="'Baja'" class="btn btn-outline-danger"></a>
 							</div>	   							
 							<div th:if="${reunion.UsuarioCreador.idUsuario == userLogin.idUsuario and filtroListado!= 'rechazados'}">
 								<label>No disponible</label>

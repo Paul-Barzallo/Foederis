@@ -56,4 +56,13 @@ public class Rutas {
 	public static final String EVENTOS_GUARDAR = 	EVENTOS+GUARDAR;
 	public static final String EVENTOS_BUSQ_SALAS = EVENTOS+BUSQ_SALAS;
 	public static final String EVENTOS_TOKEN = 		EVENTOS+"/token";
+	
+	public static final String EVENTOS_LISTAR_FILTRO = "/listarFiltro";
+	public static final String EVENTOS_LISTAR_FILTRO_CREADOR = "/listarFiltroCreador";
+	public static final String EVENTOS_VER_DETALLE = "/entrar";
+	public static final String EVENTOS_CONFIRMAR_CREADOR_EVENTO = "/confirmarAsistenciaEvento";
+	public static final String EVENTOS_CONFIRMAR_INVITADO = "/confirmar";
+	public static final String EVENTOS_BAJA= "/baja";
+
 }
+
