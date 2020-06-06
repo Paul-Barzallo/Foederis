@@ -178,6 +178,19 @@
 		} 
 	}
 	
+	function generarToken() {
+		var url = [[@{${@rutas.EVENTOS_TOKEN}}]];
+		var nombre = $('#nombreInvitado').val();
+		if (nombre == "" || nombre == undefined) {
+			return false;
+		}
+		var idEvento = [[${eventoSeleccionado.idEvento}]];
+		url += "?nombre="+nombre;
+		url += "&idEvento="+idEvento;
+		$('#token_invitado').empty();
+		$('#token_invitado').load(url);
+	}
+	
 	$(function () {
 		$('.dtp').datetimepicker({
 			format: 'DD/MM/YYYY HH:00',
@@ -353,7 +366,7 @@
 								th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario}">
 								<td><label style="color: #007bff;"> Horario mas	votado (actual):</label></td>
 								<td colspan="3"><label class= "cambioHora"
-									th:text="${horarioVotado == null ? 'Sin Confirmacion' : horarioVotado.Horario_Fecha_Inicio}" /></td>
+									th:text="${horarioVotado == null ? 'Sin Confirmacion' : horarioVotado.Horario_Fecha_Inicio}"></label></td>
 							</tr>
 							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado == @eventoConstantes.ESTADO_INACTIVO}">
 								<td colspan="1">
@@ -364,7 +377,13 @@
 								
 								<td><label for="nombre"  style="color: #007bff;">Enviar invitación:</label></td>	
 								<td>
-									<a class="btn btn-primary btn-md btn-block" role="button">Invitar</a>
+									<a class="btn btn-primary btn-md btn-block" role="button" data-toggle="modal" data-target="#invitarModal">Invitar</a>
+								</td>													
+							</tr>
+							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado == @eventoConstantes.ESTADO_ONLINE}">
+								<td><label for="nombre"  style="color: #007bff;">Enviar invitación:</label></td>	
+								<td>
+									<a class="btn btn-primary btn-md btn-block" role="button" data-toggle="modal" data-target="#invitarModal">Invitar</a>
 								</td>													
 							</tr>
 						</tfoot>
@@ -440,6 +459,28 @@
 				<div class="modal-body">
 					<div th:with="isSala=${'true'}, ruta=${'false'}" th:insert="fragmentos :: buscar"></div>
 					<div id="lista_salas" class="my-5"></div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal para generar invitación -->
+	<div class="modal fade" id="invitarModal">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Invitar</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<div class="modal-body">
+					<label for="usr">Nombre del invitado:</label>
+					<input type="text" class="form-control" id="nombreInvitado" maxlength="8">
+					<button id="btn_token" class="btn btn-success mt-3" onclick="generarToken()">Generar invitacion</button>
+					<div id="token_invitado"></div>
 				</div>
 				
 				<div class="modal-footer">

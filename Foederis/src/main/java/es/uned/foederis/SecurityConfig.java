@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		  http
 		  	.authorizeRequests()
-		  		.antMatchers("/Evento/invitado/**", "/chat_invitado").permitAll()
+		  		.antMatchers("/Evento/invitado/**", "/chat_invitado", "foederis/Evento/invitado/**", "/Evento/invitado/**.**.**").permitAll()
 		  		.anyRequest().authenticated() 
 		  		.and() 
 		  	.httpBasic()

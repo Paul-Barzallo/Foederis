@@ -724,5 +724,17 @@ public class EventosController {
 		// Si el token no contiene id o no encuentra el evento devuelve una pagina de error
 		return Vistas.TOKEN_ERROR;
 	}
+	
+	@GetMapping("/token")
+	public ModelAndView getToken(HttpServletRequest req, Model model, String nombre, String idEvento) {
+		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		int id_evento = Integer.parseInt(idEvento);
+		// Como el token solo sirve durante el evento se pone un periodo de duración alto
+		long tCaducidad = 30*24*60*60*1000; //30 dias
+		String token = jwtInvitado.createJWT(id_evento, user.getUsername(), nombre, tCaducidad);
+		String root = req.getRequestURL().toString().replaceAll("/token", "/")+"invitado/";
+		model.addAttribute("token", root+token);
+		return new ModelAndView("fragmentos :: token");
+	}
 
 }
