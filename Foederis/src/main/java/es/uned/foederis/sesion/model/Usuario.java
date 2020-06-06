@@ -36,8 +36,8 @@ import es.uned.foederis.sesion.constantes.UsuarioConstantes;
  */
 @Entity
 public class Usuario implements UserDetails{
-	private static final long serialVersionUID = -6174649516690350773L;
-	
+	private static final long serialVersionUID = -5381409440738769093L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long idUsuario;

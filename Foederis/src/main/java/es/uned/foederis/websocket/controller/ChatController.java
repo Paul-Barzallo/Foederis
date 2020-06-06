@@ -117,7 +117,7 @@ public class ChatController {
     public String getChatInvitado(Model model, HttpServletRequest req) {
 		myModel_ = model;
 		
-		String token = (String)req.getAttribute("token2");
+		String token = (String)req.getAttribute("token");
 		Claims claims = jwtInvitado.decodeJWT(token);
 		String idEvento = claims.getId();
 		String nombre = claims.getSubject();
