@@ -484,7 +484,6 @@ public class EventosController {
 						// Si el usuario ya ha confirmado su horario
 						lstEventos.add(aux.getEvento());
 					}
-
 				}
 			}
 
