@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import es.uned.foederis.eventos.EventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Horarios;
 import es.uned.foederis.eventos.model.Usuario_Evento;
@@ -110,6 +111,7 @@ public class FoederisApplication implements ApplicationRunner{
 		evento.setHorarioElegido(horario);
 		evento.setSalaEvento(salaRepo.findById(idSala).get());
 		evento.setUsuarioCreador(user);
+		evento.setEstado(EventoConstantes.ESTADO_INACTIVO);
 
 		eventoRepo.save(evento);
 		usuarioEventoRepo.saveAll(usuariosEvento);
