@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import es.uned.foederis.administracion.service.AdministracionService;
 import es.uned.foederis.constantes.Atributos;
@@ -95,49 +96,53 @@ public class EventosController {
 	// ** Ver evento.HTML ***//
 
 	/**
-	 * Carga la variable user, solo llamamos a este metodo cuando no ha sido cargado
-	 * 
+	 * Carga la variable user con el usuario cargado.
 	 */
 	public void iniciarUsuario() {
 		user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
-	
+			
 	/**
-	 * Devuelve el listado de eventos sin confirmar. Actualiza el evento, actualiza
-	 * la variable confirmado a 0.
-	 * 
-	 * @param model, Id que recupera el evento
-	 * @return html
+	 * Confirma la baja del usuario invitado al evento seleccionado
+	 * El usuario será dado de baja y aparecera el evento en el listado de rechazados.
+	 * @param model
+	 * @param eventoSeleccionado
+	 * @param redirectAtrributtes
+	 * @return 
 	 */
 	@GetMapping(Rutas.EVENTOS_BAJA)
-	public ModelAndView baja(Model model, @RequestParam(value = "id") Evento eventoSeleccionado) {
+	public String baja(Model model, @RequestParam(value = "id") Evento eventoSeleccionado,
+			RedirectAttributesModelMap redirectAtrributtes) {
 
-		ModelAndView mav = new ModelAndView();
-
-		ActualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_NO, eventoSeleccionado, null, false);
+		actualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_NO, eventoSeleccionado, null, false);
 
 		eventoService.mensajeConfirmacion(model);
+		
+		
+		redirectAtrributtes.addFlashAttribute(Atributos.ALERTA_TITULO, model.getAttribute(Atributos.ALERTA_TITULO));
+		redirectAtrributtes.addFlashAttribute(Atributos.ALERTA, model.getAttribute(Atributos.ALERTA));
 
-		mav.setViewName("listarEventos");
-
-		return mav;
+		return "redirect:/Evento/listarFiltro?filtroListado=rechazados";
 	}
 
+		
 	/**
-	 * Devuelve el listado de eventos sin confirmar. Actualiza el evento, actualiza
-	 * la variable confirmado a 1 y y pasandole el horario elegido por el usuario.
-	 * 
-	 * @param model, checkBox presencial, radioButton con la seleccion del horario y
-	 *               el evento seleccionado
-	 * @return html
+	 * Confirmación del invitado al evento seleccionado.
+	 * El usuario confirma el check de presencial y el horario preferido.
+	 * Tras confirmar, si el evento tiene aforo libre le añade como asistente.
+	 * @param model
+	 * @param chkPresencial, obtenemos el valor de combobox
+	 * @param horarioElegido, obtenemos el radioButton con el id del horario seleccionado
+	 * @param eventoSeleccionado, obtenemos el evento seleccionado
+	 * @param redirectAtrributtes
+	 * @return
 	 */
 	@PostMapping(Rutas.EVENTOS_CONFIRMAR_INVITADO)
-	public ModelAndView confirmar(Model model,
+	public String confirmar(Model model,
 			@RequestParam(value = "checkPresencial", required = false) boolean chkPresencial,
-			@RequestParam(value = "seleccionHorario", required = false) String horarioElegido, Evento eventoSeleccionado) {
+			@RequestParam(value = "seleccionHorario", required = false) String horarioElegido, Evento eventoSeleccionado,
+			RedirectAttributesModelMap redirectAtrributtes) {
 
-		ModelAndView mav = new ModelAndView();
-		
 		Horarios elegido= new Horarios();
 
 		if(horarioElegido != null) {
@@ -151,25 +156,26 @@ public class EventosController {
 
 		for (Usuario_Evento aux : user.getEventosDelUsuario()) {
 			if (aux.getEvento().getIdEvento() == eventoSeleccionado.getIdEvento()) {
-				ActualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_SI, aux.getEvento(), elegido, chkPresencial);
+				actualizarConfirmacionEvento(usuarioEventoConstantes.CONFIRMADO_SI, aux.getEvento(), elegido, chkPresencial);
 			}
 		}
 
 		eventoService.mensajeConfirmacion(model);
 
-//		return "redirect:/Evento/listarFiltro?filtroListado=sin";
-		mav.setViewName("listarEventos");
 
-		return mav;
+		redirectAtrributtes.addFlashAttribute(Atributos.ALERTA_TITULO, model.getAttribute(Atributos.ALERTA_TITULO));
+		redirectAtrributtes.addFlashAttribute(Atributos.ALERTA, model.getAttribute(Atributos.ALERTA));
+
+		return "redirect:/Evento/listarFiltro?filtroListado=sin";
 	}
 
 	/**
 	 * Funcion que se ejecuta cuando un invitado al evento confirma o rechaza su
-	 * asistencia al evento. Se viene aqui desde confirmar y baja Actualiza el
-	 * evento indicando si el usuario confirma asistencia Si esta confirmando
+	 * asistencia al evento. Se viene aqui desde confirmar y baja. Actualiza el
+	 * evento indicando si el usuario confirma asistencia. Si esta confirmando
 	 * asistencia almacenamos el horario elegido.
 	 */
-	private void ActualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido,
+	private void actualizarConfirmacionEvento(int pValor, Evento eventoSeleccionado, Horarios pHorarioElegido,
 			boolean pCheckPresencial) {
 
 		this.iniciarUsuario();
@@ -209,9 +215,17 @@ public class EventosController {
 	}
 
 	/**
-	 * Solo visible el boton para los jefes de proyecto creadores del evento.
-	 * Confirmamos los asistentes al evento que elija el jefe de proyecto
-	 * Confirmamos el horario mas legido por los confirmados al evento.
+	 * El creador del evento confirma todo lo relativo al evento creado.
+	 * Se confirma su tipo de asistencia, el horario mas elegido del evento,
+	 * y la lista con los usuarios que van a asistir.
+	 * @param model
+	 * @param lstCheckedAsistentes, listado de los usuarios elegidos para asistir
+	 * @param horarioVotado, gemos el horario mas votado por los invitados
+	 * @param chkPresencial, tipo de asistencia del creador
+	 * @param idEvento, id del evento seleccionado.
+	 * @param idSala, si se modifica la sala guardamos la nueva sala donde se celebrará el evento
+	 * @param redirectAtrributtes
+	 * @return
 	 */
 	@PostMapping(Rutas.EVENTOS_CONFIRMAR_CREADOR_EVENTO)
 	public String confirmarAsistenciaEvento(Model model,
@@ -219,7 +233,10 @@ public class EventosController {
 			@RequestParam(value = "horarioVotado") String horarioVotado,
 			@RequestParam(value = "checkPresencial") String chkPresencial,
 			@RequestParam(value = "eventoSeleccionado") Integer idEvento,
-			@RequestParam(value = "idSala") String idSala) {
+			@RequestParam(value = "idSala") String idSala,
+			RedirectAttributesModelMap redirectAtrributtes) {
+		
+		boolean mostrarMensajeConfirmacion= false;
 		
 		Evento evento = user.getEventosDelUsuario().stream().filter(c -> c.getEvento().getIdEvento() == idEvento)
 				.findFirst().get().getEvento();
@@ -232,7 +249,7 @@ public class EventosController {
 			
 			usuRepo.save(user);
 			
-			eventoService.mensajeConfirmacion(model);
+			mostrarMensajeConfirmacion= true;			
 			
 			//Actualizar sala actual del model
 			eventoService.mensajeInfoSala(model, String.valueOf(Long.parseLong(idSala)));
@@ -287,24 +304,30 @@ public class EventosController {
 			
 			usuRepo.save(user);
 			
-			eventoService.mensajeConfirmacion(model);
-		}		
+			mostrarMensajeConfirmacion= true;
+		}	
 		
-		return "redirect:/Evento/listarFiltro?filtroListado=sin";
+		if(mostrarMensajeConfirmacion)
+		{
+			eventoService.mensajeConfirmacion(model);
+			redirectAtrributtes.addFlashAttribute(Atributos.ALERTA_TITULO, model.getAttribute(Atributos.ALERTA_TITULO));
+			redirectAtrributtes.addFlashAttribute(Atributos.ALERTA, model.getAttribute(Atributos.ALERTA));
+		}
+		
+		return "redirect:/Evento/listarFiltro?filtroListado=todos";
 
 	}
 
 	// **Listar evento.HTML ***//
-
-	/****
-	 * Nos permite acceder desde el listado de eventos al evento seleccionado, donde
-	 * poner ver lo relativo a el evento
-	 * 
+	/**
+	 * Nos permite acceder desde el listado de eventos a los detalles del evento seleccionado,
+	 * @param model
 	 * @param evento
-	 * @return verEvento
+	 * @return
 	 */
 	@GetMapping(Rutas.EVENTOS_VER_DETALLE)
-	public ModelAndView entrar(Model model, @RequestParam(value = "id") Evento evento) {
+	public ModelAndView entrar(Model model, @RequestParam(value = "id") Evento evento
+			) {
 		this.iniciarUsuario();
 
 		ModelAndView mav = new ModelAndView();
@@ -376,10 +399,10 @@ public class EventosController {
 		return mav;
 
 	}
-	
+		
 	/**
 	 * Calculamos el cambio horario local con la hora de Nueva York
-	 * @return timestamp
+	 * @return Timestamp con el cambio horario al huso actual
 	 */
 	private Timestamp getHoraNY() {
 		
@@ -419,7 +442,9 @@ public class EventosController {
 	}
 	
 	/**
-	 * Muestra el listado de eventos creados por el usuario creador de eventos logado
+	 * Muestra el listado de eventos creados por el usuario creador de eventos logado.
+	 * Este acceso esta restringido a los usuarios con rol jefe de proyecto o admin, 
+	 * que son los unicos que pueden crear eventos.
 	 * @return
 	 */
 	@RequestMapping(Rutas.EVENTOS_LISTAR_FILTRO_CREADOR)
@@ -441,12 +466,12 @@ public class EventosController {
 		return mav;
 	}
 
-	/****
+	/**
 	 * Nos muestra el listado de eventos del usuario, podemos filtrar por:
 	 * Todos los evento, los de hoy, los rechazados, los pendientes de confirmar y los futuros
-	 * 
-	 * @param filtroListado
-	 * @return listarEventos
+	 * Segun el filtro que se realice en la vista.
+	 * @param filtroListado, obtenemos el tipo de filtro seleccionado por el usuario.
+	 * @return
 	 */
 	@RequestMapping(Rutas.EVENTOS_LISTAR_FILTRO)
 	public ModelAndView listarFiltro(@RequestParam(required = false, name = "filtroListado") String filtroListado) {

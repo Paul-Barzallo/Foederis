@@ -368,7 +368,7 @@
 								<td colspan="3"><label class= "cambioHora"
 									th:text="${horarioVotado == null ? 'Sin Confirmacion' : horarioVotado.Horario_Fecha_Inicio}"></label></td>
 							</tr>
-							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado == @eventoConstantes.ESTADO_INACTIVO}">
+							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado != @eventoConstantes.ESTADO_FINALIZADO}">
 								<td colspan="1">
 									<label for="nombre"  style="color: #007bff;">Cambiar de Sala:</label>
 								</td>
@@ -377,13 +377,7 @@
 								
 								<td><label for="nombre"  style="color: #007bff;">Enviar invitación:</label></td>	
 								<td>
-									<a class="btn btn-primary btn-md btn-block" role="button" data-toggle="modal" data-target="#invitarModal">Invitar</a>
-								</td>													
-							</tr>
-							<tr th:if="${eventoSeleccionado.UsuarioCreador.idUsuario == userLogin.idUsuario && eventoSeleccionado.estado == @eventoConstantes.ESTADO_ONLINE}">
-								<td><label for="nombre"  style="color: #007bff;">Enviar invitación:</label></td>	
-								<td>
-									<a class="btn btn-primary btn-md btn-block" role="button" data-toggle="modal" data-target="#invitarModal">Invitar</a>
+									<a class="btn btn-outline-secondary btn-md btn-block" role="button" data-toggle="modal" data-target="#invitarModal">Pulse para invitar</a>
 								</td>													
 							</tr>
 						</tfoot>

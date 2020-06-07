@@ -17,12 +17,10 @@ import es.uned.foederis.constantes.Atributos;
 import es.uned.foederis.constantes.Pantallas;
 import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.eventos.model.Evento;
-import es.uned.foederis.eventos.model.Usuario_Evento;
 import es.uned.foederis.eventos.repository.*;
 import es.uned.foederis.salas.model.Sala;
 import es.uned.foederis.salas.repository.ISalaRepository;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
-import es.uned.foederis.sesion.model.Usuario;
 
 public class EventoServiceImpl implements IEventoService {
 
@@ -31,30 +29,7 @@ public class EventoServiceImpl implements IEventoService {
 	
 	@Autowired
 	private ISalaRepository salaRepo;
-	
-//	@Override
-//	public List<Evento> obtenerEventosFuturos(Date fechaInicio, long usuarioLogado) {
-//		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicioAfter(fechaInicio, Sort.by(Sort.Direction.ASC, "fechaInicio"));
-//						
-//		return lst;
-//	}
-	
-	
-//	@Override
-//	public List<Evento> obtenerEventosHoy(Date fechaInicio, long usuarioLogado) {
-//		//return (List<Evento>) EventoRepository.findAllByOrderByfechaInicioAscfechaInicioAfter(fechaInicio); 
-//		List<Evento> lst= (List<Evento>) EventoRepository.findByfechaInicio(fechaInicio);
-//				
-//		return lst;				
-//		
-//	}
 
-//	@Override
-//	public List<Evento> ObtenerEventos(long usuarioLogado) {
-//		List<Evento> lst= (List<Evento>) EventoRepository.findAll();	
-//				
-//		return lst;					
-//	}
 
 	@Override
 	public void eliminar(Integer id) {
@@ -92,7 +67,7 @@ public class EventoServiceImpl implements IEventoService {
 	@Override
 	public void mensajeInfoAforo(Model model) {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Info");
-		model.addAttribute(Atributos.ALERTA, "Aforo alcanzado, se recomienda cambiar de sala.");
+		model.addAttribute(Atributos.ALERTA, "Aforo superado, se recomienda cambiar de sala.");
 	}
 	@Override
 	public void mensajeInfoSala(Model model, String paramBusq) {
