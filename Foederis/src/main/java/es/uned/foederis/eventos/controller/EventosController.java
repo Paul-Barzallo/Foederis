@@ -628,6 +628,14 @@ public class EventosController {
 			String hCierre1 = request.getParameter("horarioCierre1");
 			String hCierre2 = request.getParameter("horarioCierre2");
 			String hCierre3 = request.getParameter("horarioCierre3");
+			
+			if (result.hasErrors()) {
+				model.addAttribute(Atributos.EVENTO, evento);
+				model.addAttribute(Atributos.USER, user);
+				administracionService.cargarParamsBusqSalas(model);
+				administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO, null);
+		        return eventoService.irANuevoEvento(model);
+		    }
 
 			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 			List<Horarios> horarios = new ArrayList<>();
