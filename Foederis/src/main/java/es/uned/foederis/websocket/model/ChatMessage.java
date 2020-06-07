@@ -2,6 +2,11 @@ package es.uned.foederis.websocket.model;
 
 import es.uned.foederis.sesion.model.Rol;
 
+/**
+ * Entidad de intercambio de mensajes entre el cliente websocket y el servidor
+ * @author juancarlosandresmarcos
+ *
+ */
 public class ChatMessage {
     private MessageType type;
     private String 		content;

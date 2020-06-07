@@ -64,6 +64,14 @@ public class UploadController {
 	@Autowired
 	AdministracionService myUserService_;
 
+	/**
+	 * Recibe una petición para descargar los mensajes y documentos asociados a un evento
+	 * @param eventId
+	 * @param model
+	 * @param authentication
+	 * @return Modelo con la lista de mensajes y ficheros asociados al evento y retorna la vista resultDownload
+	 * @throws IOException
+	 */
 	@GetMapping("/download")
 	public ModelAndView listEventFiles(@RequestParam("eventId") int eventId, Model model, Authentication authentication)
 			throws IOException {
@@ -85,6 +93,11 @@ public class UploadController {
 		return new ModelAndView("chat/resultDownload");
 	}
 
+	/**
+	 * Recibe petición para descargar un fichero
+	 * @param filename
+	 * @return Fichero descargado
+	 */
 	@GetMapping("/download/file")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@RequestParam("filename") String filename) {
@@ -103,6 +116,14 @@ public class UploadController {
 	}
 
 	
+	/**
+	 * Elimina un fichero del evento
+	 * @param eventId
+	 * @param fileId
+	 * @param model
+	 * @param authentication
+	 * @return Lista de ficheros del evento y la vista resultUpload
+	 */
 	@PostMapping("/removeFile") 
 	public ModelAndView removeFile(@RequestParam("eventid") int eventId, @RequestParam("fileid") int fileId, Model model, Authentication authentication){
 
@@ -118,6 +139,14 @@ public class UploadController {
 	}
 	  
 	 
+	/**
+	 * Solicitud para subir un fichero como parte de la ducumentación de un evento
+	 * @param file
+	 * @param eventId
+	 * @param userId
+	 * @param model
+	 * @return Lista de ficheros del evento y vista resultUpload
+	 */
 	@PostMapping("/upload")
 	public ModelAndView uploadMultipartFile(@RequestParam("file") MultipartFile file,
 			@RequestParam("eventid") int eventId, @RequestParam("userid") String userId, Model model) {
@@ -155,6 +184,11 @@ public class UploadController {
 		return new ModelAndView("fragmentos :: resultUpload");
 	}
 
+	/**
+	 * Resultado de una subida de fichero
+	 * @param model
+	 * @return  Mensaje con el resultado de la subida y vista resultUpload
+	 */
 	@GetMapping("/uploadStatus")
 	@ResponseBody
 	public ModelAndView uploadStatus(Model model) {

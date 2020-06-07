@@ -16,43 +16,15 @@ import es.uned.foederis.chats.model.Chat;
 public class ChatEntityController {
 	
     @Autowired
-    ChatService service;
- 
-    /*
-    @RequestMapping
-    public String getAllEmployees(Model model) 
-    {
-        List<Chat> list = service.getAllEmployees();
- 
-        model.addAttribute("employees", list);
-        return "list-employees";
-    }
- 
-    @RequestMapping(path = {"/edit", "/edit/{id}"})
-    public String editEmployeeById(Model model, @PathVariable("id") Optional<Long> id) 
-                            throws RecordNotFoundException 
-    {
-        if (id.isPresent()) {
-            Chat entity = service.getEmployeeById(id.get());
-            model.addAttribute("employee", entity);
-        } else {
-            model.addAttribute("employee", new Chat());
-        }
-        return "add-edit-employee";
-    }
-     
-    @RequestMapping(path = "/delete/{id}")
-    public String deleteEmployeeById(Model model, @PathVariable("id") Long id) 
-                            throws RecordNotFoundException 
-    {
-        service.deleteEmployeeById(id);
-        return "redirect:/";
-    }*/
-    
- 
+    ChatService chatService_;
+
+    /**
+     * 
+     * @param chat
+     */
     @PostMapping("/create")
     public void createChat(Chat chat) 
     {
-        service.createChat(chat);
+        chatService_.createChat(chat);
     }
 }

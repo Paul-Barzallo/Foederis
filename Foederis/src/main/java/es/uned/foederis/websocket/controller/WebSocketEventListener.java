@@ -42,16 +42,19 @@ public class WebSocketEventListener {
 	@Autowired
 	private IUsuarioEventoRepository userEventRepository_;
 
+	/**
+	 * Listener de solicitudes de conexión de clientes al websocket
+	 * @param event
+	 */
 	@EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
     	LOGGER.info("Received a new web socket connection");
-//    	StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-//    	
-//    	Principal principal= (Principal)headerAccessor.getUser();
-//    	
-//    	setUserConnected ((String)principal.getName(), CONNECTED);
     }
 
+	/**
+	 * Listener de desconexiones de clientes al websocket
+	 * @param event
+	 */
 	@EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         int idEvento = -1;

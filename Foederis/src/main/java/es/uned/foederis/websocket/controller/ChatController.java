@@ -37,12 +37,15 @@ import es.uned.foederis.eventos.repository.IUsuarioEventoRepository;
 import es.uned.foederis.eventos.service.IEventoService;
 import es.uned.foederis.sesion.constantes.UsuarioConstantes;
 import es.uned.foederis.sesion.model.Usuario;
-import es.uned.foederis.sesion.repository.IUsuarioRepository;
 import es.uned.foederis.sesion.token.JWTInvitado;
 import es.uned.foederis.websocket.model.ChatMessage;
 import io.jsonwebtoken.Claims;
 
 
+/**
+ * @author juancarlosandresmarcos
+ *
+ */
 @Controller
 public class ChatController {
 	
@@ -61,8 +64,6 @@ public class ChatController {
 	private IEventoRepository eventoRepo;
     @Autowired
 	private JWTInvitado jwtInvitado;
-    @Autowired
-    private IUsuarioRepository userRepo;
 	@Autowired
 	ArchivoService myFileService_;
     
@@ -70,7 +71,13 @@ public class ChatController {
     
     // Lista del eventos
     private HashMap <Integer,Evento> myEventList_ = new HashMap<Integer,Evento>();
-
+    /**
+     * Una vez establecida la conexión, se muestra la ventana del evento para comenzar el chat
+     * @param evento
+     * @param model
+     * @param authentication
+     * @return Vista destino: chat
+     */
 	@GetMapping("/chat")
     public String getChat(@RequestParam(value="id") Evento evento, Model model, Authentication authentication) {
 		myModel_ = model;
@@ -113,6 +120,12 @@ public class ChatController {
     	return "/chat";
 	}
 	
+	/**
+	 * Acceso al evento a usuario invitado como observador
+	 * @param model
+	 * @param req
+	 * @return Vista destino: chat_invitado
+	 */
 	@GetMapping("/chat_invitado")
     public String getChatInvitado(Model model, HttpServletRequest req) {
 		myModel_ = model;
@@ -135,6 +148,12 @@ public class ChatController {
     	return "/chat/chat_invitado";
 	}
 
+	/**
+	 * Recibe un mensaje desde el cliente y lo publica en /topic/public/{eventId}
+	 * @param chatMessage
+	 * @param eventId
+	 * @return Devuelve el mensaje recibido
+	 */
     @MessageMapping("/chat.sendMessage/{eventId}")
     @SendTo("/topic/public/{eventId}")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {
@@ -166,7 +185,7 @@ public class ChatController {
 
     			c = myChatService_.createChat(c);
     			
-    			trataFinEvento(c.getTexto(),c.getEvento());
+    			trataFinEvento(chatMessage.getType().toString(),c.getEvento());
     			break;
     		}
     	}
@@ -183,6 +202,13 @@ public class ChatController {
     	return chatMessage;
     }
 
+    /**
+     * Recibe la conexión de un usuario al chat y lo publica en /topic/public/{eventId}
+     * @param chatMessage
+     * @param eventId
+     * @param headerAccessor
+     * @return Mensaje de conexión
+     */
 	@MessageMapping("/chat.addUser/{eventId}")
     @SendTo("/topic/public/{eventId}")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, @DestinationVariable String eventId,
@@ -192,6 +218,12 @@ public class ChatController {
         return chatMessage;
     }
     
+	/**
+	 * Recibe mensaje de borrado de un mensaje del chat y lo public en /topic/public/{eventId}
+	 * @param chatMessage
+	 * @param eventId
+	 * @return Mensaje de borrado
+	 */
 	@MessageMapping("/chat.remove/{eventId}")
     @SendTo("/topic/public/{eventId}")
     public ChatMessage removeMessage(@Payload ChatMessage chatMessage, @DestinationVariable String eventId) {

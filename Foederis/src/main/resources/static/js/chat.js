@@ -42,9 +42,9 @@ function disconnect(){
 
 function endEvent(){
     // Notificar fin de evento
-    stompClient.send("/app/chat.addUser/" + eventId,
+    stompClient.send("/app/chat.sendMessage/" + eventId,
         {},
-        JSON.stringify({sender: username, type: 'END'})
+        JSON.stringify({sender: username,content: "Fin del evento", type: 'END'})
     )
 
 }
