@@ -93,7 +93,7 @@
 								<label>No disponible</label>
 							</div>	
 						</td>
-						<td><div th:if="${reunion.estado == @eventoConstantes.ESTADO_ONLINE}">
+						<td><div th:if="${reunion.estado == @eventoConstantes.ESTADO_ONLINE and filtroListado!='rechazados'}">
 							<a th:href="@{/chat?id=} + ${reunion.idEvento}" th:text="'Entrar'" class="btn btn-outline-success"></a></div></td>
 						<td><div th:if="${reunion.estado == @eventoConstantes.ESTADO_FINALIZADO}">
 							<a th:href="@{/chat/download?eventId=} + ${reunion.idEvento}"><span th:text="'Recuperar evento'"></span></a></div>

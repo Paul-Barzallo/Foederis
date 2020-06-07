@@ -155,6 +155,7 @@ public class EventosController {
 
 		eventoService.mensajeConfirmacion(model);
 
+//		return "redirect:/Evento/listarFiltro?filtroListado=sin";
 		mav.setViewName("listarEventos");
 
 		return mav;
@@ -196,7 +197,7 @@ public class EventosController {
 				usuEvento.setHorario(pHorarioElegido);
 				usuEvento.setPresencial(pCheckPresencial);
 
-				// Comprobamos si hay plazaas libres
+				// Comprobamos si hay plazas libres
 				if (usuEvento.getEvento().getSalaEvento().getAforo() > usuEvento.getEvento().getTotalAsistentesEvento())
 					usuEvento.setAsistente(true);
 			}
@@ -452,7 +453,7 @@ public class EventosController {
 		
 		actualizarEstadoEventos();
 
-		// Fecha de hoy transformada a la time Zone de NY
+		//Fecha de hoy transformada a la time Zone de NY
 		Timestamp ts = getHoraNY();
 		
 

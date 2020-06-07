@@ -92,7 +92,7 @@ public class EventoServiceImpl implements IEventoService {
 	@Override
 	public void mensajeInfoAforo(Model model) {
 		model.addAttribute(Atributos.ALERTA_TITULO, "Info");
-		model.addAttribute(Atributos.ALERTA, "Aforo superado, se recomienda cambiar de sala.");
+		model.addAttribute(Atributos.ALERTA, "Aforo alcanzado, se recomienda cambiar de sala.");
 	}
 	@Override
 	public void mensajeInfoSala(Model model, String paramBusq) {
