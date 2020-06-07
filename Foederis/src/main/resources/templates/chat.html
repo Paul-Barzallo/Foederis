@@ -40,7 +40,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: 'chat/upload',
+			        url: [[@{chat/upload}]],
 
 			        data: data,
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
@@ -86,7 +86,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: 'chat/removeFile',
+			        url: [[@{chat/removeFile}]],
 			        
 			        data: data,
 				    processData: false, //prevent jQuery from automatically transforming the data into a query string
