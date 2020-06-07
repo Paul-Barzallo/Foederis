@@ -41,8 +41,29 @@
 						</div>
 			            <button type="submit" class="btn btn-success my-3">Iniciar sesión</button>
 			        </form>
+			        <button type="button" class="btn btn-link my-2" data-toggle="modal" data-target="#memoriaModal">Ver Memoria del proyecto</button>
 		        </div>
 	        </div>
         </div>
+        
+        <!-- Modal con la memoria -->
+        <div class="modal fade" id="memoriaModal">
+			<div class="modal-dialog modal-xl" style="height: 90vh">
+				<div class="modal-content h-100">
+					<div class="modal-header">
+						<h4 class="modal-title">Memoria</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					
+					<div class="modal-body">
+						<iframe th:src="@{/pdf/memoria.pdf}" height="100%" width="100%"></iframe>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
     </body>
 </html>

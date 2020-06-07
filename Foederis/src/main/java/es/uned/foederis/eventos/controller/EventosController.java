@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -590,7 +592,7 @@ public class EventosController {
 	 * @throws ParseException
 	 */
 	@PostMapping(Rutas.GUARDAR)
-	public String postGuardarSala(Model model, HttpServletRequest request, Evento evento) throws ParseException {
+	public String postGuardarSala(Model model, HttpServletRequest request, @Validated Evento evento, BindingResult result) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
 			String idSala = request.getParameter("idSala");
@@ -697,6 +699,18 @@ public class EventosController {
 		}
 		// Si el token no contiene id o no encuentra el evento devuelve una pagina de error
 		return Vistas.TOKEN_ERROR;
+	}
+	
+	@GetMapping("/token")
+	public ModelAndView getToken(HttpServletRequest req, Model model, String nombre, String idEvento) {
+		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		int id_evento = Integer.parseInt(idEvento);
+		// Como el token solo sirve durante el evento se pone un periodo de duración alto
+		long tCaducidad = 30*24*60*60*1000; //30 dias
+		String token = jwtInvitado.createJWT(id_evento, user.getUsername(), nombre, tCaducidad);
+		String root = req.getRequestURL().toString().replaceAll("/token", "/")+"invitado/";
+		model.addAttribute("token", root+token);
+		return new ModelAndView("fragmentos :: token");
 	}
 
 }

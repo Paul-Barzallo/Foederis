@@ -55,6 +55,8 @@ public class Rutas {
 	public static final String EVENTOS_NUEVO = 		EVENTOS+NUEVO;
 	public static final String EVENTOS_GUARDAR = 	EVENTOS+GUARDAR;
 	public static final String EVENTOS_BUSQ_SALAS = EVENTOS+BUSQ_SALAS;
+	public static final String EVENTOS_TOKEN = 		EVENTOS+"/token";
+	
 	public static final String EVENTOS_LISTAR_FILTRO = "/listarFiltro";
 	public static final String EVENTOS_LISTAR_FILTRO_CREADOR = "/listarFiltroCreador";
 	public static final String EVENTOS_VER_DETALLE = "/entrar";

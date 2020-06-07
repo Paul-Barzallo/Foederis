@@ -13,6 +13,7 @@ var stompClient = null;
 var username = null;
 var eventId = null;
 var connected = false;
+var userRole = null;
 
 function connect(){
     username = document.querySelector('#userName').innerHTML.trim();
@@ -51,7 +52,7 @@ function endEvent(){
 function onConnected() {
 	connected = true;
     eventId = $("#eventId").text();
-    
+    userRole = $("#userRol").text();
     // Suscribirse a topic/public/eventId para recibir los mensajes del chat
     stompClient.subscribe('/topic/public/' + eventId, onMessageReceived);
 
@@ -157,7 +158,7 @@ function onMessageReceived(payload) {
     	textMessageElement.appendChild(messageZone);
     	
     	// Solo el jefe de proyecto tendrá visible el boton de eliminar un mensaje
-    	if (message.rol == 2){
+    	if (userRole == "2"){
 	        var butDeleteMessage = document.createElement('button')
 	    	var textDeleteMessage=document.createTextNode('Eliminar');
 	        butDeleteMessage.classList.add('btn','btn-outline-danger');

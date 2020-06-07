@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		  http
 		  	.authorizeRequests()
-		  		.antMatchers("/Evento/invitado/**", "/chat_invitado").permitAll()
+		  		.antMatchers("/Evento/invitado/**", "/chat_invitado", "foederis/Evento/invitado/**", "/Evento/invitado/**.**.**", "/pdf/memoria.pdf").permitAll()
 		  		.anyRequest().authenticated() 
 		  		.and() 
 		  	.httpBasic()
@@ -51,7 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		  	.logout()
 		  		.permitAll()
 		  		.and()
-	  		.headers().httpStrictTransportSecurity()
+	  		.headers()
+	  			.frameOptions().sameOrigin()
+	  			.httpStrictTransportSecurity()
 	          	.maxAgeInSeconds(0)
 	          	.includeSubDomains(true);
 	}

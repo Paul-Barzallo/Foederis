@@ -40,7 +40,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: 'chat/upload',
+			        url: [[@{chat/upload}]],
 
 			        data: data,
 			        processData: false, //prevent jQuery from automatically transforming the data into a query string
@@ -86,7 +86,7 @@
 			    $.ajax({
 			        type: "POST",
 			        enctype: 'multipart/form-data',
-			        url: 'chat/removeFile',
+			        url: [[@{chat/removeFile}]],
 			        
 			        data: data,
 				    processData: false, //prevent jQuery from automatically transforming the data into a query string
@@ -122,6 +122,7 @@
 		<h2 id="eventName" class="text-white mb-0" th:text="${eventname}"></h2>
 		<p id="userName" th:text="${user}" class="d-none"></p>
 		<p id="eventId" th:text="${eventid}" class="d-none"></p>
+		<p id="userRol" th:text="${__${@atributos.ROLES}__}" class="d-none"></p>
 		<p id="userId" th:text="${__${@atributos.USUARIO}__}" class="d-none"></p>
 	</div>
 	<div id="connecting" class="text-danger">Conectando...</div>
