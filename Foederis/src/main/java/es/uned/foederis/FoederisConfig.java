@@ -35,7 +35,7 @@ public class FoederisConfig {
 	
 	@Bean("dateTimeFormat")
 	public SimpleDateFormat dateTimeFormat() {
-		sdf = new SimpleDateFormat("DD/MM/YYY HH:mm");
+		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		return sdf;
 	}
 	

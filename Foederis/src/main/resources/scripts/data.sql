@@ -9,14 +9,16 @@ VALUES
 INSERT INTO usuario
 	(id_usuario,    username,       nombre,             apellidos,          password,   id_rol_fk,  activo)
 VALUES
-	(1,             'admin1',		'administrador', 	'', 				'admin', 	3,          TRUE),
+	(1,             'admin',		'administrador', 	'', 				'admin', 	3,          TRUE),
 	(2,             'admin2',		'adminsitrador', 	'segundo',			'admin', 	3,          FALSE),
 	(3,             'pbarza',		'paul', 			'barzallo', 		'foederis', 3,          TRUE),	
 	(4,             'lidia',		'lidia', 			'izquierdo',		'1234', 	2,          TRUE),	
 	(5,             'juancarlos',	'juan carlos', 		'', 				'1234', 	3,          TRUE),
+    
 	(6,             'albeas',		'alex', 			'bernat asensi', 	'user', 	2,          TRUE),	
 	(7,             'daoval',		'david', 			'oviedo almeida', 	'user', 	2,          TRUE),
 	(8,             'ambain',		'amparo', 			'bas infante', 		'user', 	2,          TRUE),	
+    
 	(9,             'sasetr',		'sandra', 			'seco trivinio', 	'user', 	1,          TRUE),
 	(10,            'miduca',		'milagros', 		'dueras casellas',  'user', 	1,          TRUE),	
 	(11,            'virovi',		'vicente', 			'roura villalba', 	'user', 	1,          TRUE),

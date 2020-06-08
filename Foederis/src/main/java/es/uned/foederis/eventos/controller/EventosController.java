@@ -1,6 +1,7 @@
 package es.uned.foederis.eventos.controller;
 
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -620,14 +621,158 @@ public class EventosController {
 	public String postGuardarSala(Model model, HttpServletRequest request, @Validated Evento evento, BindingResult result) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
+			Horarios horario;
+			Timestamp fechaIni;
+			Timestamp fechaFin;
+			Time horaIni;
+			Time horaFin;
+			long ms;
+			boolean horaIniIncorrecta;
+			boolean horaFinIncorrecta;
+			
 			String idSala = request.getParameter("idSala");
-			String[] idUsuarios = request.getParameterValues("usuarios");
+			String[] idUsers = request.getParameterValues("usuarios");
 			String hApertura1 = request.getParameter("horarioApertura1");
 			String hApertura2 = request.getParameter("horarioApertura2");
 			String hApertura3 = request.getParameter("horarioApertura3");
 			String hCierre1 = request.getParameter("horarioCierre1");
 			String hCierre2 = request.getParameter("horarioCierre2");
 			String hCierre3 = request.getParameter("horarioCierre3");
+			
+			if (idSala.isEmpty()) {
+				result.rejectValue("estado", "NoBlanco.evento.salaEvento");
+				model.addAttribute(Atributos.EVENTO, evento);
+				model.addAttribute(Atributos.USER, user);
+				administracionService.cargarParamsBusqSalas(model);
+				administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO, null);
+		        return eventoService.irANuevoEvento(model);
+			}
+			Sala sala = salaRepo.findById(Long.parseLong(idSala)).get();
+
+			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
+			List<Horarios> horarios = new ArrayList<>();
+			List<Usuario> usuarios = new ArrayList<>();
+			
+			String[] idUsuarios = new String[idUsers.length+1];
+			idUsuarios[0] = user.getIdUsuario().toString();
+			for (int i=0; i<idUsers.length; i++) {
+				idUsuarios[i+1] = idUsers[i];
+			}
+			if (idUsuarios == null || idUsuarios.length<4) {
+				result.rejectValue("estado", "AforoMin.evento");
+				model.addAttribute(Atributos.EVENTO, evento);
+				model.addAttribute(Atributos.USER, user);
+				administracionService.cargarParamsBusqSalas(model);
+				administracionService.cargarUsuarios(model, UsuarioConstantes.ESTADO, null);
+		        return eventoService.irANuevoEvento(model);
+			} else {
+				for (String idUsuario : idUsuarios) {
+					Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
+					usuarios.add(user);
+					Usuario_Evento usuarioEvento = new Usuario_Evento();
+					usuarioEvento.setUsuario(usuario);
+					usuarioEvento.setEvento(evento);
+					if (usuario.getIdUsuario() == user.getIdUsuario()) {
+						usuarioEvento.setAsistente(true);
+						usuarioEvento.setConfirmado(1);
+					}
+					usuariosEvento.add(usuarioEvento);
+					usuario.addEvento(usuarioEvento);
+					evento.addUsuarioEvento(usuarioEvento);
+				}
+			}
+			
+			if ( (hApertura1.isBlank() || hCierre1.isBlank()) &&  (hApertura2.isBlank() || hCierre2.isBlank()) &&  (hApertura3.isBlank() || hCierre3.isBlank())) {
+				result.rejectValue("estado", "HorarioMin.evento");
+			}
+			
+			if (hApertura1 != null && !hApertura1.isBlank() && hCierre1 != null && !hCierre1.isBlank()) {
+				horario = new Horarios();
+				ms = dateTimeFormat.parse(hApertura1).getTime();
+				fechaIni = new Timestamp(ms);
+				horaIni = new Time(ms);
+				ms = dateTimeFormat.parse(hCierre1).getTime();
+				fechaFin = (new Timestamp(ms));
+				horaFin = new Time(ms);
+				
+				horaIniIncorrecta = horaIni.getHours()<sala.getHoraInicio().getHours() || (horaIni.getHours()>horaFin.getHours() && horaIni.getHours()>=sala.getHoraFin().getHours());
+				horaFinIncorrecta = horaFin.getHours()>sala.getHoraFin().getHours() || (horaIni.getHours()>horaFin.getHours() && horaFin.getHours()<=sala.getHoraInicio().getHours());
+				if (horaIniIncorrecta || horaFinIncorrecta) {
+					result.rejectValue("estado", "Cerrado1.evento.salaEvento");
+				}
+				if (fechaFin.getTime() - fechaIni.getTime() > 10*60*60*1000) { // Se comprueba que la reunion no dure mas de 10h
+					result.rejectValue("estado", "TimeMax1.evento.salaEvento");
+				}
+				if (fechaFin.compareTo(fechaIni) <= 0) {
+					result.rejectValue("estado", "IniLessFin1.evento.salaEvento");
+				}
+				if (salaRepo.findBySalaOcupada(Long.parseLong(idSala), fechaIni, fechaFin).isPresent()) {
+					result.rejectValue("estado", "Ocupado1.evento.salaEvento");
+				} 
+				horario.setHorario_Fecha_Inicio(fechaIni);
+				horario.setHorario_Fecha_Fin(fechaFin);
+				horario.setEvento(evento);
+				horarios.add(horario);
+				evento.addHorario(horario);
+			}
+			if (hApertura2 != null && !hApertura2.isBlank() && hCierre2 != null && !hCierre2.isBlank()) {
+				horario = new Horarios();
+				ms = dateTimeFormat.parse(hApertura2).getTime();
+				fechaIni = new Timestamp(ms);
+				horaIni = new Time(ms);
+				ms = dateTimeFormat.parse(hCierre2).getTime();		
+				fechaFin = new Timestamp(ms);
+				horaFin = new Time(ms);
+				
+				horaIniIncorrecta = horaIni.getHours()<sala.getHoraInicio().getHours() || (horaIni.getHours()>horaFin.getHours() && horaIni.getHours()>=sala.getHoraFin().getHours());
+				horaFinIncorrecta = horaFin.getHours()>sala.getHoraFin().getHours() || (horaIni.getHours()>horaFin.getHours() && horaFin.getHours()<=sala.getHoraInicio().getHours());
+				if (horaIniIncorrecta || horaFinIncorrecta) {
+					result.rejectValue("estado", "Cerrado2.evento.salaEvento");
+				}
+				if (horaFin.getTime() - horaIni.getTime() > 10*60*60*1000) { // Se comprueba que la reunion no dure mas de 10h
+					result.rejectValue("estado", "TimeMax2.evento.salaEvento");
+				}
+				if (fechaFin.compareTo(fechaIni) <= 0) {
+					result.rejectValue("estado", "IniLessFin2.evento.salaEvento");
+				}
+				if (salaRepo.findBySalaOcupada(Long.parseLong(idSala), fechaIni, fechaFin).isPresent()) {
+					result.rejectValue("estado", "Ocupado2.evento.salaEvento");
+				} 
+				horario.setHorario_Fecha_Inicio(fechaIni);
+				horario.setHorario_Fecha_Fin(fechaFin);
+				horario.setEvento(evento);
+				horarios.add(horario);
+				evento.addHorario(horario);
+			}
+			if (hApertura3 != null && !hApertura3.isBlank() && hCierre3 != null && !hCierre3.isBlank()) {
+				horario = new Horarios();
+				ms = dateTimeFormat.parse(hApertura3).getTime();
+				fechaIni = new Timestamp(ms);
+				horaIni = new Time(ms);
+				ms = dateTimeFormat.parse(hCierre3).getTime();		
+				fechaFin = new Timestamp(ms);
+				horaFin = new Time(ms);
+				
+				horaIniIncorrecta = horaIni.getHours()<sala.getHoraInicio().getHours() || (horaIni.getHours()>horaFin.getHours() && horaIni.getHours()>=sala.getHoraFin().getHours());
+				horaFinIncorrecta = horaFin.getHours()>sala.getHoraFin().getHours() || (horaIni.getHours()>horaFin.getHours() && horaFin.getHours()<=sala.getHoraInicio().getHours());
+				if (horaIniIncorrecta || horaFinIncorrecta) {
+					result.rejectValue("estado", "Cerrado3.evento.salaEvento");
+				}
+				if (horaFin.getTime() - horaIni.getTime() > 10*60*60*1000) { // Se comprueba que la reunion no dure mas de 10h
+					result.rejectValue("estado", "TimeMax3.evento.salaEvento");
+				}
+				if (fechaFin.compareTo(fechaIni) <= 0) {
+					result.rejectValue("estado", "IniLessFin3.evento.salaEvento");
+				}
+				if (salaRepo.findBySalaOcupada(Long.parseLong(idSala), fechaIni, fechaFin).isPresent()) {
+					result.rejectValue("estado", "Ocupado3.evento.salaEvento");
+				} 
+				horario.setHorario_Fecha_Inicio(fechaIni);
+				horario.setHorario_Fecha_Fin(fechaFin);
+				horario.setEvento(evento);
+				horarios.add(horario);
+				evento.addHorario(horario);
+			}
 			
 			if (result.hasErrors()) {
 				model.addAttribute(Atributos.EVENTO, evento);
@@ -637,59 +782,7 @@ public class EventosController {
 		        return eventoService.irANuevoEvento(model);
 		    }
 
-			List<Usuario_Evento> usuariosEvento = new ArrayList<>();
-			List<Horarios> horarios = new ArrayList<>();
-			List<Usuario> usuarios = new ArrayList<>();
-
-			for (String idUsuario : idUsuarios) {
-				Usuario usuario = usuRepo.findById(Long.parseLong(idUsuario)).get();
-				usuarios.add(user);
-				Usuario_Evento usuarioEvento = new Usuario_Evento();
-				usuarioEvento.setUsuario(usuario);
-				usuarioEvento.setEvento(evento);
-				if (usuario.getIdUsuario() == user.getIdUsuario()) {
-					usuarioEvento.setAsistente(true);
-					usuarioEvento.setConfirmado(1);
-				}
-				usuariosEvento.add(usuarioEvento);
-				usuario.addEvento(usuarioEvento);
-				evento.addUsuarioEvento(usuarioEvento);
-			}
-
-			if (hApertura1 != null && !hApertura1.isBlank() && hCierre1 != null && !hCierre1.isBlank()) {
-				Horarios horario = new Horarios();
-				long ms = dateTimeFormat.parse(hApertura1).getTime();
-				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
-				ms = dateTimeFormat.parse(hCierre1).getTime();
-				horario.setHorario_Fecha_Fin(new Timestamp(ms));
-				horario.setEvento(evento);
-				horarios.add(horario);
-				evento.addHorario(horario);
-			}
-
-			if (hApertura2 != null && !hApertura2.isBlank() && hCierre2 != null && !hCierre2.isBlank()) {
-				Horarios horario = new Horarios();
-				long ms = dateTimeFormat.parse(hApertura2).getTime();
-				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
-				ms = dateTimeFormat.parse(hCierre2).getTime();
-				horario.setHorario_Fecha_Fin(new Timestamp(ms));
-				horario.setEvento(evento);
-				horarios.add(horario);
-				evento.addHorario(horario);
-			}
-
-			if (hApertura3 != null && !hApertura3.isBlank() && hCierre3 != null && !hCierre3.isBlank()) {
-				Horarios horario = new Horarios();
-				long ms = dateTimeFormat.parse(hApertura3).getTime();
-				horario.setHorario_Fecha_Inicio(new Timestamp(ms));
-				ms = dateTimeFormat.parse(hCierre3).getTime();
-				horario.setHorario_Fecha_Fin(new Timestamp(ms));
-				horario.setEvento(evento);
-				horarios.add(horario);
-				evento.addHorario(horario);
-			}
-
-			evento.setSalaEvento(salaRepo.findById(Long.parseLong(idSala)).get());
+			evento.setSalaEvento(sala);
 			evento.setUsuarioCreador(user);
 
 			eventoRepo.save(evento);
@@ -704,7 +797,7 @@ public class EventosController {
 	}
 	
 	@GetMapping("/invitado/{token}")
-	public String getEventoInvitado(HttpServletRequest req, @PathVariable(value="token") String token) {
+	public String getEventoInvitado(Model model, HttpServletRequest req, @PathVariable(value="token") String token) {
 		Claims claims = jwtInvitado.decodeJWT(token);
 		String idEvento = claims.getId();
 		
@@ -712,23 +805,48 @@ public class EventosController {
 			Optional<Evento> opEvento = eventoRepo.findById(Integer.parseInt(idEvento));
 			if (opEvento.isPresent()) {
 				Evento evento = opEvento.get();
-				long timeIni = evento.getHorarioElegido().getHorario_Fecha_Inicio().getTime();
-				long timeFin = evento.getHorarioElegido().getHorario_Fecha_Fin().getTime();
-				long ahora = new Date().getTime();
-				
-				// Se disminuye 5 min a la hora de inicio para poder entrar antes
-				timeIni -= (5*60*1000);
-				
-				if (ahora < timeFin && ahora > timeIni) { 
-				    req.setAttribute("token", token);
-				    
-				    // envia a chat correspondiente
-					return "forward:/chat_invitado";
-				} else {
-					// Si la fecha no es correcta se muestra error de fecha
-					return Vistas.TOKEN_ERROR;
+				Horarios horario = evento.getHorarioElegido();
+				if (horario != null) {
+					long timeIni = horario.getHorario_Fecha_Inicio().getTime();
+					long timeFin = horario.getHorario_Fecha_Fin().getTime();
+					long ahora = new Date().getTime();
+					
+					// Se disminuye 5 min a la hora de inicio para poder entrar antes
+					timeIni -= (5*60*1000);
+					
+					if (ahora < timeFin && ahora >= timeIni) { 
+					    req.setAttribute("token", token);
+					    
+					    // envia a chat correspondiente
+						return "forward:/chat_invitado";
+					} else if ( ahora < timeIni) {
+						double segundos = (timeIni - ahora) / 1000;
+						double minutos = segundos / 60;
+						double horas = minutos / 60;
+						String falta;
+						if (segundos <= 200) {
+							falta = (int)segundos + " segundos";
+						} else if (minutos <= 200) {
+							falta = (int)minutos + " minutos";
+						} else {
+							falta = (int)horas + " horas"; 
+						}
+						model.addAttribute(Atributos.ALERTA_TITULO, "Acceso denegado");
+						model.addAttribute(Atributos.ALERTA, "Aun es pronto, faltan "+falta);
+					} else {
+						model.addAttribute(Atributos.ALERTA_TITULO, "Acceso denegado");
+						model.addAttribute(Atributos.ALERTA, "El evento ya terminó");
+					}
 				}
+				model.addAttribute(Atributos.ALERTA_TITULO, "Acceso denegado");
+				model.addAttribute(Atributos.ALERTA, "Aun no se ha definido la fecha del evento");
+			} else {
+				model.addAttribute(Atributos.ALERTA_TITULO, "Token incorrecto");
+				model.addAttribute(Atributos.ALERTA, "Compruebe que la URL de invitado es correcta");
 			}
+		} else {
+			model.addAttribute(Atributos.ALERTA_TITULO, "Token incorrecto");
+			model.addAttribute(Atributos.ALERTA, "Compruebe que la URL de invitado es correcta");
 		}
 		// Si el token no contiene id o no encuentra el evento devuelve una pagina de error
 		return Vistas.TOKEN_ERROR;
