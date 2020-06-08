@@ -618,7 +618,7 @@ public class EventosController {
 	 * @throws ParseException
 	 */
 	@PostMapping(Rutas.GUARDAR)
-	public String postGuardarSala(Model model, HttpServletRequest request, @Validated Evento evento, BindingResult result) throws ParseException {
+	public String postGuardarEvento(Model model, HttpServletRequest request, @Validated Evento evento, BindingResult result) throws ParseException {
 		Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (user.isAdminOrJP()) {
 			Horarios horario;

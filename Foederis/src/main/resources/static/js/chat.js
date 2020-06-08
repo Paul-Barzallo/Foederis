@@ -180,7 +180,7 @@ function onMessageReceived(payload) {
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-
-messageForm.addEventListener('submit', sendMessage, true);
-
+$(function () {
+	messageForm.addEventListener('submit', sendMessage, true);
+});
 

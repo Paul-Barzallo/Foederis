@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +75,9 @@ public class WebSocketEventListener {
 
             idEvento = setUserConnected(userName, NOT_CONNECTED);
 
-            if (idEvento != -1)
-		 		messagingTemplate.convertAndSend("/foederis/topic/public/" + idEvento, chatMessage);
+            if (idEvento != -1) {
+		 		messagingTemplate.convertAndSend("/topic/public/" + idEvento, chatMessage);
+            }
         }
     }
 

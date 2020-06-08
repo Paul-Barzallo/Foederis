@@ -180,6 +180,9 @@
 				$(this).toggle($(this).children("div").children("label").text().toLowerCase().indexOf(value) > -1)
 			});
 		});	
+		
+		var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		$("#tz").text('Zona horaria: '+tz);
 	});
 	</script>
 </head>
@@ -187,7 +190,8 @@
    	<div th:insert="fragmentos :: navbar"></div>
    	<div class="container mx-auto my-5 px-ms-5 h-100">
    		<form class="px-md-5 mx-lg-5" th:object="${__${@atributos.EVENTO}__}" onsubmit="tratarFechas()" th:action="@{__${@rutas.EVENTOS_GUARDAR}__}" method="post">
-           	<h1 class="mb-3 ml-n2">Evento</h1>
+           	<h1 class="mb-0 ml-n2">Evento</h1>
+           	<!-- <h6 id="tz" class="text-muted mb-3 ml-n1"></h6>-->
            	<div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible pt-4">
            		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		        <ul>
