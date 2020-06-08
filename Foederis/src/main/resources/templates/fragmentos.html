@@ -345,8 +345,24 @@
 		</div>
 	</div>
 
-	<div th:fragment="tabla_salas" th:if="${__${@atributos.SALAS}__}"
-		class="border border-dark rounded">
+	<div th:fragment="tabla_salas" th:if="${__${@atributos.SALAS}__}" class="border border-dark rounded">
+		<script th:inline="javascript">
+			$(function() {
+				var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				$('[id^=horaIni]').each(function(){
+	        	    var horaIni = $(this).text();
+	        	    var newYork = moment.tz('2014-06-01 '+horaIni, "America/New_York");
+	        	    var local = newYork.tz(tz);
+	        	    $(this).text(local.format('HH:00'));
+	        	});
+				$('[id^=horaFin]').each(function(){
+	        	    var horaIni = $(this).text();
+	        	    var newYork = moment.tz('2014-06-01 '+horaIni, "America/New_York");
+	        	    var local = newYork.tz(tz);
+	        	    $(this).text(local.format('HH:00'));
+	        	});
+			});
+		</script>
 		<table class="table table-striped mb-0 text-center">
 			<thead>
 				<tr>
@@ -366,25 +382,21 @@
 				<tr th:each="sala,i : ${__${@atributos.SALAS}__}"
 					th:class="${sala.activa}? '' : 'text-muted'">
 					<td class="align-middle" th:text="${i.count}"></td>
-					<td class="align-middle"
-						th:text="${#strings.capitalizeWords('__${sala.nombre}__')}"></td>
+					<td class="align-middle" th:text="${#strings.capitalizeWords('__${sala.nombre}__')}"></td>
 					<td class="align-middle" th:text="${sala.aforo}"></td>
 					<td th:unless="${sala.activa}" class="align-middle">Inactiva</td>
-					<td
-						th:if="${sala.horaInicio} == ${sala.horaFin} and ${sala.activa}"
-						class="align-middle">Abierto 24h</td>
-					<td
-						th:if="${sala.horaInicio} != ${sala.horaFin} and ${sala.activa}"
-						class="align-middle"
-						th:text="${#dates.format(sala.horaInicio,'HH:mm')+' - '+#dates.format(sala.horaFin,'HH:mm')}"></td>
-					<td class="align-middle"
-						th:text="${sala.presentacion}? 'Si' : 'No'"></td>
+					<td th:if="${sala.horaInicio} == ${sala.horaFin} and ${sala.activa}" class="align-middle">Abierto 24h</td>
+					<td th:if="${sala.horaInicio} != ${sala.horaFin} and ${sala.activa}" class="align-middle">
+							<span th:id="${'horaIni'+sala.idSala}" th:text="${#dates.format(sala.horaInicio,'HH:mm')}"></span>
+							<span> - </span>
+							<span th:id="${'horaFin'+sala.idSala}" th:text="${#dates.format(sala.horaFin,'HH:mm')}"></span>
+					</td>
+					<td class="align-middle" th:text="${sala.presentacion}? 'Si' : 'No'"></td>
 					<td class="align-middle" th:text="${sala.megafonia}? 'Si' : 'No'"></td>
 					<td class="align-middle" th:text="${sala.grabacion}? 'Si' : 'No'"></td>
 					<td class="align-middle" th:text="${sala.streaming}? 'Si' : 'No'"></td>
 					<td class="align-middle" th:text="${sala.wifi}? 'Si' : 'No'"></td>
-					<td th:with="id=${sala.idSala}, activo=${sala.activa}"
-						th:insert="fragmentos :: acciones"></td>
+					<td th:with="id=${sala.idSala}, activo=${sala.activa}" th:insert="fragmentos :: acciones"></td>
 				</tr>
 			</tbody>
 		</table>
