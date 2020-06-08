@@ -607,8 +607,7 @@
 		    stompClient.send("/app/chat.sendMessage/" + eventId,
 		        {},
 		        JSON.stringify({sender: username,content: "Fin del evento", type: 'END'})
-		    )
-
+		    );
 		}
 
 		function onConnected() {

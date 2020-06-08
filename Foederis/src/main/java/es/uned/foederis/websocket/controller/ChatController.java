@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +19,13 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.uned.foederis.FoederisApplication;
 import es.uned.foederis.administracion.service.AdministracionService;
@@ -29,6 +33,8 @@ import es.uned.foederis.archivos.service.ArchivoService;
 import es.uned.foederis.chats.model.Chat;
 import es.uned.foederis.chats.service.ChatService;
 import es.uned.foederis.constantes.Atributos;
+import es.uned.foederis.constantes.Rutas;
+import es.uned.foederis.constantes.Vistas;
 import es.uned.foederis.eventos.EventoConstantes;
 import es.uned.foederis.eventos.model.Evento;
 import es.uned.foederis.eventos.model.Usuario_Evento;
@@ -241,7 +247,7 @@ public class ChatController {
 			// Actualizar estado del evento en la lista de eventos
 			myEventList_.put(evento.getIdEvento(),evento);
 			myEventService_.setFinEvento(evento);
-			
+
 			logEvents();
 		}
 	}
@@ -261,4 +267,5 @@ public class ChatController {
 			  LOGGER.info("Chat message: {}", c.toString());
 		  }
     }
+	
 }

@@ -476,8 +476,9 @@ public class EventosController {
 	 */
 	@RequestMapping(Rutas.EVENTOS_LISTAR_FILTRO)
 	public ModelAndView listarFiltro(@RequestParam(required = false, name = "filtroListado") String filtroListado) {
-
 		this.iniciarUsuario();
+		long idusuario = user.getIdUsuario();
+		user = usuRepo.findById(idusuario).get();
 		
 		actualizarEstadoEventos();
 
@@ -629,6 +630,7 @@ public class EventosController {
 			long ms;
 			boolean horaIniIncorrecta;
 			boolean horaFinIncorrecta;
+			Usuario_Evento usuario_evento_creador = null;
 			
 			String idSala = request.getParameter("idSala");
 			String[] idUsers = request.getParameterValues("usuarios");
@@ -653,6 +655,10 @@ public class EventosController {
 			List<Horarios> horarios = new ArrayList<>();
 			List<Usuario> usuarios = new ArrayList<>();
 			
+			if (idUsers == null) {
+				idUsers = new String[0];
+			}
+			
 			String[] idUsuarios = new String[idUsers.length+1];
 			idUsuarios[0] = user.getIdUsuario().toString();
 			for (int i=0; i<idUsers.length; i++) {
@@ -675,6 +681,7 @@ public class EventosController {
 					if (usuario.getIdUsuario() == user.getIdUsuario()) {
 						usuarioEvento.setAsistente(true);
 						usuarioEvento.setConfirmado(1);
+						usuario_evento_creador = usuarioEvento;
 					}
 					usuariosEvento.add(usuarioEvento);
 					usuario.addEvento(usuarioEvento);
@@ -784,6 +791,8 @@ public class EventosController {
 
 			evento.setSalaEvento(sala);
 			evento.setUsuarioCreador(user);
+			user.addEventoCreado(evento);
+			user.addEvento(usuario_evento_creador);
 
 			eventoRepo.save(evento);
 			usuarioEventoRepo.saveAll(usuariosEvento);
