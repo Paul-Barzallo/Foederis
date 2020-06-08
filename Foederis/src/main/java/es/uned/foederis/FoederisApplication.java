@@ -85,6 +85,13 @@ public class FoederisApplication implements ApplicationRunner{
 		List<Usuario_Evento> usuariosEvento = new ArrayList<>();
 		List<Horarios> horarios = new ArrayList<>();
 		List<Usuario> usuarios = new ArrayList<>();
+		
+		Horarios horario = new Horarios();
+		horario.setHorario_Fecha_Inicio(new Timestamp(timeInicio));
+		horario.setHorario_Fecha_Fin(new Timestamp(timeFin));
+		horario.setEvento(evento);
+		horarios.add(horario);
+		evento.addHorario(horario);
 
 		Usuario user = userRepo.findById(idUsuarioCreador).get();
 		for (long idUsuario : idUsuarios) {
@@ -95,17 +102,11 @@ public class FoederisApplication implements ApplicationRunner{
 			usuarioEvento.setEvento(evento);
 			usuarioEvento.setAsistente(true);
 			usuarioEvento.setConfirmado(1);
+			usuarioEvento.setHorario(horario);
 			usuariosEvento.add(usuarioEvento);
 			usuario.addEvento(usuarioEvento);
 			evento.addUsuarioEvento(usuarioEvento);
-		}
-
-		Horarios horario = new Horarios();
-		horario.setHorario_Fecha_Inicio(new Timestamp(timeInicio));
-		horario.setHorario_Fecha_Fin(new Timestamp(timeFin));
-		horario.setEvento(evento);
-		horarios.add(horario);
-		evento.addHorario(horario);
+		}	
 		
 		evento.setNombre(titulo);
 		evento.setHorarioElegido(horario);
