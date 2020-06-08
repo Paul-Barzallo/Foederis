@@ -40,8 +40,14 @@
 		$('#salasModal').modal('toggle');
 		$('#listaUsuarios').show();
 		$('#filtrarUsuarios').prop("disabled", false);
+		$('#horarioApertura1').prop("disabled", false);
+		$('#horarioApertura2').prop("disabled", false);
+		$('#horarioApertura3').prop("disabled", false);
+		$('#horarioCierre1').prop("disabled", false);
+		$('#horarioCierre2').prop("disabled", false);
+		$('#horarioCierre3').prop("disabled", false);
 		$('#filtrarUsuarios').attr("placeholder", "Buscar por nombre");
-		setIntervaloHoras(sala);
+		//setIntervaloHoras(sala);
 	}
 	
 	function setIntervaloHoras(sala) {
@@ -129,40 +135,24 @@
 	function cambiarhorarioCierre() {
 		var input = $(this);
 		var dtpOrig = $(input.data("target"));
+		var dtp = $(input.data("next"));
 		var fecha = dtpOrig.datetimepicker('date');
-		var fechaMin = moment(fecha).add(1, 'hour');
-		var fechaMax = moment(fecha).add(5, 'hour');
-		tratarHorario(input, fechaMin, fechaMax);
+		if (fecha!=undefined) {
+			var fechaMin = moment(fecha).add(1, 'hour');
+			dtp.datetimepicker('minDate', fechaMin);
+		}
 	}
 	
 	function cambiarhorarioApertura() {
 		var input = $(this);
 		var dtpOrig = $(input.data("target"));
-		var fecha = dtpOrig.datetimepicker('date');
-		var fechaMax = moment(fecha).add(-1, 'hour');
-		var fechaMin = moment(fecha).add(-5, 'hour');
-		tratarHorario(input, fechaMin, fechaMax);
-	}
-	
-	function tratarHorario(input, fechaMin, fechaMax) {
-		var dtpOrig = $(input.data("target"));
 		var dtp = $(input.data("next"));
 		var fecha = dtpOrig.datetimepicker('date');
 		if (fecha!=undefined) {
-			var horasDesactivadas = dtpOrig.datetimepicker('disabledHours');
-			var hora = moment(fecha).hour();
-			if (Object.keys(horasDesactivadas).includes(''+hora)) {
-				input.val('');
-				return false;
-			}
+			var fechaMax = moment(fecha).add(-1, 'hour');
 			dtp.datetimepicker('maxDate', fechaMax);
-			dtp.datetimepicker('minDate', fechaMin);
-		} else {
-			var fechaMin = moment(new Date());
-			var fechaMax = moment(new Date()).add(100, 'year');
-			dtp.datetimepicker('maxDate', fechaMax);
-			dtp.datetimepicker('minDate', fechaMin); 
-		} 
+		}
+		
 	}
 	
 	$(function () {
@@ -189,7 +179,7 @@
 			$("#listaUsuarios li").filter(function() {
 				$(this).toggle($(this).children("div").children("label").text().toLowerCase().indexOf(value) > -1)
 			});
-		});
+		});	
 	});
 	</script>
 </head>
@@ -206,7 +196,6 @@
 		    </div>
 				
 		    <input type="hidden" th:field="*{estado}"> 
-		    <input type="hidden" th:field="*{usuarioCreador}" th:value="$__${@atributos.USER}__}"> 
 		    <input type="hidden" id="idSala" name="idSala"> 
 
 			<div class="form-group">
@@ -216,7 +205,7 @@
 			
 			<div class="form-group">
 				<label for="nombre">Sala:</label>
-				<input id="inputSala" type="text" class="form-control" data-toggle="modal" data-target="#salasModal" readonly>
+				<input id="inputSala" type="text" class="form-control" data-toggle="modal" data-target="#salasModal" readonly >
 			</div>
 			
 			<div class="form-group">

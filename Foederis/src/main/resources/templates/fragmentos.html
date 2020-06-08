@@ -436,8 +436,24 @@
 	</div>
 
 
-	<div th:fragment="lista_salas" th:if="${__${@atributos.SALAS}__}"
-		class="border border-dark rounded">
+	<div th:fragment="lista_salas" th:if="${__${@atributos.SALAS}__}" class="border border-dark rounded">
+		<script th:inline="javascript">
+			$(function() {
+				var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				$('[id^=horaIni]').each(function(){
+	        	    var horaIni = $(this).text();
+	        	    var newYork = moment.tz('2014-06-01 '+horaIni, "America/New_York");
+	        	    var local = newYork.tz(tz);
+	        	    $(this).text(local.format('HH:00'));
+	        	});
+				$('[id^=horaFin]').each(function(){
+	        	    var horaIni = $(this).text();
+	        	    var newYork = moment.tz('2014-06-01 '+horaIni, "America/New_York");
+	        	    var local = newYork.tz(tz);
+	        	    $(this).text(local.format('HH:00'));
+	        	});
+			});
+		</script>
 		<div id="accordion">
 			<div th:each="sala : ${__${@atributos.SALAS}__}" class="card"
 				onclick="setSala(this);"
@@ -448,10 +464,17 @@
 				data-hfin=${#dates.format(sala.horaFin,'HH')}">
 				<div
 					class="card-header d-flex justify-content-between align-items-center">
-					<a class="card-link"> <strong
-						th:text="${'['+#dates.format(sala.horaInicio,'HH:mm')+' - '+#dates.format(sala.horaFin,'HH:mm')+'] '+#strings.capitalizeWords(sala.nombre)}"></strong>
-					</a> <span class="badge badge-primary badge-pill" data-toggle="tooltip"
-						title="Aforo" th:text="${sala.aforo}"></span>
+					<a class="card-link">
+						<strong>
+							<span>[</span>
+							<span th:id="${'horaIni'+sala.idSala}" th:text="${#dates.format(sala.horaInicio,'HH:mm')}"></span>
+							<span> - </span>
+							<span th:id="${'horaFin'+sala.idSala}" th:text="${#dates.format(sala.horaFin,'HH:mm')}"></span>
+							<span>]</span>
+							<span th:text="${#strings.capitalizeWords(sala.nombre)}"></span>
+						</strong>
+					</a>
+					<span class="badge badge-primary badge-pill" data-toggle="tooltip" title="Aforo" th:text="${sala.aforo}"></span>
 				</div>
 				<div class="collapse show" data-parent="#accordion">
 					<div class="card-body">
@@ -476,7 +499,7 @@
 
 	<div th:fragment="horario" th:id="${'accordion'+n}">
 		<div id="card">
-			<div class="card-header d-flex justify-content-between align-items-center">
+			<div th:id="${'hearderHorario'+n}" class="card-header d-flex justify-content-between align-items-center">
 				<a class="card-link" data-toggle="collapse"
 					th:href="@{#horario}+${n}"> <span th:text="${'Horario '+n}"></span>
 				</a>
@@ -494,7 +517,8 @@
 										th:name="${'horarioApertura'+n}" type="text"
 										class="form-control datetimepicker-input"
 										th:attr="data-target=${'#datetimepicker'+i}, data-next=${'#datetimepicker'+(i+1)}"
-										data-toggle="datetimepicker" />
+										data-toggle="datetimepicker"
+										disabled/>
 								</div>
 							</div>
 						</div>
@@ -507,7 +531,8 @@
 										th:name="${'horarioCierre'+n}" type="text"
 										class="form-control datetimepicker-input"
 										th:attr="data-target=${'#datetimepicker'+(i+1)}, data-next=${'#datetimepicker'+i}"
-										data-toggle="datetimepicker" />
+										data-toggle="datetimepicker"
+										disabled/>
 								</div>
 							</div>
 						</div>

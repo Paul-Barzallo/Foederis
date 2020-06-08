@@ -28,7 +28,6 @@ public class Evento {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idEvento;
 	
-	@NotNull
 	@OneToOne
 	@JoinColumn(name="id_usuario_creador_fk")
 	private Usuario	UsuarioCreador;

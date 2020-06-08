@@ -11,12 +11,11 @@
 	<script src="https://kit.fontawesome.com/adb5bd4540.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-light" style="height: 100vh">
-   	<div th:insert="fragmentos :: navbar"></div>
    	<div class="d-flex container text-center mx-auto h-100">
    		<div class="d-flex flex-column mx-auto align-self-center mb-5 mt-n5">
     		<div class="p-2 px-5">
-    			<h1 class="text-danger px-5 mx-5"><strong>Token Incorrecto</strong></h1>
-    			<h2 class="px-5 mx-5">Compruebe que la URL de invitado es correcta</h2>
+    			<h1 class="text-danger px-5 mx-5"><strong th:text="${__${@atributos.ALERTA_TITULO}__}"></strong></h1>
+    			<h2 class="px-5 mx-5" th:text="${__${@atributos.ALERTA}__}"></h2>
     			<h1><i class="fas fa-frown text-danger"></i></h1>
     		</div>
 		</div>
